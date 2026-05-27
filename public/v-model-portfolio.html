@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Lora:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f5f1ea;font-family:"Plus Jakarta Sans","Segoe UI",sans-serif;color:#172230}
+
+.wrap{padding:20px 24px 28px;max-width:100%;margin:0 auto}
+
+.canvas-wrap{position:relative;width:100%;background:#fcfaf6;border:.75px solid rgba(23,34,48,.14);border-radius:8px;overflow:hidden;box-shadow:0 8px 30px rgba(23,34,48,.04)}
+svg.vmap{width:100%;display:block}
+
+.vnode{cursor:pointer}
+.vnode rect{
+  fill:#22324a;
+  stroke:rgba(255,255,255,.16);
+  stroke-width:.75;
+  transition:fill .18s,stroke .18s,stroke-width .18s;
+}
+.vnode text.v-title{fill:#f7f4ef}
+.vnode text.v-sub{fill:rgba(247,244,239,.62)}
+.vnode:hover rect{
+  stroke:rgba(201,162,74,.55)!important;
+  stroke-width:1.4!important;
+}
+.vnode.lit rect{
+  fill:#243a55!important;
+  stroke:rgba(201,162,74,.92)!important;
+  stroke-width:2.2!important;
+}
+
+@media(max-width:640px){
+  .wrap{padding:16px 16px 24px}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="canvas-wrap" id="canvas">
+    <svg class="vmap" viewBox="0 0 960 470" role="img">
+      <title>SE V-Model — Anurag Yadav project map</title>
+      <desc>Eight projects mapped to SE lifecycle phases from architecture definition through implementation to verification and validation</desc>
+
+      <!-- Phase zone backgrounds -->
+      <rect x="0"   y="0" width="475" height="470" fill="rgba(69,102,143,.038)"/>
+      <rect x="485" y="0" width="475" height="470" fill="rgba(138,118,82,.03)"/>
+
+      <!-- Implementation zone -->
+      <rect x="280" y="350" width="400" height="100" rx="12" fill="rgba(69,102,143,.042)"/>
+
+      <!-- Zone labels -->
+      <text x="200" y="26" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10.5" font-weight="500" letter-spacing="0.14em" fill="rgba(45,72,108,.88)">DEFINITION &amp; DECOMPOSITION</text>
+      <text x="760" y="26" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10.5" font-weight="500" letter-spacing="0.14em" fill="rgba(108,82,48,.9)">INTEGRATION · VERIFICATION · VALIDATION</text>
+      <text x="480" y="462" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10.5" font-weight="500" letter-spacing="0.14em" fill="rgba(23,34,48,.78)">IMPLEMENTATION &amp; SIMULATION</text>
+
+      <!-- V backbone -->
+      <path d="M100 56 L480 418" stroke="rgba(23,34,48,.24)" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+      <path d="M480 418 L860 56" stroke="rgba(23,34,48,.24)" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+
+      <!-- Level connectors -->
+      <line x1="142" y1="99"  x2="818" y2="99"  stroke="rgba(23,34,48,.28)" stroke-width="2" stroke-dasharray="5 6"/>
+      <line x1="218" y1="201" x2="742" y2="201" stroke="rgba(23,34,48,.28)" stroke-width="2" stroke-dasharray="5 6"/>
+      <line x1="302" y1="303" x2="658" y2="303" stroke="rgba(23,34,48,.28)" stroke-width="2" stroke-dasharray="5 6"/>
+
+      <!-- Phase labels LEFT -->
+      <text x="30" y="64"  text-anchor="start" font-family="'JetBrains Mono',monospace" font-size="9.5" font-weight="500" fill="rgba(23,34,48,.78)" letter-spacing=".08em">Stakeholder</text>
+      <text x="30" y="76"  text-anchor="start" font-family="'JetBrains Mono',monospace" font-size="9.5" font-weight="500" fill="rgba(23,34,48,.78)" letter-spacing=".08em">needs</text>
+      <text x="30" y="167" text-anchor="start" font-family="'JetBrains Mono',monospace" font-size="9.5" font-weight="500" fill="rgba(23,34,48,.78)" letter-spacing=".08em">System</text>
+      <text x="30" y="179" text-anchor="start" font-family="'JetBrains Mono',monospace" font-size="9.5" font-weight="500" fill="rgba(23,34,48,.78)" letter-spacing=".08em">requirements</text>
+      <text x="30" y="270" text-anchor="start" font-family="'JetBrains Mono',monospace" font-size="9.5" font-weight="500" fill="rgba(23,34,48,.78)" letter-spacing=".08em">Subsystem</text>
+      <text x="30" y="282" text-anchor="start" font-family="'JetBrains Mono',monospace" font-size="9.5" font-weight="500" fill="rgba(23,34,48,.78)" letter-spacing=".08em">design</text>
+
+      <!-- Phase labels RIGHT -->
+      <text x="952" y="64"  text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="9.5" font-weight="500" fill="rgba(23,34,48,.78)" letter-spacing=".08em">System</text>
+      <text x="952" y="76"  text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="9.5" font-weight="500" fill="rgba(23,34,48,.78)" letter-spacing=".08em">validation</text>
+      <text x="952" y="167" text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="9.5" font-weight="500" fill="rgba(23,34,48,.78)" letter-spacing=".08em">System</text>
+      <text x="952" y="179" text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="9.5" font-weight="500" fill="rgba(23,34,48,.78)" letter-spacing=".08em">verification</text>
+      <text x="952" y="270" text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="9.5" font-weight="500" fill="rgba(23,34,48,.78)" letter-spacing=".08em">Subsystem</text>
+      <text x="952" y="282" text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="9.5" font-weight="500" fill="rgba(23,34,48,.78)" letter-spacing=".08em">integration</text>
+
+      <!-- ── LEFT ARM ── -->
+
+      <g class="vnode" id="n-ruga" onclick="goToProject('ruga')">
+        <rect x="102" y="57" width="156" height="56" rx="5"/>
+        <text class="v-title" x="180" y="84" text-anchor="middle" font-family="'Lora',serif" font-size="12.5" font-weight="500">RUGA Aircraft</text>
+        <text class="v-sub" x="180" y="100" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" letter-spacing=".06em">Architecture · trade space</text>
+      </g>
+
+      <g class="vnode" id="n-mbse" onclick="goToProject('mbse')">
+        <rect x="176" y="159" width="156" height="56" rx="5"/>
+        <text class="v-title" x="254" y="186" text-anchor="middle" font-family="'Lora',serif" font-size="12.5" font-weight="500">Bus Shelter MBSE</text>
+        <text class="v-sub" x="254" y="202" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" letter-spacing=".06em">Requirements · SysML</text>
+      </g>
+
+      <g class="vnode" id="n-rag" onclick="goToProject('rag')">
+        <rect x="258" y="261" width="156" height="56" rx="5"/>
+        <text class="v-title" x="336" y="288" text-anchor="middle" font-family="'Lora',serif" font-size="12.5" font-weight="500">RAG Lab</text>
+        <text class="v-sub" x="336" y="304" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" letter-spacing=".06em">Lecture assistant · design</text>
+      </g>
+
+      <!-- ── BOTTOM ── -->
+
+      <g class="vnode" id="n-wind" onclick="goToProject('wind')">
+        <rect x="322" y="372" width="156" height="56" rx="5"/>
+        <text class="v-title" x="400" y="399" text-anchor="middle" font-family="'Lora',serif" font-size="12.5" font-weight="500">Wind Turbine DT</text>
+        <text class="v-sub" x="400" y="415" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" letter-spacing=".06em">Digital twin · sim</text>
+      </g>
+
+      <g class="vnode" id="n-llm" onclick="goToProject('llm')">
+        <rect x="482" y="372" width="156" height="56" rx="5"/>
+        <text class="v-title" x="560" y="399" text-anchor="middle" font-family="'Lora',serif" font-size="12.5" font-weight="500">LLM Serving Sim</text>
+        <text class="v-sub" x="560" y="415" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" letter-spacing=".06em">DES · GPU scheduling</text>
+      </g>
+
+      <!-- ── RIGHT ARM ── -->
+
+      <g class="vnode" id="n-ivv" onclick="goToProject('ivv')">
+        <rect x="546" y="261" width="156" height="56" rx="5"/>
+        <text class="v-title" x="624" y="288" text-anchor="middle" font-family="'Lora',serif" font-size="12.5" font-weight="500">IV&amp;V — LLM System</text>
+        <text class="v-sub" x="624" y="304" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" letter-spacing=".06em">Formal V&amp;V · acceptance</text>
+      </g>
+
+      <g class="vnode" id="n-sched" onclick="goToProject('sched')">
+        <rect x="628" y="159" width="156" height="56" rx="5"/>
+        <text class="v-title" x="706" y="186" text-anchor="middle" font-family="'Lora',serif" font-size="12.5" font-weight="500">Infra Scheduling</text>
+        <text class="v-sub" x="706" y="202" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" letter-spacing=".06em">Verification · Monte Carlo</text>
+      </g>
+
+      <g class="vnode" id="n-news" onclick="goToProject('news')">
+        <rect x="702" y="57" width="156" height="56" rx="5"/>
+        <text class="v-title" x="780" y="84" text-anchor="middle" font-family="'Lora',serif" font-size="12.5" font-weight="500">News for People</text>
+        <text class="v-sub" x="780" y="100" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" letter-spacing=".06em">User-need validation</text>
+      </g>
+
+    </svg>
+  </div>
+</div>
+
+<script>
+const PROJECT_IDS = {
+  ruga: "ruga_project_v2-(3)",
+  mbse: "mbse_bus_shelter-(1)",
+  rag: "rag_lab_multimodal_project",
+  wind: "turbine_digital_twin_project",
+  llm: "llm_simulation_project",
+  ivv: "ivv_local_gemma_llm_project",
+  sched: "infra_scheduling_project",
+  news: "news_app_project-(1)",
+};
+
+const nodes = document.querySelectorAll(".vnode");
+
+function goToProject(key) {
+  const projectId = PROJECT_IDS[key];
+  if (!projectId) return;
+
+  nodes.forEach((n) => {
+    const k = n.id.replace("n-", "");
+    n.classList.toggle("lit", k === key);
+  });
+
+  const hash = `project-card-${projectId}`;
+  if (window.parent !== window) {
+    window.parent.location.hash = hash;
+    window.parent.dispatchEvent(
+      new CustomEvent("vmodel-goto-project", { detail: { projectId } }),
+    );
+  } else {
+    window.location.hash = hash;
+  }
+}
+
+function reportHeight() {
+  if (window.parent === window) return;
+  window.parent.postMessage(
+    { type: "v-model-resize", height: document.documentElement.scrollHeight },
+    "*",
+  );
+}
+
+reportHeight();
+window.addEventListener("resize", reportHeight);
+new ResizeObserver(reportHeight).observe(document.body);
+</script>
+</body>
+</html>

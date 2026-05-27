@@ -1,0 +1,59 @@
+# Dependencies & build output
+node_modules/
+dist/
+.vite/
+
+# Local-only attic of audited-out files (kept for review, not for GitHub)
+_attic/
+
+# TypeScript / Vite cache
+*.tsbuildinfo
+
+# Environment & secrets
+.env
+.env.*
+*.local
+
+# OS & editor
+.DS_Store
+**/.DS_Store
+Thumbs.db
+
+# IDE / local agent (not needed on GitHub)
+.claude/
+.cursor/
+.idea/
+.vscode/
+
+# Life section — video hosted externally (YouTube); keep folder, not binary files
+public/assets/life/videos/*
+!public/assets/life/videos/.gitkeep
+
+# Video files anywhere in the repo (large; not for GitHub)
+*.mp4
+*.mov
+*.MOV
+*.webm
+*.avi
+*.mkv
+*.m4v
+
+# Resume sources (Word + generator). Site PDF lives in public/assets/resume/
+resumes/
+
+# Internal strategy / planning docs (not for public repo)
+docs/
+
+# Root-level resume / draft Word files
+*.docx
+~$*
+
+# Source project archive (large drafts; not used by the Vite build)
+Projects/
+
+# Stale duplicate V-model at repo root (canonical: public/v-model-portfolio.html)
+v_model_portfolio_v3.html
+
+# Emitted Vite config duplicates (source of truth: vite.config.ts)
+vite.config.js
+vite.config.d.ts
