@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Wind Turbine Digital Twin — Interactive Systems Case Study</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&amp;family=Source+Code+Pro:wght@400;500&amp;family=Libre+Franklin:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --ink:#0e1a26;--ink2:#192738;--paper:#f6f2eb;--paper2:#ece8df;
+  --steel:#2a4d70;--steel2:#3d6b96;--gold:#8a6a2e;--gold2:#b08940;
+  --amber:#c47c1a;--mist:#6b8499;--text:#1a2838;--text2:#4a6070;
+  --text3:#7a92a5;--border:rgba(14,26,38,.1);--border2:rgba(14,26,38,.06);
+  --green:#1b5c38;--red:#8b2218;
+  --pad-x:clamp(18px,2.2vw,32px);
+  --page-gutter:clamp(20px,4.5vw,56px);
+  --content-inset:calc(var(--page-gutter) + var(--pad-x));
+  --topbar-h:56px;
+  --content-gap:12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Libre Franklin',sans-serif;background:var(--paper);color:var(--text);overflow-x:hidden}
+
+/* LAYER 2 (technical) */
+.layer2{
+  background:var(--paper);
+  padding:0 0 48px;
+  --l2-card: rgba(255,255,255,.62);
+  --l2-card-hover: rgba(255,255,255,.95);
+  --l2-lift: translateY(-4px);
+}
+.layer2 .l2-nav{
+  position:sticky;top:var(--topbar-h);z-index:90;
+  display:flex;flex-wrap:nowrap;align-items:center;gap:4px;
+  width:100%;margin:0;padding:6px 0 10px;
+  min-height:var(--topbar-h);box-sizing:border-box;
+  background:rgba(246,242,235,.92);backdrop-filter:blur(10px);
+  border-bottom:none;overflow-x:auto;scrollbar-width:thin
+}
+.layer2 .l2-nav-btn{
+  appearance:none;border:1px solid transparent;background:rgba(14,26,38,.06);
+  font-family:inherit;font-size:12px;font-weight:600;
+  padding:7px 11px;border-radius:2px;color:var(--text2);
+  cursor:pointer;white-space:nowrap;
+  transition:background .2s,color .2s,border-color .2s
+}
+.layer2 .l2-nav-btn:hover{color:var(--ink);background:rgba(138,106,46,.12);border-color:rgba(138,106,46,.2)}
+.layer2 .l2-nav-btn.active{color:var(--ink);background:rgba(138,106,46,.2);border-color:rgba(138,106,46,.35)}
+
+.layer2 .l2-sec{
+  width:100%;max-width:none;margin:0;padding:28px 0 6px;
+  border-bottom:none;
+  display:flex;flex-direction:column;gap:var(--content-gap);
+  opacity:0;transform:translateY(14px)
+}
+.layer2 .l2-sec > .l2-h{margin-bottom:0}
+.layer2 .l2-sec .prose,
+.layer2 .l2-sec .callout,
+.layer2 .l2-sec .eq-block,
+.layer2 .l2-sec .dt,
+.layer2 .l2-sec .metrics-strip,
+.layer2 .l2-sec .insight-grid,
+.layer2 .l2-sec .fig-block,
+.layer2 .l2-sec .fig-grid,
+.layer2 .l2-sec .pipeline-diagram,
+.layer2 .l2-sec .app-screen{margin:0}
+.technical-depth-wrap.is-open .layer2 .l2-sec{
+  animation:l2SecIn .55s cubic-bezier(.16,1,.3,1) forwards
+}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(2){animation-delay:.04s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(3){animation-delay:.08s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(4){animation-delay:.12s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(5){animation-delay:.16s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(6){animation-delay:.2s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(7){animation-delay:.24s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(8){animation-delay:.28s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(9){animation-delay:.32s}
+@keyframes l2SecIn{to{opacity:1;transform:none}}
+
+.layer2 .l2-h{display:block;margin-bottom:18px;padding-bottom:0;border-bottom:none}
+.layer2 .l2-n{
+  display:block;font-family:'Source Code Pro',monospace;
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:6px
+}
+.layer2 .l2-t{
+  font-family:'Playfair Display',serif;font-size:26px;font-weight:700;
+  color:var(--ink);line-height:1.2;margin:0
+}
+.layer2 .prose{
+  max-width:none;font-size:15px;color:var(--text2);line-height:1.65;margin-bottom:0
+}
+.layer2 .prose p{margin-bottom:12px}
+.layer2 .prose p:last-child{margin-bottom:0}
+.layer2 .prose strong{color:var(--ink);font-weight:600}
+
+.layer2 .callout,
+.layer2 .eq-block{
+  background:var(--l2-card);border:none;border-left:3px solid transparent;
+  border-radius:2px;padding:20px 18px;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .callout:hover,.layer2 .eq-block:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);border-left-color:var(--gold)
+}
+.layer2 .callout{
+  font-size:14px;line-height:1.65;color:var(--text2);
+  border-left-color:var(--gold);background:rgba(255,255,255,.72)
+}
+.layer2 .callout strong{color:var(--ink);font-weight:600}
+
+.layer2 .eq-block{
+  font-family:'Playfair Display',serif;font-size:17px;font-style:italic;
+  text-align:center;color:var(--ink);background:rgba(255,255,255,.72);
+  border-left-color:var(--gold)
+}
+
+.layer2 .dt{
+  width:100%;border-collapse:collapse;margin:14px 0;font-size:14px;
+  background:var(--l2-card);border-radius:2px;overflow:hidden;
+  border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .dt:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);border-left-color:var(--gold)
+}
+.layer2 .dt th{
+  font-family:'Source Code Pro',monospace;font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--text3);padding:12px 16px;text-align:left;
+  background:rgba(236,232,223,.55);border-bottom:none
+}
+.layer2 .dt td{
+  padding:12px 16px;border-bottom:1px solid var(--border2);
+  color:var(--text2);vertical-align:top;line-height:1.55
+}
+.layer2 .dt tr:last-child td{border-bottom:none}
+.layer2 .dt td:first-child{
+  font-family:'Source Code Pro',monospace;font-size:11px;color:var(--gold);font-weight:500
+}
+.layer2 .dt td.green{color:var(--green);font-weight:600}
+.layer2 .dt td.red{color:var(--red)}
+
+.layer2 .metrics-strip{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+  background:transparent;margin:14px 0
+}
+.layer2 .ms{
+  padding:18px 16px;background:var(--l2-card);border-radius:2px;
+  border:none;border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .ms:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);border-left-color:var(--gold)
+}
+.layer2 .ms-lbl{
+  font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text3);display:block;margin-bottom:6px
+}
+.layer2 .ms-val{
+  font-family:'Playfair Display',serif;font-size:24px;font-weight:700;
+  color:var(--ink);display:block;margin-bottom:4px
+}
+.layer2 .ms-val.green{color:var(--green)}
+.layer2 .ms-val.red{color:var(--red)}
+.layer2 .ms-note{font-size:13px;color:var(--text2);line-height:1.5}
+
+.layer2 .insight-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
+  background:transparent;margin:14px 0
+}
+.layer2 .insight{
+  padding:20px 18px;background:var(--l2-card);border-radius:2px;
+  border:none;border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .insight:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);border-left-color:var(--gold)
+}
+.layer2 .insight-head{
+  font-size:15px;font-weight:600;color:var(--ink);margin-bottom:8px;line-height:1.35
+}
+.layer2 .insight-body{font-size:14px;color:var(--text2);line-height:1.65}
+
+.layer2 .fig-block{
+  margin:20px auto;width:100%;max-width:100%;
+  border:none;border-radius:2px;overflow:hidden;
+  background:var(--l2-card);border-left:3px solid rgba(14,26,38,.08);
+  transition:transform .32s cubic-bezier(.16,1,.3,1),border-color .28s ease
+}
+.layer2 .fig-block:hover{border-left-color:var(--gold);transform:var(--l2-lift)}
+.layer2 .fig-block img{
+  display:block;width:auto;max-width:100%;height:auto;max-height:100%;
+  object-fit:contain;object-position:center;margin:0 auto;background:rgba(255,255,255,.45)
+}
+.layer2 .fig-media{
+  display:flex;align-items:center;justify-content:center;
+  padding:18px 22px;background:rgba(255,255,255,.55);
+  overflow:hidden; /* never show scrollbars */
+  max-height:min(54vh,520px); /* uniform figure height */
+}
+.layer2 .fig-block figcaption{
+  font-family:'Source Code Pro',monospace;font-size:11px;color:var(--text3);
+  padding:10px 16px;background:rgba(236,232,223,.4);
+  letter-spacing:.02em;line-height:1.5;
+  text-wrap:balance;
+}
+.layer2 .fig-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;
+  width:100%;max-width:100%;margin:20px 0
+}
+.layer2 .fig-grid .fig-block{margin:0}
+.layer2 .fig-full{width:100%;max-width:min(980px,100%);margin:20px auto}
+.layer2 .fig-block.fig-full .fig-media{max-height:min(62vh,620px)}
+.layer2 .fig-block.fig-arch{max-width:520px;margin:18px auto}
+.layer2 .fig-block.fig-arch .fig-media{padding:14px 18px}
+.layer2 .fig-block.fig-arch img{max-height:240px;width:auto}
+
+/* Figure spacing adjustments */
+.layer2 .prose+.fig-grid, .layer2 .prose+.fig-block, .layer2 .prose+.fig-full {margin-top:20px}
+
+/* Pipeline diagram centering (Section 03) */
+.layer2 #l2-pipeline .pipeline-diagram{
+  width:100%;
+  margin:18px auto;
+  align-self:center;
+}
+
+/* Pipeline diagram (Layer 2) */
+.layer2 .pipeline-diagram{
+  max-width:min(640px,100%);margin:22px auto;padding:32px 28px 36px;
+  background:rgba(255,255,255,.55);border:none;border-left:3px solid transparent;border-radius:2px;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .pipeline-diagram:hover{transform:var(--l2-lift);background:var(--l2-card-hover);border-left-color:var(--gold)}
+.layer2 .pipeline-diagram .pd-title{font-family:'Source Code Pro',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);text-align:center;margin-bottom:24px}
+.layer2 .mf-col{display:flex;flex-direction:column;align-items:center}
+.layer2 .mf-node{width:100%;max-width:340px;padding:14px 22px;text-align:center;background:rgba(255,255,255,.85);border:1.5px solid var(--ink);border-radius:2px;position:relative}
+.layer2 .mf-node .mf-label{font-family:'Playfair Display',serif;font-size:15px;color:var(--ink);display:block;margin-bottom:5px;line-height:1.25}
+.layer2 .mf-node .mf-sub{font-family:'Source Code Pro',monospace;font-size:9px;color:var(--text3);letter-spacing:.04em;line-height:1.5}
+.layer2 .mf-node.pd-input{border-color:var(--mist)}
+.layer2 .mf-node.pd-score{border-color:var(--gold);background:rgba(138,106,46,.06)}
+.layer2 .mf-node.pd-out{border-color:var(--green);min-width:0;max-width:none;flex:1;padding:12px 10px}
+.layer2 .mf-node.pd-out .mf-label{font-size:13px}
+.layer2 .mf-arrow{width:2px;height:24px;background:var(--gold);position:relative;margin:0 auto}
+.layer2 .mf-arrow::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--gold)}
+.layer2 .mf-fork{width:100%;max-width:540px}
+.layer2 .mf-fork-stem{width:2px;height:22px;background:var(--gold);margin:0 auto}
+.layer2 .mf-fork-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding-top:20px;position:relative}
+.layer2 .mf-fork-grid::before{content:'';position:absolute;top:0;left:16.67%;right:16.67%;height:2px;background:var(--ink);opacity:.22}
+.layer2 .mf-fork-grid .mf-node::before{content:'';display:block;width:2px;height:12px;background:var(--gold);margin:0 auto 8px}
+
+/* App-screen (validation summary) */
+.layer2 .app-screen{margin:18px 0;border:none;border-radius:2px;overflow:hidden;background:rgba(255,255,255,.62);border-left:3px solid transparent;transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease}
+.layer2 .app-screen:hover{transform:var(--l2-lift);background:var(--l2-card-hover);border-left-color:var(--gold)}
+.layer2 .app-bar{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--ink2)}
+.layer2 .app-dot{width:10px;height:10px;border-radius:50%}
+.layer2 .app-url{flex:1;font-family:'Source Code Pro',monospace;font-size:10px;color:rgba(247,244,239,.7);padding:6px 12px;background:rgba(255,255,255,.06);border-radius:2px}
+.layer2 .app-content{padding:22px 24px;background:rgba(236,232,223,.4)}
+.layer2 .app-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;background:transparent}
+.layer2 .app-card{padding:14px 12px;background:rgba(255,255,255,.75);border-radius:2px;text-align:center}
+.layer2 .app-card-lbl{font-family:'Source Code Pro',monospace;font-size:9px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.layer2 .app-card-val{font-family:'Playfair Display',serif;font-size:20px;color:var(--ink)}
+.layer2 .app-card-val.pass{color:var(--green)}
+.layer2 .app-card-note{font-size:11px;color:var(--text3);margin-top:4px;line-height:1.4}
+
+/* Sub-section block in results */
+.layer2 .subsec-block{margin:18px 0 26px;width:100%}
+.layer2 .subsec-block:last-child{margin-bottom:0}
+.layer2 .subsec-h{
+  font-family:'Playfair Display',serif;font-size:18px;color:var(--ink);
+  margin:14px 0 10px;line-height:1.3
+}
+.layer2 .subsec-h span{font-family:'Source Code Pro',monospace;font-size:10px;color:var(--gold);display:block;margin-bottom:6px;letter-spacing:.12em;text-transform:uppercase;font-style:normal}
+
+.conc-bar{
+  width:100vw;margin:0;margin-left:calc(50% - 50vw);
+  padding:28px var(--content-inset) 32px;box-sizing:border-box;
+  background:var(--ink);border-top:2px solid var(--gold)
+}
+.conc-inner{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);align-items:start;gap:20px 36px;max-width:none}
+.conc-name{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:rgba(247,244,239,.94);line-height:1.24;margin:0}
+.conc-left{min-width:0}
+.conc-right{min-width:0;justify-self:end}
+.conc-links{list-style:none;display:grid;grid-template-columns:repeat(2,max-content);gap:10px 18px;margin:0;padding:0;justify-content:end}
+.conc-links a{font-size:13px;color:var(--gold2);text-decoration:none;border-bottom:1px solid rgba(176,137,64,.35);transition:color .2s,border-color .2s;display:inline-flex;align-items:center;gap:6px}
+.conc-links a:hover{color:#f7f4ef;border-bottom-color:var(--gold2)}
+.conc-links img{width:14px;height:14px;display:block;flex:0 0 14px}
+.conc-course{width:100%;margin:0;font-size:11px;letter-spacing:.06em;line-height:1.6;color:rgba(247,244,239,.78)}
+.conc-copy{width:100%;display:flex;flex-direction:column;gap:8px;margin-top:4px}
+@media(max-width:640px){
+  .conc-inner{grid-template-columns:1fr}
+  .conc-right{justify-self:start}
+  .conc-links{grid-template-columns:1fr;justify-content:start}
+}
+.layer2 .code-link{
+  font-family:'Source Code Pro',monospace;font-size:12px;color:var(--gold2);
+  text-decoration:none;border-bottom:1px solid rgba(176,137,64,.4);
+  transition:color .2s,border-color .2s
+}
+.layer2 .code-link:hover{color:#f7f4ef;border-bottom-color:var(--gold2)}
+
+.scroll-anchor{scroll-margin-top:calc(var(--topbar-h) + 12px)}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── ENTRY LAYER (topbar + hero + cards) ── */
+.mono{font-family:'Source Code Pro',monospace}
+
+.topbar{
+  position:sticky;top:0;z-index:120;
+  display:flex;flex-wrap:nowrap;align-items:center;justify-content:space-between;
+  gap:10px;min-height:var(--topbar-h);padding:0 var(--page-gutter);
+  background:linear-gradient(180deg,#121f2c 0%,var(--ink) 100%);
+  border-bottom:2px solid var(--gold);
+  box-shadow:0 4px 18px rgba(14,26,38,.22)
+}
+.topbar-brand{flex:0 0 auto;min-width:max-content;max-width:none}
+.topbar-title{
+  font-family:'Playfair Display',serif;font-size:22px;font-weight:700;
+  color:#f7f4ef;letter-spacing:.01em;line-height:1.15;white-space:nowrap
+}
+.topbar-meta{
+  font-size:10px;color:rgba(247,244,239,.82);letter-spacing:.05em;margin-top:3px;white-space:nowrap
+}
+.topbar-link{
+  font-size:12px;font-weight:500;color:#f7f4ef;text-decoration:none;white-space:nowrap;
+  padding:8px 12px;border:1px solid rgba(176,137,64,.35);border-radius:2px;
+  transition:background .2s,border-color .2s;flex-shrink:0
+}
+.topbar-link:hover{background:rgba(138,106,46,.2);border-color:var(--gold2);text-decoration:none}
+.topbar-actions{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.topbar-contacts{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.topbar-contacts a{width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;opacity:.95;transition:opacity .2s ease,transform .2s ease}
+.topbar-contacts a:hover{opacity:1;transform:translateY(-1px)}
+.topbar-contacts img{width:24px;height:24px;display:block}
+
+.topbar-nav{
+  display:flex;flex:1 1 auto;flex-wrap:nowrap;gap:4px;align-items:center;justify-content:center;
+  min-width:0;overflow-x:auto;scrollbar-width:thin;padding:6px 0
+}
+.topbar-nav button{
+  appearance:none;border:1px solid transparent;background:rgba(255,255,255,.06);
+  color:rgba(247,244,239,.78);flex-shrink:0;
+  padding:6px 10px;border-radius:2px;font-family:inherit;font-size:12px;font-weight:600;
+  line-height:1.2;cursor:pointer;transition:background .2s,color .2s,border-color .2s;white-space:nowrap
+}
+.topbar-nav button:hover{color:#f7f4ef;background:rgba(138,106,46,.18);border-color:rgba(176,137,64,.25)}
+.topbar-nav button.is-active{color:#f7f4ef;background:rgba(138,106,46,.32);border-color:rgba(176,137,64,.5)}
+
+.overview-body,
+.technical-depth-wrap.content-pad-tech{
+  padding-left:var(--content-inset);padding-right:var(--content-inset);
+  width:100%;box-sizing:border-box
+}
+main.page{width:100%;max-width:none;margin:0;padding:0 0 24px}
+.overview-body > .hero,
+.overview-body > .section{width:100%;max-width:100%}
+
+.hero{padding:24px 0 16px}
+.hero-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(260px,.85fr);gap:20px 28px;align-items:start}
+.hero-kicker{
+  display:inline-block;margin-bottom:12px;padding:4px 10px;background:rgba(138,106,46,.1);
+  font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)
+}
+.hero h1{
+  font-family:'Playfair Display',serif;font-size:clamp(30px,3.2vw,44px);line-height:1.12;color:var(--ink);
+  max-width:none;margin-bottom:12px
+}
+.hero-lede{font-size:17px;line-height:1.65;color:var(--text2);max-width:72ch}
+
+.hero-metrics .metric-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.metric-card,.card,.tab-panel,.faq-card{
+  border-radius:2px;border:none;border-left:3px solid transparent;background:rgba(255,255,255,.62);
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.metric-card{padding:18px 16px}
+.metric-card:hover,.card:hover,.tab-panel:hover,.faq-card:hover{
+  transform:translateY(-4px);background:rgba(255,255,255,.95);border-left-color:var(--gold)
+}
+.metric-val{display:block;font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.metric-val.good{color:var(--green)}
+.metric-val.warn{color:var(--red)}
+.metric-lbl{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
+
+.section{padding:24px 0 4px;scroll-margin-top:calc(var(--topbar-h) + 12px)}
+.section-head{margin-bottom:12px}
+.section-num{font-family:'Source Code Pro',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.section-head h2{font-family:'Playfair Display',serif;font-size:26px;color:var(--ink);margin-bottom:6px}
+.section-head p{font-size:15px;color:var(--text2);max-width:none;line-height:1.6}
+
+.card-grid{display:grid;gap:10px}
+.card-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.card-grid.cols-2{grid-template-columns:repeat(2,1fr)}
+.card-grid.cols-4{grid-template-columns:repeat(4,1fr)}
+.card{padding:20px 18px}
+.card h3{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:8px}
+.card p{font-size:14px;color:var(--text2);line-height:1.6}
+.card-tag{display:inline-block;margin-top:10px;font-size:11px;color:var(--gold);font-weight:500}
+
+.model-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.tab-panel{padding:20px 18px;background:rgba(255,255,255,.62)}
+.tab-panel h3{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:8px}
+.tab-panel p{font-size:14px;color:var(--text2);line-height:1.55;margin-bottom:4px}
+.tab-panel ul{margin:12px 0 0 18px;font-size:14px;color:var(--text2)}
+.tab-panel li{margin-bottom:6px}
+
+.exp-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:12px}
+.exp-card{
+  padding:16px 14px;background:rgba(255,255,255,.62);border-radius:2px;
+  border:none;border-left:3px solid transparent;text-align:left;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.exp-card:hover{transform:translateY(-4px);background:rgba(255,255,255,.95);border-left-color:var(--gold)}
+.exp-id{font-family:'Source Code Pro',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.exp-name{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px;line-height:1.35}
+.exp-status{font-family:'Source Code Pro',monospace;font-size:11px;font-weight:600;color:var(--green);letter-spacing:.04em}
+.exp-status.caveat{color:var(--amber)}
+.exp-note{font-size:12px;color:var(--text2);margin-top:6px;line-height:1.5}
+
+.faq-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.faq-card{padding:20px 18px;height:100%;background:rgba(255,255,255,.62)}
+.faq-card h3{font-size:15px;font-weight:600;color:var(--ink);line-height:1.35;margin-bottom:8px}
+.faq-card p{font-size:14px;color:var(--text2);line-height:1.65}
+
+.technical-bridge{
+  width:100%;max-width:none;margin:0;
+  padding:32px var(--content-inset) 24px;
+  background:var(--ink);color:rgba(247,244,239,.85);
+  border-top:2px solid var(--gold)
+}
+.technical-depth-wrap.is-open .technical-bridge{border-top:none}
+.technical-bridge .section-num{color:var(--gold2);margin-bottom:10px}
+.technical-bridge h2{
+  font-family:'Playfair Display',serif;font-size:26px;color:#f7f4ef;
+  margin-bottom:10px;line-height:1.2
+}
+.technical-bridge p{font-size:15px;line-height:1.65;max-width:none;color:rgba(247,244,239,.72)}
+
+.technical-depth-wrap{display:none}
+.technical-depth-wrap.is-open{display:block;animation:slideDown .25s ease}
+.overview-end{
+  margin:20px 0 0;padding:14px var(--content-inset);
+  background:var(--ink);color:rgba(247,244,239,.85);
+  border-top:2px solid var(--gold)
+}
+.overview-end-inner{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;
+  gap:16px 28px;align-items:center;text-align:left
+}
+.overview-end h2{
+  font-family:'Playfair Display',serif;font-size:19px;color:#f7f4ef;
+  margin-bottom:6px;line-height:1.25
+}
+.overview-end p{
+  font-size:13px;line-height:1.55;color:rgba(247,244,239,.72);margin:0;max-width:56ch
+}
+.overview-end-action{display:flex;align-items:center;justify-content:flex-end;flex-shrink:0}
+.btn-open-technical{
+  font-family:'Source Code Pro',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  padding:10px 18px;background:var(--gold);color:#fff;border:none;cursor:pointer;
+  white-space:nowrap;transition:background .2s,transform .2s
+}
+.btn-open-technical:hover{background:var(--gold2);transform:translateY(-1px)}
+@media(max-width:720px){
+  .overview-end-inner{grid-template-columns:1fr;gap:12px}
+  .overview-end-action{justify-content:flex-start}
+}
+
+[data-reveal]{opacity:0;transform:translateY(18px)}
+[data-reveal].is-visible{animation:cardRise .65s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes cardRise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+@media(max-width:900px){
+  .hero-layout{grid-template-columns:1fr}
+  .model-grid,.faq-grid{grid-template-columns:1fr}
+  .card-grid.cols-3,.card-grid.cols-4{grid-template-columns:1fr 1fr}
+  .exp-grid{grid-template-columns:1fr 1fr}
+  .layer2 .metrics-strip,.layer2 .insight-grid,.layer2 .fig-grid{grid-template-columns:1fr 1fr}
+  .layer2 .app-grid{grid-template-columns:1fr 1fr}
+  .layer2 .mf-fork-grid{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .hero-metrics .metric-grid{grid-template-columns:1fr}
+  .card-grid.cols-2,.card-grid.cols-3,.card-grid.cols-4{grid-template-columns:1fr}
+  .exp-grid{grid-template-columns:1fr}
+  .layer2 .metrics-strip,.layer2 .insight-grid,.layer2 .fig-grid,.layer2 .app-grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  [data-reveal]{opacity:1;transform:none}
+  .layer2 .l2-sec{opacity:1;transform:none;animation:none!important}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+
+/* ── EMBEDDED DIGITAL TWIN SIMULATOR ── */
+.sim-wrap{
+  margin:22px 0 6px;background:rgba(255,255,255,.62);border-radius:2px;
+  border:none;border-left:3px solid transparent;overflow:hidden;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.sim-wrap:hover{transform:translateY(-4px);background:rgba(255,255,255,.92);border-left-color:var(--gold)}
+.sim-head{padding:18px 22px 6px}
+.sim-eye{font-family:'Source Code Pro',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.sim-title{font-family:'Playfair Display',serif;font-size:22px;line-height:1.2;color:var(--ink);margin-bottom:8px}
+.sim-note{font-size:13.5px;color:var(--text2);line-height:1.6}
+.sim-note strong{color:var(--ink);font-weight:600}
+.sim-kbd{font-family:'Source Code Pro',monospace;font-size:10px;padding:2px 6px;border:.5px solid var(--border);background:var(--paper2);color:var(--gold);border-radius:2px}
+#twin-simulator{width:100%;overflow:hidden;background:#0a0e14;border-top:.5px solid var(--border)}
+#twin-simulator .twin-sim-app{
+  --sim-bg-primary:#0a0e14;--sim-bg-secondary:#111720;--sim-bg-tertiary:#161d28;
+  --sim-border:rgba(255,255,255,.08);
+  --sim-text-primary:#e2e8f0;--sim-text-secondary:#94a3b8;
+  --sim-accent-green:#22c55e;--sim-accent-blue:#38bdf8;
+  --sim-accent-orange:#fb923c;--sim-accent-red:#f87171;--sim-accent-purple:#a78bfa;
+  display:flex;flex-direction:column;height:min(82vh,820px);min-height:520px;
+  font-family:'Libre Franklin',-apple-system,BlinkMacSystemFont,sans-serif;
+  color:var(--sim-text-primary);
+}
+#twin-simulator header{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;background:#111720;border-bottom:1px solid var(--sim-border);flex-shrink:0}
+#twin-simulator header h1{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;margin:0;color:#e2e8f0}
+#twin-simulator .header-info{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+#twin-simulator .sim-clock{font-family:'Source Code Pro',monospace;font-size:13px;color:#22c55e;font-weight:500}
+#twin-simulator .header-hint{font-family:'Source Code Pro',monospace;font-size:10px;letter-spacing:.04em;color:#64748b}
+#twin-simulator main{display:flex;flex:1;overflow:hidden;min-height:0;background:#0a0e14}
+#twin-simulator .panel{overflow:hidden}
+#twin-simulator .viz-panel{flex:0 0 45%;min-height:280px;background:#0a0e14;border-right:1px solid var(--sim-border)}
+#twin-simulator .viz-panel canvas{width:100%;height:100%;display:block;min-height:240px}
+#twin-simulator .controls-panel{flex:1;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;min-width:0;background:#111720}
+#twin-simulator .gauges-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+#twin-simulator .gauge{background:#161d28;border:1px solid var(--sim-border);border-radius:2px;padding:10px 8px;text-align:center}
+#twin-simulator .gauge-label{font-family:'Source Code Pro',monospace;font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+#twin-simulator .gauge-value{font-size:20px;font-weight:600;font-family:'Playfair Display',serif;color:#e2e8f0;line-height:1.2;text-shadow:0 0 12px rgba(56,189,248,.35)}
+#twin-simulator .gauge-unit{font-size:10px;color:#64748b}
+#twin-simulator .power-bar-container{background:#161d28;border:1px solid var(--sim-border);border-radius:2px;padding:10px 14px}
+#twin-simulator .power-bar-label{font-size:11px;color:#94a3b8;margin-bottom:6px}
+#twin-simulator .power-bar{height:8px;background:#0a0e14;border-radius:2px;overflow:hidden}
+#twin-simulator .power-bar-fill{height:100%;border-radius:2px;transition:width .3s ease}
+#twin-simulator .power-bar-fill.low{background:#334155}
+#twin-simulator .power-bar-fill.mid{background:#38bdf8}
+#twin-simulator .power-bar-fill.high{background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,.5)}
+#twin-simulator .controls-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#twin-simulator .control-group{background:#161d28;border:1px solid var(--sim-border);border-radius:2px;padding:10px 12px}
+#twin-simulator .control-group label{display:block;font-family:'Source Code Pro',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#64748b;margin-bottom:6px}
+#twin-simulator .control-group input[type="range"]{width:100%;height:4px;-webkit-appearance:none;appearance:none;background:#0a0e14;border-radius:2px;outline:none;cursor:pointer}
+#twin-simulator .control-group input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#38bdf8;cursor:pointer;border:2px solid #111720;box-shadow:0 0 6px rgba(56,189,248,.5)}
+#twin-simulator .slider-val{display:block;font-size:12px;font-family:'Source Code Pro',monospace;color:#e2e8f0;margin-top:4px;text-align:right}
+#twin-simulator .buttons-row{display:flex;gap:8px;flex-wrap:wrap}
+#twin-simulator .btn{padding:8px 14px;border:1px solid rgba(255,255,255,.1);border-radius:2px;background:#161d28;color:#e2e8f0;font-size:12px;font-weight:500;cursor:pointer;transition:background .2s,border-color .2s;font-family:'Source Code Pro',monospace;letter-spacing:.04em;text-transform:uppercase}
+#twin-simulator .btn:hover{background:#1e2a38;border-color:#38bdf8}
+#twin-simulator .btn-primary{background:#1a4a6b;border-color:#38bdf8;color:#e2e8f0}
+#twin-simulator .btn-primary:hover{background:#1e5a82;border-color:#38bdf8}
+#twin-simulator .btn-primary.active{background:#166534;border-color:#22c55e;box-shadow:0 0 8px rgba(34,197,94,.4)}
+#twin-simulator .btn-gust{border-color:#fb923c;color:#fb923c}
+#twin-simulator .btn-gust:hover{background:rgba(251,146,60,.1)}
+#twin-simulator .btn-brake{border-color:#f87171;color:#f87171}
+#twin-simulator .btn-brake:hover{background:rgba(248,113,113,.08)}
+#twin-simulator .btn-brake.engaged{background:#7f1d1d;border-color:#f87171;color:#fca5a5;box-shadow:0 0 8px rgba(248,113,113,.4)}
+#twin-simulator .btn-export{border-color:#a78bfa;color:#a78bfa}
+#twin-simulator .btn-export:hover{background:rgba(167,139,250,.1)}
+#twin-simulator .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1;min-height:300px}
+#twin-simulator .chart-container{background:#161d28;border:1px solid var(--sim-border);border-radius:2px;padding:10px;position:relative;min-height:140px}
+#twin-simulator .chart-container canvas{width:100%!important;height:100%!important}
+#twin-simulator .controls-panel::-webkit-scrollbar{width:6px}
+#twin-simulator .controls-panel::-webkit-scrollbar-track{background:#0a0e14}
+#twin-simulator .controls-panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:2px}
+@media(max-width:1100px){
+  #twin-simulator .twin-sim-app main{flex-direction:column}
+  #twin-simulator .viz-panel{flex:0 0 38vh;border-right:none;border-bottom:1px solid var(--sim-border)}
+}
+@media(max-width:600px){
+  #twin-simulator .gauges-grid{grid-template-columns:repeat(2,1fr)}
+  #twin-simulator .controls-grid{grid-template-columns:1fr}
+  #twin-simulator .charts-grid{grid-template-columns:1fr}
+}
+
+/* ── SHARED L2 CARD SYSTEM ── */
+/* Scoped to .layer2 so overview cards stay unchanged. Match infra / IVV / turbine. */
+
+.layer2{
+  --l2-card:rgba(255,255,255,.62);
+  --l2-card-hover:rgba(255,255,255,.95);
+  --l2-lift:translateY(-4px);
+  --content-gap:12px;
+  background:var(--paper);
+  padding:0 0 48px;
+}
+
+.layer2 .l2-nav{
+  position:sticky;top:var(--topbar-h,56px);z-index:90;
+  display:flex;flex-wrap:nowrap;align-items:center;gap:4px;
+  width:100%;margin:0;padding:6px 0 10px;min-height:var(--topbar-h,56px);box-sizing:border-box;
+  background:rgba(246,242,235,.92);backdrop-filter:blur(10px);
+  border-bottom:none;overflow-x:auto;scrollbar-width:thin
+}
+.layer2 .l2-nav-btn,
+.layer2 .l2-btn,
+.layer2 .l2-nav-item{
+  appearance:none;border:1px solid transparent;background:rgba(14,26,38,.06);
+  font-family:inherit;font-size:12px;font-weight:600;
+  padding:7px 11px;border-radius:2px;color:var(--text2);
+  cursor:pointer;white-space:nowrap;
+  transition:background .2s,color .2s,border-color .2s
+}
+.layer2 .l2-nav-btn:hover,.layer2 .l2-btn:hover,.layer2 .l2-nav-item:hover{
+  color:var(--ink);background:rgba(138,106,46,.12);border-color:rgba(138,106,46,.2)
+}
+.layer2 .l2-nav-btn.active,.layer2 .l2-btn.active,.layer2 .l2-nav-item.active{
+  color:var(--ink);background:rgba(138,106,46,.2);border-color:rgba(138,106,46,.35)
+}
+
+.layer2 .l2-sec,
+.layer2 .l2-section{
+  width:100%;max-width:none;margin:0;padding:28px 0 6px;border-bottom:none;
+  display:flex;flex-direction:column;gap:var(--content-gap);
+  opacity:0;transform:translateY(14px)
+}
+.layer2 .l2-sec > .l2-h,
+.layer2 .l2-sec > .l2-sec-header,
+.layer2 .l2-section > .l2-h,
+.layer2 .l2-section > .l2-sec-header{margin-bottom:0}
+.layer2 .l2-sec .prose,
+.layer2 .l2-section .prose,
+.layer2 .l2-sec .callout,
+.layer2 .l2-section .callout,
+.layer2 .l2-sec .eq-block,
+.layer2 .l2-sec .dt,
+.layer2 .l2-sec .arch-table,
+.layer2 .l2-sec .tool-table,
+.layer2 .l2-sec .scenario-grid,
+.layer2 .l2-sec .metrics-strip,
+.layer2 .l2-sec .metric-strip,
+.layer2 .l2-sec .perf-strip,
+.layer2 .l2-sec .dec-grid,
+.layer2 .l2-sec .insight-grid,
+.layer2 .l2-sec .limit-grid,
+.layer2 .l2-sec .compare-grid,
+.layer2 .l2-sec .contrib-grid,
+.layer2 .l2-sec .subsys-grid,
+.layer2 .l2-sec .agent-flow,
+.layer2 .l2-sec .tool-chain,
+.layer2 .l2-sec .fig-block,
+.layer2 .l2-sec .fig-grid,
+.layer2 .l2-sec .fig-full,
+.layer2 .l2-sec .pipeline-diagram,
+.layer2 .l2-sec .mermaid-grid,
+.layer2 .l2-sec .mermaid-flow,
+.layer2 .l2-sec .flow-wrap,
+.layer2 .l2-sec .code-block,
+.layer2 .l2-sec .iw-panel,
+.layer2 .l2-sec .app-screen{margin:0}
+
+.technical-depth-wrap.is-open .layer2 .l2-sec,
+.technical-depth-wrap.is-open .layer2 .l2-section{
+  animation:l2SecIn .55s cubic-bezier(.16,1,.3,1) forwards
+}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(2),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(2){animation-delay:.04s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(3),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(3){animation-delay:.08s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(4),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(4){animation-delay:.12s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(5),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(5){animation-delay:.16s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(6),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(6){animation-delay:.2s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(7),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(7){animation-delay:.24s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(8),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(8){animation-delay:.28s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(9),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(9){animation-delay:.32s}
+@keyframes l2SecIn{to{opacity:1;transform:none}}
+
+.layer2 .l2-h,
+.layer2 .l2-sec-header{
+  display:block;margin-bottom:18px;padding-bottom:0;border-bottom:none
+}
+.layer2 .l2-n,
+.layer2 .l2-sec-n{
+  display:block;font-family:'Source Code Pro',monospace;
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold,var(--gold2,var(--accent2,var(--teal2,var(--cobalt2)))));margin-bottom:6px
+}
+.layer2 .l2-t,
+.layer2 .l2-sec-t{
+  font-family:'Playfair Display',serif;font-size:26px;font-weight:700;
+  color:var(--ink);line-height:1.2;margin:0
+}
+.layer2 .prose{
+  max-width:none;font-size:15px;color:var(--text2);line-height:1.65;margin-bottom:0
+}
+.layer2 .prose p{margin-bottom:12px}
+.layer2 .prose p:last-child{margin-bottom:0}
+.layer2 .prose strong{color:var(--ink);font-weight:600}
+
+.layer2 .l2-card-surface,
+.layer2 .callout,
+.layer2 .eq-block,
+.layer2 .insight,
+.layer2 .limit,
+.layer2 .dec,
+.layer2 .contrib,
+.layer2 .compare-card,
+.layer2 .agent-box,
+.layer2 .ss,
+.layer2 .mermaid-card,
+.layer2 .mermaid-flow-card{
+  background:var(--l2-card);border:none;border-left:3px solid transparent;
+  border-radius:2px;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .callout,
+.layer2 .eq-block,
+.layer2 .insight,
+.layer2 .limit,
+.layer2 .dec,
+.layer2 .contrib,
+.layer2 .compare-card,
+.layer2 .agent-box,
+.layer2 .ss,
+.layer2 .mermaid-card,
+.layer2 .mermaid-flow-card{padding:20px 18px}
+.layer2 .callout:hover,
+.layer2 .eq-block:hover,
+.layer2 .insight:hover,
+.layer2 .limit:hover,
+.layer2 .dec:hover,
+.layer2 .contrib:hover,
+.layer2 .compare-card:hover,
+.layer2 .agent-box:hover,
+.layer2 .ss:hover,
+.layer2 .mermaid-card:hover,
+.layer2 .mermaid-flow-card:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);
+  border-left-color:var(--gold,var(--gold2,var(--accent,var(--teal2,var(--cobalt2)))))
+}
+.layer2 .callout{
+  font-size:14px;line-height:1.65;color:var(--text2);
+  border-left-color:var(--gold,var(--gold2,var(--accent,var(--teal2,var(--cobalt2)))));
+  background:rgba(255,255,255,.72)
+}
+.layer2 .callout strong{color:var(--ink);font-weight:600}
+
+.layer2 .dt,
+.layer2 .arch-table,
+.layer2 .tool-table{
+  width:100%;border-collapse:collapse;margin:0;font-size:14px;
+  background:var(--l2-card);border-radius:2px;overflow:hidden;
+  border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .dt:hover,
+.layer2 .arch-table:hover,
+.layer2 .tool-table:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);
+  border-left-color:var(--gold,var(--gold2,var(--accent,var(--teal2,var(--cobalt2)))))
+}
+.layer2 .dt th,
+.layer2 .arch-table th,
+.layer2 .tool-table th{
+  font-family:'Source Code Pro',monospace;font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--text3);padding:12px 16px;text-align:left;
+  background:rgba(236,232,223,.55);border-bottom:none
+}
+.layer2 .dt td,
+.layer2 .arch-table td,
+.layer2 .tool-table td{
+  padding:12px 16px;border-bottom:1px solid var(--border2);
+  color:var(--text2);vertical-align:top;line-height:1.55
+}
+.layer2 .dt tr:last-child td,
+.layer2 .arch-table tr:last-child td,
+.layer2 .tool-table tr:last-child td{border-bottom:none}
+.layer2 .dt td:first-child,
+.layer2 .arch-table td:first-child,
+.layer2 .tool-table td:first-child{
+  font-family:'Source Code Pro',monospace;font-size:11px;
+  color:var(--gold,var(--gold2,var(--accent2,var(--teal2,var(--cobalt2)))));font-weight:500
+}
+.layer2 .dt td.green,.layer2 .arch-table td.green{color:var(--green);font-weight:600}
+.layer2 .dt td.red,.layer2 .arch-table td.red{color:var(--red);font-weight:600}
+
+.layer2 .metrics-strip,
+.layer2 .metric-strip,
+.layer2 .perf-strip{
+  display:grid;gap:10px;background:transparent;margin:0
+}
+.layer2 .metrics-strip,
+.layer2 .metric-strip{grid-template-columns:repeat(4,1fr)}
+.layer2 .perf-strip{grid-template-columns:repeat(4,1fr)}
+.layer2 .ms,
+.layer2 .ms-item,
+.layer2 .ps{
+  padding:18px 16px;background:var(--l2-card);border-radius:2px;
+  border:none;border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .ms:hover,
+.layer2 .ms-item:hover,
+.layer2 .ps:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);
+  border-left-color:var(--gold,var(--gold2,var(--accent,var(--teal2,var(--cobalt2)))))
+}
+.layer2 .ms-lbl,
+.layer2 .ps-lbl{
+  font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text3);display:block;margin-bottom:6px
+}
+.layer2 .ms-val,
+.layer2 .ps-val{
+  font-family:'Playfair Display',serif;font-size:24px;font-weight:700;
+  color:var(--ink);display:block;margin-bottom:4px
+}
+.layer2 .ms-val.green,.layer2 .ms-val.cobalt,.layer2 .ps-val.teal{color:var(--green)}
+.layer2 .ms-val.cobalt{color:var(--accent,var(--cobalt))}
+.layer2 .ms-val.teal{color:var(--teal)}
+.layer2 .ms-note,.layer2 .ps-note{font-size:13px;color:var(--text2);line-height:1.5}
+
+.layer2 .scenario-grid{grid-template-columns:repeat(4,1fr)}
+.layer2 .sc{
+  padding:20px 18px;background:var(--l2-card);border-radius:2px;
+  border:none;border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .sc:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);
+  border-left-color:var(--gold,var(--gold2,var(--accent,var(--teal2,var(--cobalt2)))))
+}
+
+.layer2 .dec-grid,
+.layer2 .insight-grid,
+.layer2 .limit-grid,
+.layer2 .compare-grid,
+.layer2 .contrib-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
+  background:transparent;margin:0
+}
+.layer2 .subsys-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+  background:transparent;margin:0
+}
+.layer2 .insight-head,
+.layer2 .limit-head,
+.layer2 .contrib-head,
+.layer2 .compare-card h4{
+  font-size:15px;font-weight:600;color:var(--ink);margin-bottom:8px;line-height:1.35
+}
+.layer2 .compare-card h4{font-family:'Playfair Display',serif;font-size:18px}
+.layer2 .insight-body,
+.layer2 .limit-body,
+.layer2 .contrib-body,
+.layer2 .compare-card p{font-size:14px;color:var(--text2);line-height:1.65}
+.layer2 .ss-name{
+  font-family:'Source Code Pro',monospace;font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--teal2,var(--accent2,var(--cobalt2)));margin-bottom:8px
+}
+.layer2 .ss-req{font-size:12px;color:var(--text2);line-height:1.6}
+
+.layer2 .agent-flow{
+  display:flex;align-items:stretch;gap:10px;margin:0;background:transparent
+}
+.layer2 .agent-arrow{
+  display:flex;align-items:center;padding:0 2px;font-size:20px;color:var(--text3);
+  background:transparent;flex-shrink:0
+}
+.layer2 .agent-num{
+  font-family:'Source Code Pro',monospace;font-size:10px;
+  color:var(--accent2,var(--cobalt2));letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px
+}
+.layer2 .agent-name{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:8px}
+.layer2 .agent-desc{font-size:12px;color:var(--text2);line-height:1.65}
+
+.layer2 .tool-chain{display:flex;flex-direction:column;gap:10px;margin:0;background:transparent}
+.layer2 .tc-row{
+  display:grid;grid-template-columns:36px minmax(140px,.9fr) 1fr minmax(140px,.75fr);
+  gap:1px;background:var(--border);border-radius:2px;overflow:hidden;
+  border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),border-color .28s ease
+}
+.layer2 .tc-row:hover{transform:var(--l2-lift);border-left-color:var(--gold,var(--gold2))}
+.layer2 .tc-num,.layer2 .tc-name,.layer2 .tc-purpose,.layer2 .tc-leads{
+  padding:14px 16px;background:var(--l2-card);font-size:12px;color:var(--text2);line-height:1.5
+}
+.layer2 .tc-num{font-family:'Source Code Pro',monospace;color:var(--teal2,var(--accent2));background:var(--paper2)}
+.layer2 .tc-name{font-weight:600;color:var(--ink)}
+.layer2 .tc-leads{font-family:'Source Code Pro',monospace;font-size:10px;text-align:right;background:var(--paper2)}
+
+.layer2 .fig-block,
+.layer2 .fig-full{
+  margin:0;width:100%;max-width:100%;border:none;border-radius:2px;overflow:hidden;
+  background:var(--l2-card);border-left:3px solid rgba(14,26,38,.08);
+  transition:transform .32s cubic-bezier(.16,1,.3,1),border-color .28s ease
+}
+.layer2 .fig-block:hover,.layer2 .fig-full:hover{
+  border-left-color:var(--gold,var(--gold2));transform:var(--l2-lift)
+}
+.layer2 .fig-block img,.layer2 .fig-full img{
+  display:block;width:auto;max-width:100%;height:auto;
+  max-height:min(72vh,520px);object-fit:contain;object-position:center;
+  margin:0 auto;background:rgba(255,255,255,.45)
+}
+.layer2 .fig-block.fig-dist-full{
+  overflow:visible;max-width:min(980px,100%);margin:28px auto
+}
+.layer2 .fig-block.fig-dist-full .fig-media{
+  display:flex;align-items:center;justify-content:center;
+  max-height:none;overflow:visible;padding:12px 16px
+}
+.layer2 .fig-block.fig-dist-full img{
+  display:block;width:auto;max-width:100%;height:auto;max-height:none;
+  object-fit:contain;object-position:center;margin:0 auto
+}
+.layer2 .fig-grid .fig-block.fig-dist-full{
+  grid-column:1 / -1;justify-self:center;width:100%;max-width:min(980px,100%)
+}
+#l2-results .subsec-block:nth-child(4) .fig-grid{justify-items:center}
+.layer2 .fig-block figcaption{
+  font-family:'Source Code Pro',monospace;font-size:11px;color:var(--text3);
+  padding:10px 16px;background:rgba(236,232,223,.4);line-height:1.5
+}
+.layer2 .fig-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;margin:0
+}
+.layer2 .fig-grid .fig-block{margin:0}
+
+.layer2 .mermaid-grid,
+.layer2 .mermaid-flow{max-width:min(880px,100%);margin:0}
+.layer2 .mermaid-flow-grid{display:flex;flex-direction:column;gap:22px}
+.layer2 .mermaid-card h3,
+.layer2 .mermaid-flow-card h3{
+  font-family:'Playfair Display',serif;font-size:19px;color:var(--ink);margin-bottom:6px
+}
+.layer2 .mermaid-card p,
+.layer2 .mermaid-flow-card p{font-size:13px;color:var(--text3);line-height:1.6;margin-bottom:16px}
+.layer2 .mermaid-chart .mermaid,
+.layer2 .mermaid{display:flex;justify-content:center;overflow-x:auto;padding:4px 0}
+.layer2 .mermaid svg{max-width:100%;height:auto;display:block;margin:0 auto}
+
+.layer2 .pipeline-diagram{
+  max-width:min(640px,100%);margin:0 auto;padding:28px 24px 32px;
+  background:var(--l2-card);border-radius:2px;border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .pipeline-diagram:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);
+  border-left-color:var(--gold,var(--gold2))
+}
+
+.layer2 .code-block{
+  margin:0;padding:20px 24px;border-radius:2px;overflow-x:auto;
+  background:var(--ink);border-left:3px solid rgba(255,255,255,.12);
+  transition:border-color .28s ease,transform .32s cubic-bezier(.16,1,.3,1)
+}
+.layer2 .code-block:hover{border-left-color:var(--gold2,var(--gold))}
+.layer2 .code-block pre,
+.layer2 .code-block .cb-label{color:rgba(255,255,255,.85)}
+
+.layer2 .flow-wrap,
+.layer2 .iw-panel{
+  margin:0;border-radius:2px;overflow:hidden;
+  border-left:3px solid rgba(255,255,255,.15);
+  transition:border-color .28s ease
+}
+.layer2 .flow-wrap:hover,.layer2 .iw-panel:hover{
+  border-left-color:var(--gold2,var(--gold,var(--accent2)))
+}
+
+.layer2 .app-screen{
+  margin:0;border-radius:2px;overflow:hidden;
+  background:var(--l2-card);border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .app-screen:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);
+  border-left-color:var(--gold,var(--gold2))
+}
+
+@media(max-width:900px){
+  .layer2 .metrics-strip,.layer2 .metric-strip,.layer2 .perf-strip,
+  .layer2 .scenario-grid{grid-template-columns:repeat(2,1fr)}
+  .layer2 .subsys-grid{grid-template-columns:1fr 1fr}
+  .layer2 .agent-flow{flex-direction:column}
+  .layer2 .agent-arrow{transform:rotate(90deg);justify-content:center;padding:4px 0}
+  .layer2 .tc-row{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  .layer2 .dec-grid,.layer2 .insight-grid,.layer2 .limit-grid,
+  .layer2 .compare-grid,.layer2 .contrib-grid,.layer2 .fig-grid,
+  .layer2 .metrics-strip,.layer2 .metric-strip,.layer2 .perf-strip,
+  .layer2 .scenario-grid,.layer2 .subsys-grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  .layer2 .l2-sec,.layer2 .l2-section{opacity:1;transform:none;animation:none!important}
+  .layer2 .callout:hover,.layer2 .insight:hover,.layer2 .ms:hover,.layer2 .fig-block:hover{
+    transform:none
+  }
+}
+
+/* ── SHARED L2 CARD EXTENSIONS ── */
+/* (reserved — extensions merged into block above) */
+
+</style>
+</head>
+<body>
+<header class="topbar">
+<div class="topbar-brand">
+<div class="topbar-title">Wind Turbine Digital Twin</div>
+<div class="topbar-meta mono">SYSEN 5490 · Anurag Yadav · Spring 2026</div>
+</div>
+<nav aria-label="Page sections" class="topbar-nav mono">
+<button class="is-active" data-section="overview" type="button">Overview</button>
+<button data-section="problem" type="button">Problem</button>
+<button data-section="model" type="button">Model</button>
+<button data-section="twin" type="button">Live twin</button>
+<button data-section="experiments" type="button">Experiments</button>
+<button data-section="faq" type="button">FAQ</button>
+<button data-section="technical-depth" type="button">Technical</button>
+</nav>
+<div class="topbar-actions">
+<a aria-label="Download resume (PDF)" class="topbar-link mono" href="/assets/resume/Anurag_Yadav_Resume.pdf" target="_blank" rel="noopener noreferrer" download>Resume</a>
+<div aria-label="Contact links" class="topbar-contacts">
+<a aria-label="Email yadavanurag560@gmail.com" href="mailto:yadavanurag560@gmail.com"><img alt="" src="assets/footer-icons/email.png"/></a>
+<a aria-label="Email ay468@cornell.edu" href="mailto:ay468@cornell.edu"><img alt="" src="assets/footer-icons/email2.png"/></a>
+<a aria-label="Call (607) 262-3840" href="tel:+16072623840"><img alt="" src="assets/footer-icons/phone.png"/></a>
+<a aria-label="LinkedIn" href="https://www.linkedin.com/in/anurag-systems" rel="noopener noreferrer" target="_blank"><img alt="" src="assets/footer-icons/linkedin.png"/></a>
+<a aria-label="GitHub" href="https://github.com/anuragyadav21" rel="noopener noreferrer" target="_blank"><img alt="" src="assets/footer-icons/github.png"/></a>
+</div>
+</div>
+</header>
+<main class="page">
+<div class="overview-body">
+<header class="hero" id="overview">
+<div class="hero-layout">
+<div class="hero-copy">
+<span class="hero-kicker mono">Differentiator · Digital twin · V&amp;V · Browser simulation</span>
+<h1>Verify the model before you trust the turbine.</h1>
+<p class="hero-lede">
+            A reduced-order horizontal-axis wind turbine digital twin runs in the browser. Five sequential experiments check it against analytical physics, exercise it under turbulence and transients, and document where the model must not be trusted, including a 7× surrogate-vs-twin annual energy gap that surfaced during design optimisation.
+          </p>
+</div>
+<div class="hero-metrics">
+<div class="metric-grid">
+<div class="metric-card" data-reveal="">
+<span class="metric-val">5</span>
+<span class="metric-lbl">V&amp;V experiments</span>
+</div>
+<div class="metric-card" data-reveal="">
+<span class="metric-val good">0.48</span>
+<span class="metric-lbl">Peak Cp (81% Betz)</span>
+</div>
+<div class="metric-card" data-reveal="">
+<span class="metric-val">19.4%</span>
+<span class="metric-lbl">Capacity factor</span>
+</div>
+<div class="metric-card" data-reveal="">
+<span class="metric-val warn">7×</span>
+<span class="metric-lbl">Surrogate AEP gap</span>
+</div>
+</div>
+</div>
+</div>
+</header>
+<section class="section" id="problem">
+<div class="section-head">
+<div class="section-num mono">01 · Problem</div>
+<h2>Why credible digital twins need structured V&amp;V</h2>
+<p>Three properties make turbine twins hard to trust without a verification plan. Each card stands on its own.</p>
+</div>
+<div class="card-grid cols-3">
+<article class="card" data-reveal="">
+<h3>Coupled physics</h3>
+<p>Aerodynamic power depends on rotor speed, pitch, and inflow simultaneously. A small Cp(λ, β) error compounds through the operating envelope before it shows up at the generator.</p>
+<span class="card-tag mono">Heier Cp surface</span>
+</article>
+<article class="card" data-reveal="">
+<h3>Stochastic operation</h3>
+<p>Real wind is turbulent. Mean power, variability, and fatigue proxies respond to turbulence intensity in different regions, they cannot be inferred from a steady-state curve.</p>
+<span class="card-tag mono">TI sweep 0–0.5</span>
+</article>
+<article class="card" data-reveal="">
+<h3>Transient control</h3>
+<p>Pitch, yaw, gust response, and emergency brake must behave correctly under step changes, or the twin overstates rated-power recovery and understates dynamic losses.</p>
+<span class="card-tag mono">RPM cap matters</span>
+</article>
+</div>
+</section>
+<section class="section" id="model">
+<div class="section-head">
+<div class="section-num mono">02 · Model</div>
+<h2>What was built</h2>
+<p>Three subsystems sit behind every experiment: aerodynamic physics, rotor and control dynamics, and a CSV-emitting simulation loop.</p>
+</div>
+<div class="model-grid">
+<div aria-label="Aerodynamic physics" class="tab-panel" data-reveal="" role="region">
+<h3>Aerodynamic kernel</h3>
+<p><strong>Heier parametric Cp(λ, β)</strong> drives aerodynamic power. Inputs are wind speed, rotor speed, and pitch; output is captured rotor power before drivetrain losses.</p>
+<ul>
+<li>P<sub>aero</sub> = ½ρACp(λ, β)v³</li>
+<li>Swept area πR² ≈ 5,027 m² at R = 40 m</li>
+<li>Betz reference Cp = 0.593 used as ceiling</li>
+<li>Cut-in 3 m/s · rated 12 m/s · cut-out 25 m/s</li>
+</ul>
+</div>
+<div aria-label="Rotor &amp; control" class="tab-panel" data-reveal="" role="region">
+<h3>Rotor &amp; control</h3>
+<p><strong>Rotor inertia, pitch, yaw, and braking</strong> integrate against aerodynamic torque and generator load across operating regions.</p>
+<ul>
+<li>MPPT below rated (λ* ≈ 8.1)</li>
+<li>Pitch derates above rated to hold 2,000 kW</li>
+<li>Yaw tracks wind direction with limited slew</li>
+<li>Hard cap at 15 RPM, affects high-wind λ</li>
+</ul>
+</div>
+<div aria-label="Simulation loop" class="tab-panel" data-reveal="" role="region">
+<h3>Simulation loop</h3>
+<p><strong>Browser physics engine</strong> runs the model in real time and exports CSV time-series for offline analysis in Python and R.</p>
+<ul>
+<li>Steady-state sweeps and transient tests</li>
+<li>CSV: power, RPM, Cp, λ, pitch, yaw</li>
+<li>Same engine renders the live twin below</li>
+<li>Offline notebooks compute metrics &amp; figures</li>
+</ul>
+</div>
+</div>
+<div class="card-grid cols-4" style="margin-top:14px">
+<article class="card" data-reveal="">
+<h3 class="mono" style="font-size:12px">CUT-IN · 3 m/s</h3>
+<p>Generator engages, partial load begins.</p>
+</article>
+<article class="card" data-reveal="">
+<h3 class="mono" style="font-size:12px">RATED · 12 m/s</h3>
+<p>2,000 kW output, pitch begins limiting.</p>
+</article>
+<article class="card" data-reveal="">
+<h3 class="mono" style="font-size:12px">CUT-OUT · 25 m/s</h3>
+<p>Protective shutdown, brake engaged.</p>
+</article>
+<article class="card" data-reveal="">
+<h3 class="mono" style="font-size:12px">BETZ · 0.593</h3>
+<p>Theoretical Cp ceiling; twin reaches 0.48.</p>
+</article>
+</div>
+</section>
+<section class="section" id="twin">
+<div class="section-head">
+<div class="section-num mono">03 · Live twin</div>
+<h2>Try the model in the browser</h2>
+<p>Same engine as the lab twin. Set wind, direction, and turbulence; trigger a gust or emergency brake; export CSV for your own analysis.</p>
+</div>
+<div class="sim-wrap" data-reveal="">
+<div class="sim-head">
+<div class="sim-eye mono">Live demonstration · Same engine as the lab twin</div>
+<div class="sim-title">Adjust wind, run experiments, export CSV</div>
+<p class="sim-note">
+<strong>Keyboard:</strong> <span class="sim-kbd">Space</span> play/pause ·  <span class="sim-kbd">G</span> gust ·  <span class="sim-kbd">B</span> brake ·  <span class="sim-kbd">R</span> reset. The simulator below is the canonical artifact for every experiment summarised on this page.
+          </p>
+</div>
+<div id="twin-simulator">
+<div class="twin-sim-app">
+<header>
+<h1>Wind Turbine Digital Twin</h1>
+<div class="header-info">
+<span class="sim-clock">Time: <span id="sim-time">00:00</span></span>
+<span class="header-hint">Space=Play/Pause | G=Gust | B=Brake | R=Reset</span>
+</div>
+</header>
+<main>
+<section class="panel viz-panel">
+<canvas id="turbine-canvas"></canvas>
+</section>
+<section class="panel controls-panel">
+<div class="gauges-grid">
+<div class="gauge" id="gauge-power"><div class="gauge-label">Power</div><div class="gauge-value">0</div><div class="gauge-unit">kW</div></div>
+<div class="gauge" id="gauge-wind-speed"><div class="gauge-label">Wind</div><div class="gauge-value">0</div><div class="gauge-unit">m/s</div></div>
+<div class="gauge" id="gauge-rpm"><div class="gauge-label">Rotor</div><div class="gauge-value">0</div><div class="gauge-unit">RPM</div></div>
+<div class="gauge" id="gauge-cp"><div class="gauge-label">Cp</div><div class="gauge-value">0</div><div class="gauge-unit"></div></div>
+<div class="gauge" id="gauge-tsr"><div class="gauge-label">TSR</div><div class="gauge-value">0</div><div class="gauge-unit"></div></div>
+<div class="gauge" id="gauge-pitch"><div class="gauge-label">Pitch</div><div class="gauge-value">0</div><div class="gauge-unit">deg</div></div>
+<div class="gauge" id="gauge-wind-dir"><div class="gauge-label">Wind Dir</div><div class="gauge-value">0</div><div class="gauge-unit">deg</div></div>
+<div class="gauge" id="gauge-yaw-error"><div class="gauge-label">Yaw Err</div><div class="gauge-value">0</div><div class="gauge-unit">deg</div></div>
+</div>
+<div class="power-bar-container">
+<div class="power-bar-label">Output: <span id="power-pct">0</span>% of rated</div>
+<div class="power-bar"><div class="power-bar-fill low" id="power-bar-fill" style="width:0%"></div></div>
+</div>
+<div class="controls-grid">
+<div class="control-group"><label>Wind Speed</label><input id="slider-wind-speed" max="30" min="0" step="0.5" type="range" value="8"/><span class="slider-val" id="val-wind-speed">8 m/s</span></div>
+<div class="control-group"><label>Wind Direction</label><input id="slider-wind-dir" max="360" min="0" step="1" type="range" value="270"/><span class="slider-val" id="val-wind-dir">270 deg</span></div>
+<div class="control-group"><label>Turbulence</label><input id="slider-turbulence" max="0.5" min="0" step="0.01" type="range" value="0.1"/><span class="slider-val" id="val-turbulence">0.1</span></div>
+<div class="control-group"><label>Sim Speed</label><input id="slider-sim-speed" max="10" min="0.25" step="0.25" type="range" value="1"/><span class="slider-val" id="val-sim-speed">1x</span></div>
+</div>
+<div class="buttons-row">
+<button class="btn btn-primary" id="btn-start" type="button">Start</button>
+<button class="btn" id="btn-reset" type="button">Reset</button>
+<button class="btn btn-gust" id="btn-gust" type="button">Gust</button>
+<button class="btn btn-brake" id="btn-brake" type="button">E-Brake</button>
+<button class="btn btn-export" id="btn-export" type="button">Export CSV</button>
+<button class="btn" id="btn-save-config" type="button">Save Config</button>
+</div>
+<div class="charts-grid">
+<div class="chart-container"><canvas id="chart-power"></canvas></div>
+<div class="chart-container"><canvas id="chart-wind"></canvas></div>
+<div class="chart-container"><canvas id="chart-rotor"></canvas></div>
+<div class="chart-container"><canvas id="chart-efficiency"></canvas></div>
+</div>
+</section>
+</main>
+</div>
+</div>
+</div>
+</section>
+<section class="section" id="experiments">
+<div class="section-head">
+<div class="section-num mono">04 · Experiments</div>
+<h2>Five V&amp;V phases, one model</h2>
+<p>Each phase answers a single verification question. Together they form the validation chain from baseline physics to design support, with the surrogate-vs-twin gap recorded as an explicit caveat.</p>
+</div>
+<div class="exp-grid">
+<article class="exp-card" data-reveal="">
+<div class="exp-id">Exp. 1</div>
+<div class="exp-name">Baseline power curve</div>
+<div class="exp-status">PASS</div>
+<div class="exp-note">Cut-in / rated / cut-out behaviour; CF 19.4% (Weibull k=2, c=7 m/s).</div>
+</article>
+<article class="exp-card" data-reveal="">
+<div class="exp-id">Exp. 2</div>
+<div class="exp-name">Cp(λ, β) fidelity</div>
+<div class="exp-status">PASS</div>
+<div class="exp-note">Peak Cp = 0.48 at λ* = 8.1; strong agreement β ≤ 15°.</div>
+</article>
+<article class="exp-card" data-reveal="">
+<div class="exp-id">Exp. 3</div>
+<div class="exp-name">Stochastic operation</div>
+<div class="exp-status">PASS</div>
+<div class="exp-note">Variability peaks at rated; fatigue proxy peaks at 8 m/s.</div>
+</article>
+<article class="exp-card" data-reveal="">
+<div class="exp-id">Exp. 4</div>
+<div class="exp-name">Transient control</div>
+<div class="exp-status">PASS</div>
+<div class="exp-note">Stable pitch / yaw / brake; RPM cap limits post-step recovery.</div>
+</article>
+<article class="exp-card" data-reveal="">
+<div class="exp-id">Exp. 5</div>
+<div class="exp-name">Design optimisation</div>
+<div class="exp-status caveat">CAVEAT</div>
+<div class="exp-note">Surrogate 20.5 vs twin 3.0 GWh/yr, gap documented, not papered over.</div>
+</article>
+</div>
+</section>
+<section class="section" id="faq">
+<div class="section-head">
+<div class="section-num mono">05 · FAQ</div>
+<h2>Common questions</h2>
+<p>Short answers shown directly. Full evidence is in the technical section.</p>
+</div>
+<div class="faq-grid">
+<article class="faq-card" data-reveal="">
+<h3>What problem does this solve?</h3>
+<p>Wind projects need credible what-if analysis before committing to hardware. The twin offers a repeatable testbed where operating points can be swept, time-series exported, and results compared to analytical limits (Betz, Heier Cp), supporting early design and control work without a full aeroelastic solver.</p>
+</article>
+<article class="faq-card" data-reveal="">
+<h3>How is success defined?</h3>
+<p>Physically plausible behaviour against known theory, not perfect match to Betz. Criteria: correct cut-in / cut-out, cubic partial-load region, rated-region pitch limiting, Cp peak near λ* = 8.1 at ~81% of Betz, and explicit acknowledgement where the surrogate over-predicts annual energy.</p>
+</article>
+<article class="faq-card" data-reveal="">
+<h3>What did the main results show?</h3>
+<p>Twin reproduces realistic regions below the Betz curve. Peak Cp ≈ 0.48 at β = 0°, λ ≈ 8. Turbulence raises variability most at 12 m/s; fatigue proxy peaks at 8 m/s. Power under TI is left-skewed (Weibull beats Normal). Transients are stable; RPM cap limits rated-power capture after large steps.</p>
+</article>
+<article class="faq-card" data-reveal="">
+<h3>What failed or what is the main caveat?</h3>
+<p>The model is reduced-order; no structural dynamics, wake rotation, dynamic stall, or BEM tip-loss. The optimisation surrogate predicted 20.5 GWh/yr vs 3.0 GWh/yr from the twin because it assumed perfect TSR tracking and ignored turbulence and controller transients. Field validation is required for deployment decisions.</p>
+</article>
+<article class="faq-card" data-reveal="">
+<h3>How does this connect to systems engineering?</h3>
+<p>The work follows a V-model verification path: define twin architecture, characterise baseline, verify the aerodynamic kernel against an independent reference, quantify uncertainty, validate controls under transients, and close with optimisation and sensitivity, mirroring how digital twins support requirements validation before physical test.</p>
+</article>
+<article class="faq-card" data-reveal="">
+<h3>What is out of scope?</h3>
+<p>Blade-element momentum with tip-loss, aeroelastic fatigue, wake interaction, grid integration, SCADA, and certified AEP guarantees. No claim of IEC 61400 compliance or manufacturer-specific controller fidelity.</p>
+</article>
+</div>
+</section>
+</div><!-- /overview-body -->
+<section aria-label="Open technical report" class="overview-end" id="overview-end">
+<div class="overview-end-inner">
+<div class="overview-end-copy">
+<div class="section-num mono" style="color:var(--gold2)">Technical report</div>
+<h2>View full technical section</h2>
+<p>
+            Governing physics, parameter tables, experiment-by-experiment evidence with figures, pipeline diagram, discussion, and conclusions from the course submission.
+          </p>
+</div>
+<div class="overview-end-action">
+<button aria-controls="technicalDepthWrap" aria-expanded="false" class="btn-open-technical" id="openTechnicalBtn" type="button">
+            View full technical section ↓
+          </button>
+</div>
+</div>
+</section>
+</main>
+<div class="technical-depth-wrap content-pad-tech" hidden="" id="technicalDepthWrap">
+<section class="technical-bridge scroll-anchor" id="technical-depth">
+<div class="section-num mono">06 · Technical depth</div>
+<h2>Framing, experiments, pipeline, figures, conclusions</h2>
+<p>
+      The sections below preserve the full case study: systems framing, the five-experiment program, data and analysis pipeline, governing physics, twin architecture, results with figures, discussion of limitations, and conclusions.
+    </p>
+</section>
+<div class="layer2" id="layer2">
+<nav class="l2-nav">
+<button class="l2-nav-btn active" data-l2="framing" type="button">Framing</button>
+<button class="l2-nav-btn" data-l2="experiment" type="button">Experiments</button>
+<button class="l2-nav-btn" data-l2="pipeline" type="button">Pipeline</button>
+<button class="l2-nav-btn" data-l2="model" type="button">Physics</button>
+<button class="l2-nav-btn" data-l2="architecture" type="button">Architecture</button>
+<button class="l2-nav-btn" data-l2="results" type="button">Results</button>
+<button class="l2-nav-btn" data-l2="findings" type="button">Findings</button>
+<button class="l2-nav-btn" data-l2="conclusions" type="button">Conclusions</button>
+</nav>
+<div class="l2-sec scroll-anchor" id="l2-framing">
+<div class="l2-h"><span class="l2-n">01</span><h2 class="l2-t">Problem &amp; Systems Framing</h2></div>
+<div class="prose">
+<p>Before a digital twin can support control design, siting, or sizing, stakeholders need to trust that it reproduces dominant physics under known conditions. For wind energy that means credible power curves, an aerodynamic efficiency surface that matches an independent reference, sensible response to turbulence, and safe transient behaviour, not a cartoon animation.</p>
+<p>This project treats a browser-based HAWT simulation as a <strong>systems artifact</strong>: explicit inputs (wind speed, direction, turbulence), internal state (rotor speed, pitch, yaw error), and measurable outputs (electrical power, Cp, λ). Five experiments progressively raise fidelity demands, from deterministic steady states through stochastic loads to design search.</p>
+</div>
+<div class="callout">
+<strong>Scope boundary:</strong> the twin is validated for early-stage analysis and control exploration. High-stakes AEP forecasting or structural certification requires field data, BEM with loss models, and integrated generator transients, not this reduced-order implementation alone.
+      </div>
+</div>
+<div class="l2-sec scroll-anchor" id="l2-experiment">
+<div class="l2-h"><span class="l2-n">02</span><h2 class="l2-t">Experimental Program</h2></div>
+<div class="prose"><p>Each experiment answers one verification question. Together they form a closed validation narrative from baseline physics to decision support.</p></div>
+<table class="dt">
+<thead><tr><th>Exp.</th><th>Question</th><th>Method summary</th><th>Key recorded outcome</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Trust baseline physics?</td><td>Wind sweep 3–26 m/s, TI = 0, steady-state CSV</td><td class="green">Realistic P(v); CF = 19.4%</td></tr>
+<tr><td>2</td><td>Is Cp(λ, β) implemented correctly?</td><td>Lock pitch β ∈ {0…20°}; compare to Heier surface</td><td class="green">Peak Cp ≈ 0.48; strong agreement β ≤ 15°</td></tr>
+<tr><td>3</td><td>Behavior under uncertainty?</td><td>TI ∈ {0…0.5} at 8, 12, 18 m/s</td><td>Variability ↑ at rated; fatigue proxy max at 8 m/s</td></tr>
+<tr><td>4</td><td>Controls handle transients?</td><td>Wind step, yaw step, gust, e-brake</td><td class="green">Stable shutdown; RPM cap limits rated capture</td></tr>
+<tr><td>5</td><td>Can twin inform design?</td><td>DE optimiser + surrogate AEP</td><td class="red">Surrogate 20.5 vs twin 3.0 GWh/yr</td></tr>
+</tbody>
+</table>
+<div class="metrics-strip">
+<div class="ms"><span class="ms-lbl">Wind sweep (Exp. 1)</span><span class="ms-val">3–26</span><span class="ms-note">m/s, 18 samples</span></div>
+<div class="ms"><span class="ms-lbl">Pitch angles (Exp. 2)</span><span class="ms-val">5</span><span class="ms-note">0° to 20°</span></div>
+<div class="ms"><span class="ms-lbl">TI levels (Exp. 3)</span><span class="ms-val">8</span><span class="ms-note">0 to 0.5</span></div>
+<div class="ms"><span class="ms-lbl">Transient tests (Exp. 4)</span><span class="ms-val">4</span><span class="ms-note">step, yaw, gust, brake</span></div>
+</div>
+<div class="app-screen">
+<div class="app-bar">
+<span class="app-dot" style="background:#ff5f57"></span>
+<span class="app-dot" style="background:#febc2e"></span>
+<span class="app-dot" style="background:#28c840"></span>
+<span class="app-url">twin · validation summary</span>
+</div>
+<div class="app-content">
+<div class="app-grid">
+<div class="app-card"><div class="app-card-lbl">Exp. 1</div><div class="app-card-val pass">PASS</div><div class="app-card-note">Power curve &amp; CF</div></div>
+<div class="app-card"><div class="app-card-lbl">Exp. 2</div><div class="app-card-val pass">PASS</div><div class="app-card-note">Cp surface fidelity</div></div>
+<div class="app-card"><div class="app-card-lbl">Exp. 3</div><div class="app-card-val pass">PASS</div><div class="app-card-note">Stochastic characterization</div></div>
+<div class="app-card"><div class="app-card-lbl">Exp. 4</div><div class="app-card-val pass">PASS</div><div class="app-card-note">Control transients</div></div>
+<div class="app-card"><div class="app-card-lbl">Exp. 5</div><div class="app-card-val">CAVEAT</div><div class="app-card-note">Surrogate gap documented</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="l2-sec scroll-anchor" id="l2-pipeline">
+<div class="l2-h"><span class="l2-n">03</span><h2 class="l2-t">Data &amp; Analysis Pipeline</h2></div>
+<div class="prose"><p>The twin runs in the browser; experiments export CSV time-series. Offline Python, R, and Jupyter notebooks compute steady-state metrics, compare against analytical references, and produce presentation figures.</p></div>
+<div aria-label="Digital twin experiment pipeline" class="pipeline-diagram" role="img">
+<div class="pd-title">End-to-end experiment flow</div>
+<div class="mf-col">
+<div class="mf-node pd-input">
+<span class="mf-label">① Configure twin</span>
+<span class="mf-sub">Wind · TI · pitch lock · design parameters</span>
+</div>
+<div aria-hidden="true" class="mf-arrow"></div>
+<div class="mf-node pd-score">
+<span class="mf-label">② Run simulation</span>
+<span class="mf-sub">Browser physics loop · steady state or transient</span>
+</div>
+<div aria-hidden="true" class="mf-arrow"></div>
+<div class="mf-node">
+<span class="mf-label">③ Export CSV</span>
+<span class="mf-sub">Power · RPM · Cp · λ · pitch · yaw</span>
+</div>
+<div aria-hidden="true" class="mf-arrow"></div>
+<div class="mf-node">
+<span class="mf-label">④ Analyse &amp; compare</span>
+<span class="mf-sub">Betz · Heier · distributions · transients</span>
+</div>
+<div aria-hidden="true" class="mf-arrow"></div>
+<div class="mf-fork">
+<div aria-hidden="true" class="mf-fork-stem"></div>
+<div class="mf-fork-grid">
+<div class="mf-node pd-out"><span class="mf-label">⑤a Metrics</span><span class="mf-sub">CF · Cp peak · variability</span></div>
+<div class="mf-node pd-out"><span class="mf-label">⑤b Figures</span><span class="mf-sub">Power curves · surfaces</span></div>
+<div class="mf-node pd-out"><span class="mf-label">⑤c Decisions</span><span class="mf-sub">Siting · control · design trade</span></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="l2-sec scroll-anchor" id="l2-model">
+<div class="l2-h"><span class="l2-n">04</span><h2 class="l2-t">Governing Physics &amp; Parameters</h2></div>
+<div class="prose">
+<p>Aerodynamic power extraction follows the standard relation with Heier parametric Cp(λ, β). Rotor dynamics integrate aerodynamic torque against friction and generator loading; pitch and yaw controllers modulate setpoints across operating regions.</p>
+</div>
+<div class="eq-block">P<sub>aero</sub> = ½ ρ A C<sub>p</sub>(λ, β) v³ · λ = ωR / v</div>
+<table class="dt">
+<thead><tr><th>Parameter</th><th>Value</th><th>Role</th></tr></thead>
+<tbody>
+<tr><td>Blade length R</td><td>40 m</td><td>Swept area πR² ≈ 5,027 m²</td></tr>
+<tr><td>Rated power</td><td>2,000 kW</td><td>Electrical output cap</td></tr>
+<tr><td>Cut-in / rated / cut-out</td><td>3 / 12 / 25 m/s</td><td>Operating envelope</td></tr>
+<tr><td>Optimal TSR λ*</td><td>8.1</td><td>MPPT target</td></tr>
+<tr><td>Betz limit</td><td>0.593</td><td>Theoretical Cp ceiling</td></tr>
+<tr><td>Max rotor speed</td><td>15 RPM</td><td>Hard cap (affects high-wind λ)</td></tr>
+</tbody>
+</table>
+<div class="callout">
+<strong>Simplifications (explicit):</strong> uniform inflow, no structural modes, empirical Heier Cp without dynamic stall or wake rotation. Generator and gearbox losses appear as departures below the Betz reference curve, not as a separate BEM solve.
+      </div>
+</div>
+<div class="l2-sec scroll-anchor" id="l2-architecture">
+<div class="l2-h"><span class="l2-n">05</span><h2 class="l2-t">Twin Architecture</h2></div>
+<div class="prose"><p>Four subsystems chain from environment to electrical output: wind model → aerodynamic physics → rotor and generator dynamics → control layer. Configuration parameters (geometry, rated power, Cp coefficients) live in a single config module consumed by the simulation loop and renderer.</p></div>
+<figure class="fig-block fig-arch">
+<div class="fig-media"><img alt="Wind turbine digital twin architecture diagram" loading="lazy" src="assets/figures/image9.png"/></div>
+<figcaption>Model definition, wind environment, aerodynamic physics, rotor and generator dynamics, control system, and measured outputs</figcaption>
+</figure>
+</div>
+<div class="l2-sec scroll-anchor" id="l2-results">
+<div class="l2-h"><span class="l2-n">06</span><h2 class="l2-t">Results &amp; Evidence</h2></div>
+<div class="subsec-block">
+<h3 class="subsec-h"><span>Experiment 1</span>Power curve &amp; aerodynamic performance</h3>
+<div class="prose"><p>Steady-state runs at TI = 0 show cut-in at 3 m/s, cubic partial-load growth, rated transition near 12 m/s, and protective cut-out at 25 m/s. Output sits below the Betz theoretical curve, expected given generator efficiency, friction, and control limits. Weibull integration (k = 2, c = 7 m/s) yields a <strong>19.4% capacity factor</strong>.</p></div>
+<div class="fig-grid">
+<figure class="fig-block"><div class="fig-media"><img alt="Power curve" loading="lazy" src="assets/figures/image4.png"/></div><figcaption>Electrical power vs wind speed, realistic regions vs ideal limit</figcaption></figure>
+<figure class="fig-block"><div class="fig-media"><img alt="Cp and TSR vs wind speed" loading="lazy" src="assets/figures/image8.png"/></div><figcaption>Cp and λ vs wind speed, optimal near 8 m/s; λ declines when RPM saturates</figcaption></figure>
+</div>
+</div>
+<div class="subsec-block">
+<h3 class="subsec-h"><span>Experiment 2</span>Cp(λ, β) fidelity</h3>
+<div class="prose"><p>Locked-pitch sweeps match the Heier analytical surface at β = 0°–15°. Global optimum at λ* = 8.1, β = 0° with C<sub>p,max</sub> = 0.480 (81% of Betz). Localised mismatch at β = 20° and extreme λ is attributed to discretisation, transient settling, and unmodeled drivetrain effects.</p></div>
+<figure class="fig-block fig-full fig-dist-full"><div class="fig-media"><img alt="Cp vs lambda curve family" loading="lazy" src="assets/figures/image11.png"/></div><figcaption>Cp vs λ families for fixed pitch angles</figcaption></figure>
+<figure class="fig-block fig-full fig-dist-full"><div class="fig-media"><img alt="Cp surface and operating trajectory" loading="lazy" src="assets/figures/image3.png"/></div><figcaption>Cp(λ, β) surface with operating trajectory from cut-in to cut-out</figcaption></figure>
+</div>
+<div class="subsec-block">
+<h3 class="subsec-h"><span>Experiment 3</span>Stochastic operation</h3>
+<div class="prose"><p>Turbulence increases power variability everywhere; mean power degrades most at <strong>12 m/s</strong> (rated). Fatigue loading proxy (RPM fluctuation σ) peaks at <strong>8 m/s</strong> when pitch is inactive, TI &gt; 0.1 near rated marks operational concern. At TI = 0.2, v = 8 m/s, power is left-skewed (skewness −0.37); Weibull fits better than Normal by Kolmogorov–Smirnov.</p></div>
+<div class="fig-grid">
+<figure class="fig-block"><div class="fig-media"><img alt="Power variability vs turbulence" loading="lazy" src="assets/figures/image6.png"/></div><figcaption>Mean power variability vs TI at 8, 12, and 18 m/s</figcaption></figure>
+<figure class="fig-block"><div class="fig-media"><img alt="Fatigue proxy vs turbulence" loading="lazy" src="assets/figures/image10.png"/></div><figcaption>Fatigue loading proxy vs TI, highest sensitivity at partial load</figcaption></figure>
+</div>
+<figure class="fig-block fig-full fig-dist-full"><div class="fig-media"><img alt="Power distribution fit" loading="lazy" src="assets/figures/image12.png"/></div><figcaption>Probability distribution of power under turbulence, non-Gaussian, Weibull preferred</figcaption></figure>
+</div>
+<div class="subsec-block">
+<h3 class="subsec-h"><span>Experiment 4</span>Transient control</h3>
+<div class="prose"><p>Wind step 8→16 m/s: peak +146 kW (7.3% of rated), settling ~34 s, new steady state below pre-step baseline. Yaw 270°→180°: rise 1.52 s, settling 14.3 s, no overshoot. Gust at 10 m/s: +7.3% peak. Emergency brake from 15 RPM: decel 95 s, 34.5 MJ dissipated. The <strong>RPM cap</strong> prevents optimal TSR after large steps, rated power is not fully recovered.</p></div>
+<div class="fig-grid">
+<figure class="fig-block fig-dist-full"><div class="fig-media"><img alt="Wind step response" loading="lazy" src="assets/figures/image7.png"/></div><figcaption>Wind step response, power and pitch dynamics</figcaption></figure>
+<figure class="fig-block fig-dist-full"><div class="fig-media"><img alt="Gust and brake response" loading="lazy" src="assets/figures/image5.png"/></div><figcaption>Gust injection and emergency brake, controlled shutdown demonstrated</figcaption></figure>
+</div>
+</div>
+<div class="subsec-block">
+<h3 class="subsec-h"><span>Experiment 5</span>Design optimisation</h3>
+<div class="prose"><p>Differential evolution found R* = 80 m, λ* = 6.67, η_gen = 0.97 at the rated 5 MW constraint boundary. Surrogate annual energy (Rayleigh mean 7.5 m/s, perfect TSR) = <strong>20.5 GWh/yr</strong>; dynamic twin extrapolation = <strong>3.0 GWh/yr</strong>. Gap driven by missing turbulence, transients, and a controller tuned for the R = 40 m baseline.</p></div>
+<table class="dt">
+<thead><tr><th>Parameter</th><th>Optimal</th><th>Constraint</th><th>Met?</th></tr></thead>
+<tbody>
+<tr><td>R*</td><td>80 m</td><td>20–80 m</td><td class="green">Y</td></tr>
+<tr><td>λ*</td><td>6.67</td><td>5–12</td><td class="green">Y</td></tr>
+<tr><td>η_gen</td><td>0.97</td><td>0.85–0.97</td><td class="green">Y</td></tr>
+<tr><td>P_rated</td><td>5,000 kW</td><td>≤ 5,000 kW</td><td class="green">Y</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="l2-sec scroll-anchor" id="l2-findings">
+<div class="l2-h"><span class="l2-n">07</span><h2 class="l2-t">Discussion &amp; Limitations</h2></div>
+<div class="insight-grid">
+<div class="insight"><div class="insight-head">What the twin does well</div><div class="insight-body">Core Cp(λ, β) relationships, MPPT region behaviour, pitch derating above rated, and interactive exploration of gust and brake scenarios, suitable for teaching and early control strategy studies.</div></div>
+<div class="insight"><div class="insight-head">Observed limitations</div><div class="insight-body">No dynamic stall, wake, or structural coupling; RPM cap distorts high-wind λ; β = 20° mismatch; surrogate AEP can over-predict by an order of magnitude without controller-in-the-loop validation.</div></div>
+<div class="insight"><div class="insight-head">Operations · turbulence</div><div class="insight-body">TI &gt; 0.1 near rated speed begins noticeable power degradation; TI &gt; 0.2 raises variability and loading concerns for maintenance planning.</div></div>
+<div class="insight"><div class="insight-head">Why twin &gt; spreadsheet</div><div class="insight-body">Captures controller dynamics, skewed power distributions, and short transient losses, mean-based spreadsheet models miss fatigue trends and asymmetric tails.</div></div>
+<div class="insight"><div class="insight-head">Siting implication</div><div class="insight-body">High-turbulence sites are most damaging during partial-load (8 m/s) operation, prioritise exposure assessment alongside mean wind resource.</div></div>
+<div class="insight"><div class="insight-head">Next validation steps</div><div class="insight-body">Wind-tunnel or SCADA comparison, BEM with tip-loss, integrated generator transients, and re-tuned controller for optimised geometry before deployment decisions.</div></div>
+</div>
+<div class="callout">
+<strong>Verdict:</strong> reliable for early-stage analysis and control design. For sizing and bankable AEP, field-validated aeroelastic models and controller-in-the-loop runs are required.
+      </div>
+</div>
+<div class="l2-sec scroll-anchor" id="l2-conclusions">
+<div class="l2-h"><span class="l2-n">08</span><h2 class="l2-t">Conclusions</h2></div>
+<div class="prose">
+<p>This project delivered a <strong>browser-based wind turbine digital twin</strong> and a five-experiment verification program aligned with systems engineering practice. Experiment 1 established that the twin produces physically credible power curves, cut-in, partial-load cubic growth, rated-region limiting, and cut-out protection, with output intentionally below the Betz ideal. A Weibull site model (k = 2, c = 7 m/s) yields a 19.4% capacity factor, linking the simulation to deployment-level expectations.</p>
+<p>Experiment 2 verified the aerodynamic kernel against the independent Heier Cp(λ, β) surface. Peak Cp ≈ 0.48 at λ* = 8.1 reaches 81% of the Betz limit, with strong agreement for pitch angles up to 15°. Experiment 3 showed that operational risk is governed by the interaction of wind regime and turbulence: variability and fatigue proxies peak in different regions (rated vs partial load), and power distributions become left-skewed, poorly represented by Gaussian assumptions alone.</p>
+<p>Experiment 4 demonstrated that pitch, yaw, gust, and emergency-brake logic respond correctly to dynamic events, while exposing a practical limit: the 15 RPM cap prevents full rated-power recovery after large wind steps. Experiment 5 applied optimisation to turbine sizing and surfaced the engineering lesson the report leads with. The analytical surrogate over-predicted annual energy by roughly 7× relative to the dynamic twin because it assumed perfect tracking and ignored turbulence and transients.</p>
+<p>Taken together, the work shows how a lightweight digital twin can support <strong>structured V&amp;V</strong>: define architecture, characterise baselines, verify against theory, quantify uncertainty, test controls, and document where the model must not be trusted. The interactive simulation is the primary artifact; this page documents the evidence chain behind it.</p>
+<p>For practitioners, the actionable read is: use the twin for comparative studies, control prototyping, and teaching. Do not treat surrogate AEP or uncorrected Cp peaks as bankable without field data and higher-fidelity aeroelastic integration. The natural next step is controller retuning on optimised geometry and BEM-based loss models, closing the gap between classroom twin and operational asset.</p>
+</div>
+<div class="callout">
+<strong>Bottom line:</strong> five-phase validation complete · Cp peak 0.48 (81% Betz) · CF 19.4% · turbulence and transients captured · surrogate-vs-twin AEP gap documented · <a class="code-link" href="#twin">run the embedded twin</a> to reproduce any experiment.
+      </div>
+</div>
+</div>
+</div><!-- /technicalDepthWrap -->
+<footer class="conc-bar" id="contact">
+<div class="conc-inner">
+<div class="conc-left">
+<p class="conc-name">Anurag Yadav</p>
+<div class="conc-copy">
+<p class="conc-course mono">Ithaca, NY · Cornell University · M.Eng. Systems Engineering</p>
+<p class="conc-course mono">Capital programs · Digital engineering · Mission-critical infrastructure</p>
+</div>
+</div>
+<div class="conc-right">
+<ul aria-label="Contact" class="conc-links mono">
+<li><a href="mailto:yadavanurag560@gmail.com"><img alt="" src="assets/footer-icons/email.png"/>yadavanurag560@gmail.com</a></li>
+<li><a href="mailto:ay468@cornell.edu"><img alt="" src="assets/footer-icons/email2.png"/>ay468@cornell.edu</a></li>
+<li><a href="tel:+16072623840"><img alt="" src="assets/footer-icons/phone.png"/>(607) 262-3840</a></li>
+<li><a href="https://www.linkedin.com/in/anurag-systems" rel="noopener noreferrer" target="_blank"><img alt="" src="assets/footer-icons/linkedin.png"/>LinkedIn</a></li>
+<li><a href="https://github.com/anuragyadav21" rel="noopener noreferrer" target="_blank"><img alt="" src="assets/footer-icons/github.png"/>GitHub</a></li>
+<li><a href="/assets/resume/Anurag_Yadav_Resume.pdf" target="_blank" rel="noopener noreferrer" download><img alt="" src="assets/footer-icons/resume.svg"/>Resume</a></li>
+</ul>
+</div>
+</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/windModel.js"></script>
+<script src="js/turbinePhysics.js"></script>
+<script src="js/datastore.js"></script>
+<script src="js/renderer.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/app.js"></script>
+<script>
+(function () {
+  const overviewIds = ["overview","problem","model","twin","experiments","faq","overview-end"];
+  const techIds = ["l2-framing","l2-experiment","l2-pipeline","l2-model","l2-architecture","l2-results","l2-findings","l2-conclusions"];
+  const technicalWrap = document.getElementById("technicalDepthWrap");
+  const openTechnicalBtn = document.getElementById("openTechnicalBtn");
+  const navBtns = document.querySelectorAll(".topbar-nav button[data-section]");
+  let technicalOpen = false;
+  let navObserver = null;
+
+  function setActiveSection(id) {
+    var inTech = techIds.indexOf(id) !== -1 || id === "technical-depth" || id === "technicalDepthWrap";
+    navBtns.forEach(function (btn) {
+      var sec = btn.getAttribute("data-section");
+      if (inTech) {
+        btn.classList.toggle("is-active", sec === "technical-depth");
+      } else {
+        btn.classList.toggle("is-active", sec === id);
+      }
+    });
+  }
+
+  function openTechnical(scrollTargetId) {
+    if (!technicalWrap || technicalOpen) return;
+    technicalOpen = true;
+    technicalWrap.hidden = false;
+    technicalWrap.classList.add("is-open");
+    technicalWrap.setAttribute("aria-hidden", "false");
+    if (openTechnicalBtn) {
+      openTechnicalBtn.setAttribute("aria-expanded", "true");
+      openTechnicalBtn.textContent = "Technical section open";
+      openTechnicalBtn.disabled = true;
+      openTechnicalBtn.style.opacity = "0.65";
+      openTechnicalBtn.style.cursor = "default";
+    }
+    setActiveSection("technical-depth");
+    startTechNavObserver();
+    const targetId = scrollTargetId || "technical-depth";
+    requestAnimationFrame(function () {
+      const target = document.getElementById(targetId);
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  navBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      const id = btn.getAttribute("data-section");
+      if (id === "technical-depth" && !technicalOpen) {
+        openTechnical("technical-depth");
+        return;
+      }
+      if (id === "technical-depth" && technicalOpen) {
+        const target = document.getElementById("technical-depth");
+        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+      const target = document.getElementById(id);
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+
+  if (openTechnicalBtn) {
+    openTechnicalBtn.addEventListener("click", function () {
+      openTechnical("technical-depth");
+    });
+  }
+
+  function startOverviewNavObserver() {
+    if (navObserver) navObserver.disconnect();
+    navObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          setActiveSection(entry.target.id);
+        });
+      },
+      { rootMargin: "-42% 0px -42% 0px", threshold: 0 }
+    );
+    overviewIds.forEach(function (id) {
+      const el = document.getElementById(id);
+      if (el) navObserver.observe(el);
+    });
+  }
+
+  function startTechNavObserver() {
+    if (navObserver) navObserver.disconnect();
+    navObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          setActiveSection(entry.target.id);
+        });
+      },
+      { rootMargin: "-42% 0px -42% 0px", threshold: 0 }
+    );
+    ["technical-depth"].concat(techIds).forEach(function (id) {
+      const el = document.getElementById(id);
+      if (el) navObserver.observe(el);
+    });
+  }
+
+  startOverviewNavObserver();
+
+  const revealObs = new IntersectionObserver(
+    function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-visible");
+        revealObs.unobserve(entry.target);
+      });
+    },
+    { threshold: 0.08, rootMargin: "0px 0px -8% 0px" }
+  );
+  document.querySelectorAll("[data-reveal]").forEach(function (el, i) {
+    el.style.animationDelay = (i % 6) * 0.08 + "s";
+    revealObs.observe(el);
+  });
+
+  const techSecs = ["framing","experiment","pipeline","model","architecture","results","findings","conclusions"];
+  const l2Btns = document.querySelectorAll(".l2-nav-btn");
+  l2Btns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      const key = btn.getAttribute("data-l2");
+      const el = document.getElementById("l2-" + key);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      l2Btns.forEach(function (b) { b.classList.toggle("active", b === btn); });
+    });
+  });
+  const l2Obs = new IntersectionObserver(
+    function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        const id = entry.target.id;
+        l2Btns.forEach(function (b) {
+          b.classList.toggle("active", id === "l2-" + b.getAttribute("data-l2"));
+        });
+        if (technicalOpen) setActiveSection(id);
+      });
+    },
+    { threshold: 0.22, rootMargin: "-20% 0px -55% 0px" }
+  );
+  techSecs.forEach(function (id) {
+    const el = document.getElementById("l2-" + id);
+    if (el) l2Obs.observe(el);
+  });
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    document.querySelectorAll("[data-reveal]").forEach(function (el) {
+      el.classList.add("is-visible");
+    });
+  }
+})();
+</script>
+</body>
+</html>

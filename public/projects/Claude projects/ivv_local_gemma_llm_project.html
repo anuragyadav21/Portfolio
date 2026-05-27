@@ -1,0 +1,1912 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>IV&amp;V of a Locally Deployed LLM System — Interactive Case Study</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&amp;family=Source+Code+Pro:wght@400;500&amp;family=Libre+Franklin:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --ink:#0e1a26;--ink2:#192738;--paper:#f6f2eb;--paper2:#ece8df;
+  --steel:#2a4d70;--steel2:#3d6b96;--gold:#8a6a2e;--gold2:#b08940;
+  --amber:#c47c1a;--mist:#6b8499;--text:#1a2838;--text2:#4a6070;
+  --text3:#7a92a5;--border:rgba(14,26,38,.1);--border2:rgba(14,26,38,.06);
+  --green:#1b5c38;--red:#8b2218;
+  --pad-x:clamp(18px,2.2vw,32px);
+  --page-gutter:clamp(20px,4.5vw,56px);
+  --content-inset:calc(var(--page-gutter) + var(--pad-x));
+  --topbar-h:56px;
+  --content-gap:12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Libre Franklin',sans-serif;background:var(--paper);color:var(--text);overflow-x:hidden}
+
+/* LAYER 2 (technical) — aligned with overview cards & typography */
+.layer2{
+  background:var(--paper);
+  padding:0 0 48px;
+  --l2-card: rgba(255,255,255,.62);
+  --l2-card-hover: rgba(255,255,255,.95);
+  --l2-lift: translateY(-4px);
+}
+.layer2 .l2-nav{
+  position:sticky;top:var(--topbar-h);z-index:90;
+  display:flex;flex-wrap:nowrap;align-items:center;gap:4px;
+  width:100%;margin:0;padding:6px 0 10px;
+  min-height:var(--topbar-h);box-sizing:border-box;
+  background:rgba(246,242,235,.92);backdrop-filter:blur(10px);
+  border-bottom:none;overflow-x:auto;scrollbar-width:thin
+}
+.layer2 .l2-nav-btn{
+  appearance:none;border:1px solid transparent;background:rgba(14,26,38,.06);
+  font-family:inherit;font-size:12px;font-weight:600;
+  padding:7px 11px;border-radius:2px;color:var(--text2);
+  cursor:pointer;white-space:nowrap;
+  transition:background .2s,color .2s,border-color .2s
+}
+.layer2 .l2-nav-btn:hover{color:var(--ink);background:rgba(138,106,46,.12);border-color:rgba(138,106,46,.2)}
+.layer2 .l2-nav-btn.active{color:var(--ink);background:rgba(138,106,46,.2);border-color:rgba(138,106,46,.35)}
+
+.layer2 .l2-sec{
+  width:100%;max-width:none;margin:0;padding:28px 0 6px;
+  border-bottom:none;
+  display:flex;flex-direction:column;gap:var(--content-gap);
+  opacity:0;transform:translateY(14px)
+}
+.layer2 .l2-sec > .l2-h{margin-bottom:0}
+.layer2 .l2-sec .prose,
+.layer2 .l2-sec .callout,
+.layer2 .l2-sec .eq-block,
+.layer2 .l2-sec .dt,
+.layer2 .l2-sec .scenario-grid,
+.layer2 .l2-sec .metrics-strip,
+.layer2 .l2-sec .dec-grid,
+.layer2 .l2-sec .insight-grid,
+.layer2 .l2-sec .limit-grid,
+.layer2 .l2-sec .fig-block,
+.layer2 .l2-sec .fig-grid{margin:0}
+.technical-depth-wrap.is-open .layer2 .l2-sec{
+  animation:l2SecIn .55s cubic-bezier(.16,1,.3,1) forwards
+}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(2){animation-delay:.04s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(3){animation-delay:.08s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(4){animation-delay:.12s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(5){animation-delay:.16s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(6){animation-delay:.2s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(7){animation-delay:.24s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(8){animation-delay:.28s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(9){animation-delay:.32s}
+@keyframes l2SecIn{to{opacity:1;transform:none}}
+
+.layer2 .l2-h{
+  display:block;margin-bottom:18px;padding-bottom:0;border-bottom:none
+}
+.layer2 .l2-n{
+  display:block;font-family:'Source Code Pro',monospace;
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:6px
+}
+.layer2 .l2-t{
+  font-family:'Playfair Display',serif;font-size:26px;font-weight:700;
+  color:var(--ink);line-height:1.2;margin:0
+}
+.layer2 .prose{
+  max-width:none;font-size:15px;color:var(--text2);line-height:1.65;margin-bottom:0
+}
+.layer2 .l2-flow{display:flex;flex-direction:column;gap:var(--content-gap);width:100%}
+.layer2 .prose p{margin-bottom:12px}
+.layer2 .prose p:last-child{margin-bottom:0}
+.layer2 .prose strong{color:var(--ink);font-weight:600}
+
+.layer2 .l2-panel,
+.layer2 .callout,
+.layer2 .eq-block{
+  background:var(--l2-card);border:none;border-left:3px solid transparent;
+  border-radius:2px;padding:20px 18px;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .callout:hover,.layer2 .eq-block:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);border-left-color:var(--gold)
+}
+.layer2 .callout{
+  font-size:14px;line-height:1.65;color:var(--text2);
+  border-left-color:var(--gold);background:rgba(255,255,255,.72)
+}
+.layer2 .callout strong{color:var(--ink);font-weight:600}
+
+.layer2 .eq-block{
+  font-family:'Source Code Pro',monospace;font-size:13px;line-height:1.85;color:var(--text2)
+}
+.layer2 .eq-block .eq-label{
+  font-family:'Source Code Pro',monospace;font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--gold);display:block;margin-bottom:10px
+}
+.layer2 .eq-row{margin-bottom:6px}
+.layer2 .eq-row:last-child{margin-bottom:0}
+.layer2 .eq-comment{color:var(--text3);margin-left:12px}
+
+.formulation-eq-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;
+  width:100%;margin:14px 0
+}
+.formulation-eq-grid .eq-block{margin:0;height:100%;display:flex;flex-direction:column}
+.formulation-eq-grid .eq-block .eq-row:last-of-type{margin-bottom:0}
+
+.layer2 .dt{
+  width:100%;border-collapse:collapse;margin:14px 0;font-size:14px;
+  background:var(--l2-card);border-radius:2px;overflow:hidden;
+  border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .dt:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);border-left-color:var(--gold)
+}
+.layer2 .dt th{
+  font-family:'Source Code Pro',monospace;font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--text3);padding:12px 16px;text-align:left;
+  background:rgba(236,232,223,.55);border-bottom:none
+}
+.layer2 .dt td{
+  padding:12px 16px;border-bottom:1px solid var(--border2);
+  color:var(--text2);vertical-align:top;line-height:1.55
+}
+.layer2 .dt tr:last-child td{border-bottom:none}
+.layer2 .dt td:first-child{
+  font-family:'Source Code Pro',monospace;font-size:11px;color:var(--gold);font-weight:500
+}
+.layer2 .dt td.green{color:var(--green);font-weight:600}
+.layer2 .dt td.red{color:var(--red)}
+
+.layer2 .scenario-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+  background:transparent;margin:14px 0
+}
+.layer2 .sc{
+  padding:20px 18px;background:var(--l2-card);border-radius:2px;
+  border:none;border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .sc:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);border-left-color:var(--gold)
+}
+.layer2 .sc.sc-worst{border-left-color:rgba(139,34,24,.35);background:rgba(255,255,255,.78)}
+.layer2 .sc-label{
+  font-family:'Source Code Pro',monospace;font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:8px
+}
+.layer2 .sc-name{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:8px}
+.layer2 .sc-row{font-size:13px;color:var(--text2);margin-bottom:4px;line-height:1.5}
+.layer2 .sc-row span{font-family:'Source Code Pro',monospace;font-weight:500;color:var(--ink)}
+.layer2 .sc-prob{
+  font-family:'Playfair Display',serif;font-size:22px;color:var(--steel);
+  margin-bottom:6px
+}
+
+.layer2 .metrics-strip{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+  background:transparent;margin:14px 0
+}
+.layer2 .ms{
+  padding:18px 16px;background:var(--l2-card);border-radius:2px;
+  border:none;border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .ms:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);border-left-color:var(--gold)
+}
+.layer2 .ms-lbl{
+  font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text3);display:block;margin-bottom:6px
+}
+.layer2 .ms-val{
+  font-family:'Playfair Display',serif;font-size:24px;font-weight:700;
+  color:var(--ink);display:block;margin-bottom:4px
+}
+.layer2 .ms-val.green{color:var(--green)}
+.layer2 .ms-val.red{color:var(--red)}
+.layer2 .ms-note{font-size:13px;color:var(--text2);line-height:1.5}
+
+.layer2 .dec-grid,
+.layer2 .insight-grid,
+.layer2 .limit-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
+  background:transparent;margin:14px 0
+}
+.layer2 .dec,
+.layer2 .insight,
+.layer2 .limit{
+  padding:20px 18px;background:var(--l2-card);border-radius:2px;
+  border:none;border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .dec:hover,.layer2 .insight:hover,.layer2 .limit:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);border-left-color:var(--gold)
+}
+.layer2 .dec-num,.layer2 .insight-head .mono{
+  font-family:'Source Code Pro',monospace;font-size:11px;color:var(--gold);
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px
+}
+.layer2 .dec-head{
+  font-family:'Playfair Display',serif;font-size:17px;font-weight:700;
+  color:var(--ink);margin-bottom:8px;line-height:1.35
+}
+.layer2 .dec-body,.layer2 .insight-body,.layer2 .limit-body{
+  font-size:14px;color:var(--text2);line-height:1.65
+}
+.layer2 .insight-head,.layer2 .limit-head{
+  font-size:15px;font-weight:600;color:var(--ink);margin-bottom:8px;line-height:1.35
+}
+.layer2 .dec-result{
+  font-size:12px;font-weight:500;color:var(--green);margin-top:12px;
+  padding-top:10px;border-top:1px solid var(--border2)
+}
+
+.layer2 .fig-block{
+  margin:20px 0;width:100%;max-width:100%;
+  border:none;border-radius:2px;overflow:hidden;
+  background:var(--l2-card);border-left:3px solid rgba(14,26,38,.08);
+  transition:transform .32s cubic-bezier(.16,1,.3,1),border-color .28s ease
+}
+.layer2 .fig-block:hover{border-left-color:var(--gold);transform:var(--l2-lift)}
+.layer2 .fig-block img{
+  width:100%;height:auto;display:block;
+  margin:0 auto;background:rgba(255,255,255,.45)
+}
+.layer2 .fig-block figcaption{
+  font-family:'Source Code Pro',monospace;font-size:11px;color:var(--text3);
+  padding:10px 16px;background:rgba(236,232,223,.4);letter-spacing:.02em;line-height:1.5
+}
+.layer2 .fig-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;
+  width:100%;max-width:100%;margin:20px 0
+}
+.layer2 .fig-grid .fig-block{margin:0}
+.layer2 .fig-full{width:100%;max-width:100%;margin:20px 0}
+
+.conc-bar{
+  width:100vw;margin:0;margin-left:calc(50% - 50vw);
+  padding:28px var(--content-inset) 32px;box-sizing:border-box;
+  background:var(--ink);border-top:2px solid var(--gold)
+}
+.conc-inner{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);align-items:start;gap:20px 36px;max-width:none}
+.conc-name{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:rgba(247,244,239,.94);line-height:1.24;margin:0}
+.conc-left{min-width:0}
+.conc-right{min-width:0;justify-self:end}
+.conc-links{list-style:none;display:grid;grid-template-columns:repeat(2,max-content);gap:10px 18px;margin:0;padding:0;justify-content:end}
+.conc-links a{font-size:13px;color:var(--gold2);text-decoration:none;border-bottom:1px solid rgba(176,137,64,.35);transition:color .2s,border-color .2s;display:inline-flex;align-items:center;gap:6px}
+.conc-links a:hover{color:#f7f4ef;border-bottom-color:var(--gold2)}
+.conc-links img{width:14px;height:14px;display:block;flex:0 0 14px}
+.conc-course{width:100%;margin:0;font-size:11px;letter-spacing:.06em;line-height:1.6;color:rgba(247,244,239,.78)}
+.conc-copy{width:100%;display:flex;flex-direction:column;gap:8px;margin-top:4px}
+@media(max-width:640px){
+  .conc-inner{grid-template-columns:1fr}
+  .conc-right{justify-self:start}
+  .conc-links{grid-template-columns:1fr;justify-content:start}
+}
+.layer2 .code-link{
+  font-family:'Source Code Pro',monospace;font-size:12px;color:var(--gold2);
+  text-decoration:none;border-bottom:1px solid rgba(176,137,64,.4);
+  transition:color .2s,border-color .2s
+}
+.layer2 .code-link:hover{color:#f7f4ef;border-bottom-color:var(--gold2)}
+
+.scroll-anchor{scroll-margin-top:calc(var(--topbar-h) + 12px)}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── MERGED INTERACTIVE ENTRY LAYER (topbar + hero + cards) ── */
+.mono{font-family:'Source Code Pro',monospace}
+
+.topbar{
+  position:sticky;top:0;z-index:120;
+  display:flex;flex-wrap:nowrap;align-items:center;justify-content:space-between;
+  gap:10px;min-height:var(--topbar-h);padding:0 var(--page-gutter);
+  background:linear-gradient(180deg,#121f2c 0%,var(--ink) 100%);
+  border-bottom:2px solid var(--red);
+  box-shadow:0 4px 18px rgba(14,26,38,.22)
+}
+.topbar-brand{flex:0 0 auto;min-width:max-content;max-width:none}
+.topbar-title{
+  font-family:'Playfair Display',serif;font-size:22px;font-weight:700;
+  color:#f7f4ef;letter-spacing:.01em;line-height:1.15;
+  white-space:nowrap
+}
+.topbar-meta{
+  font-size:10px;color:rgba(247,244,239,.82);letter-spacing:.05em;margin-top:3px;
+  white-space:nowrap
+}
+.topbar-link{
+  font-size:12px;font-weight:500;color:#f7f4ef;text-decoration:none;white-space:nowrap;
+  padding:8px 12px;border:1px solid rgba(176,137,64,.35);border-radius:2px;
+  transition:background .2s,border-color .2s
+}
+.topbar-link:hover{background:rgba(138,106,46,.2);border-color:var(--gold2);text-decoration:none}
+.topbar-actions{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.topbar-contacts{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.topbar-contacts a{width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;opacity:.95;transition:opacity .2s ease,transform .2s ease}
+.topbar-contacts a:hover{opacity:1;transform:translateY(-1px)}
+.topbar-contacts img{width:24px;height:24px;display:block}
+
+.topbar-nav{
+  display:flex;flex:1 1 auto;flex-wrap:nowrap;gap:4px;align-items:center;justify-content:center;
+  min-width:0;overflow-x:auto;scrollbar-width:thin;padding:6px 0
+}
+.topbar-nav button{
+  appearance:none;border:1px solid transparent;background:rgba(255,255,255,.06);
+  color:rgba(247,244,239,.78);flex-shrink:0;
+  padding:6px 10px;border-radius:2px;font-family:inherit;font-size:12px;font-weight:600;
+  line-height:1.2;cursor:pointer;transition:background .2s,color .2s,border-color .2s;white-space:nowrap
+}
+.topbar-link{flex-shrink:0}
+.topbar-nav button:hover{color:#f7f4ef;background:rgba(138,106,46,.18);border-color:rgba(176,137,64,.25)}
+.topbar-nav button.is-active{
+  color:#f7f4ef;background:rgba(138,106,46,.32);border-color:rgba(176,137,64,.5)
+}
+
+.hero{padding:28px 0 20px}
+.hero-layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(280px,.9fr);gap:24px 32px;align-items:start}
+.hero-kicker{
+  display:inline-block;margin-bottom:12px;padding:4px 10px;background:rgba(138,106,46,.1);
+  font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--amber)
+}
+.hero h1{
+  font-family:'Playfair Display',serif;font-size:clamp(30px,4vw,42px);line-height:1.12;color:var(--ink);
+  max-width:16ch;margin-bottom:14px
+}
+.hero-lede{font-size:17px;line-height:1.65;color:var(--text2);max-width:52ch;margin-bottom:0}
+
+.hero-metrics .metric-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,auto);gap:10px;width:100%
+}
+.metric-card{
+  padding:18px 16px;border:none;border-left:3px solid transparent;background:rgba(255,255,255,.62);
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.metric-card:hover{
+  transform:translateY(-5px);background:rgba(255,255,255,.95);border-left-color:var(--gold)
+}
+.metric-val{display:block;font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.metric-val.good{color:var(--green)}
+.metric-lbl{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
+
+.section{padding:32px 0 8px;scroll-margin-top:104px}
+.section-head{margin-bottom:16px}
+.section-num{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.section-head h2{font-family:'Playfair Display',serif;font-size:26px;color:var(--ink);margin-bottom:8px}
+.section-head p{font-size:15px;color:var(--text2);max-width:58ch}
+
+.card-grid{display:grid;gap:10px}
+.card-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.card-grid.cols-2{grid-template-columns:repeat(2,1fr)}
+.card-grid.cols-4{grid-template-columns:repeat(4,1fr)}
+.card, .tab-panel, .faq-card, .scenario-btn, .card.compare-bars{
+  border-radius:2px;border:none;border-left:3px solid transparent;background:rgba(255,255,255,.65);
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.card{padding:20px 18px}
+.card:hover,.tab-panel:hover,.faq-card:hover,.scenario-btn:hover,.card.compare-bars:hover{
+  transform:translateY(-5px);background:rgba(255,255,255,.95);border-left-color:var(--amber)
+}
+.card h3{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:8px}
+.card p{font-size:14px;color:var(--text2);line-height:1.6}
+.card-tag{display:inline-block;margin-top:10px;font-size:11px;color:var(--amber);font-weight:500}
+
+.tab-panel{display:block;padding:22px 20px;background:rgba(255,255,255,.65);margin-bottom:0}
+.tab-panel ul{margin:12px 0 0 18px;font-size:14px;color:var(--text2)}
+.tab-panel li{margin-bottom:6px}
+
+.model-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:stretch}
+.model-grid .tab-panel{height:100%;display:flex;flex-direction:column;padding:20px 18px}
+.model-grid .tab-panel h3{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:8px}
+.model-grid .tab-panel > p{font-size:14px;color:var(--text2);line-height:1.55;margin-bottom:4px}
+.model-grid .tab-panel ul{flex:1;margin-top:10px}
+
+.compare-bars{display:grid;gap:18px;padding:28px 24px;width:100%}
+.bar-row{display:grid;grid-template-columns:minmax(150px,200px) 1fr 92px;align-items:center;gap:16px;font-size:14px}
+.bar-track{height:18px;background:var(--paper2);border-radius:2px;overflow:hidden}
+.bar-fill{height:100%;background:var(--steel);border-radius:2px;width:0;transition:width .85s cubic-bezier(.16,1,.3,1),background .3s}
+.bar-fill.opt{background:var(--green)}
+.bar-val{text-align:right;font-weight:600;color:var(--ink)}
+
+.scenario-picker{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.scenario-btn{
+  padding:14px 12px;border:none;background:rgba(255,255,255,.55);text-align:left;cursor:pointer;transition:background .2s,transform .2s
+}
+.scenario-btn[aria-pressed="true"]{
+  background:rgba(138,106,46,.1);border-left-color:var(--gold);transform:translateY(-3px)
+}
+.scenario-btn .sc-id{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.scenario-btn .sc-name{font-size:13px;font-weight:600;color:var(--ink)}
+
+.faq-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:stretch}
+.faq-card{height:100%;display:flex;flex-direction:column;gap:8px;padding:20px 18px;background:rgba(255,255,255,.65)}
+.faq-card h3{font-size:15px;font-weight:600;color:var(--ink);line-height:1.35}
+.faq-card p{font-size:14px;color:var(--text2);line-height:1.65}
+
+/* Scroll reveal */
+[data-reveal]{opacity:0;transform:translateY(22px)}
+[data-reveal].is-visible{animation:cardRise 0.65s cubic-bezier(.16,1,.3,1) forwards}
+[data-reveal].is-visible:hover{animation:none;opacity:1}
+@keyframes cardRise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+
+@media (max-width: 900px){
+  .hero-layout{grid-template-columns:1fr;gap:20px}
+  .metric-grid{grid-template-columns:repeat(2,1fr)}
+  .model-grid, .faq-grid{grid-template-columns:1fr}
+  .card-grid.cols-3, .card-grid.cols-4, .scenario-picker{grid-template-columns:1fr 1fr}
+  .scenario-detail dl{grid-template-columns:1fr 1fr}
+  .bar-row{grid-template-columns:1fr;gap:4px}
+  .bar-val{text-align:left}
+}
+
+@media (max-width: 560px){
+  .metric-grid,.scenario-picker{grid-template-columns:1fr}
+  .bar-row{grid-template-columns:1fr;gap:4px}
+}
+
+/* ── merged interactive entry (replaces ribbon / layer1) ── */
+.technical-depth-wrap{display:none}
+.technical-depth-wrap.is-open{display:block;animation:slideDown .25s ease}
+.overview-end{
+  margin:20px 0 0;padding:14px var(--content-inset);
+  background:var(--ink);color:rgba(247,244,239,.85);
+  border-top:2px solid var(--red)
+}
+.overview-end-inner{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;
+  gap:16px 28px;align-items:center;text-align:left
+}
+.overview-end-copy .section-num{margin-bottom:6px}
+.overview-end h2{
+  font-family:'Playfair Display',serif;font-size:19px;color:#f7f4ef;
+  margin-bottom:6px;line-height:1.25
+}
+.overview-end p{
+  font-size:13px;line-height:1.55;color:rgba(247,244,239,.72);margin:0;max-width:56ch
+}
+.overview-end-action{display:flex;align-items:center;justify-content:flex-end;flex-shrink:0}
+.btn-open-technical{
+  font-family:'Source Code Pro',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  padding:10px 18px;background:var(--gold);color:#fff;border:none;cursor:pointer;
+  white-space:nowrap;transition:background .2s,transform .2s
+}
+.btn-open-technical:hover{background:var(--gold2);transform:translateY(-1px)}
+@media(max-width:720px){
+  .overview-end-inner{grid-template-columns:1fr;gap:12px}
+  .overview-end-action{justify-content:flex-start}
+}
+
+.mono{font-family:'Source Code Pro',monospace}
+.overview-body,
+.technical-depth-wrap.content-pad-tech{
+  padding-left:var(--content-inset);padding-right:var(--content-inset);
+  width:100%;box-sizing:border-box
+}
+main.page{width:100%;max-width:none;margin:0;padding:0 0 24px}
+.overview-body > .hero,
+.overview-body > .section{width:100%;max-width:100%}
+.hero{padding:24px 0 16px}
+.hero-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(260px,.85fr);gap:20px 28px;align-items:start}
+.hero-kicker{
+  display:inline-block;margin-bottom:12px;padding:4px 10px;background:rgba(138,106,46,.1);
+  font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)
+}
+.hero h1{
+  font-family:'Playfair Display',serif;font-size:clamp(30px,3.2vw,44px);line-height:1.12;color:var(--ink);
+  max-width:none;margin-bottom:12px
+}
+.hero-lede{font-size:17px;line-height:1.65;color:var(--text2);max-width:72ch}
+.hero-metrics .metric-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.metric-card,.card,.tab-panel,.faq-card,.scenario-btn,.card.compare-bars{
+  border:none;border-left:3px solid transparent;background:rgba(255,255,255,.62);
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.metric-card{padding:18px 16px}
+.metric-card:hover,.card:hover,.tab-panel:hover,.faq-card:hover,.scenario-btn:hover,.card.compare-bars:hover{
+  transform:translateY(-4px);background:rgba(255,255,255,.95);border-left-color:var(--gold)
+}
+.metric-val{display:block;font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.metric-val.good{color:var(--green)}
+.metric-lbl{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
+
+.section{padding:24px 0 4px;scroll-margin-top:calc(var(--topbar-h) + 12px)}
+.section-head{margin-bottom:12px}
+.section-num{font-family:'Source Code Pro',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.section-head h2{font-family:'Playfair Display',serif;font-size:26px;color:var(--ink);margin-bottom:6px}
+.section-head p{font-size:15px;color:var(--text2);max-width:none;line-height:1.6}
+.card-grid{display:grid;gap:10px}
+.card-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.card-grid.cols-2{grid-template-columns:repeat(2,1fr)}
+.card-grid.cols-4{grid-template-columns:repeat(4,1fr)}
+.card{padding:20px 18px}
+.card h3{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:8px}
+.card p{font-size:14px;color:var(--text2);line-height:1.6}
+.card-tag{display:inline-block;margin-top:10px;font-size:11px;color:var(--gold);font-weight:500}
+
+.model-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.tab-panel{padding:20px 18px;background:rgba(255,255,255,.62)}
+.tab-panel ul{margin:12px 0 0 18px;font-size:14px;color:var(--text2)}
+.tab-panel li{margin-bottom:6px}
+
+.compare-toggle{display:inline-flex;padding:3px;background:var(--paper2);margin-bottom:16px}
+.compare-toggle button{
+  padding:8px 16px;border:none;border-radius:2px;background:transparent;font-family:inherit;
+  font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:background .2s,color .2s
+}
+.compare-toggle button[aria-pressed="true"]{background:var(--card);color:var(--ink)}
+.compare-wrap{display:grid;gap:14px;width:100%}
+.compare-wrap[data-view="optimized"] #compareChartBaseline,
+.compare-wrap[data-view="baseline"] #compareChartOptimized{display:none}
+.compare-wrap[data-view="both"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+.compare-wrap[data-view="optimized"] .compare-bars,
+.compare-wrap[data-view="baseline"] .compare-bars{grid-column:1/-1}
+.compare-bars{display:grid;gap:18px;padding:28px 24px;width:100%}
+.compare-bars h3{font-size:16px;margin-bottom:4px}
+.bar-row{display:grid;grid-template-columns:minmax(150px,200px) 1fr 92px;align-items:center;gap:16px;font-size:14px}
+.bar-track{height:18px;background:var(--paper2);overflow:hidden;border-radius:2px}
+.bar-fill{height:100%;background:var(--steel);width:0;transition:width .85s cubic-bezier(.16,1,.3,1),background .3s}
+.compare-bars.bars-ready .bar-fill{transition-delay:var(--bar-delay,0ms)}
+.bar-fill.opt{background:var(--green)}
+.bar-val{text-align:right;font-weight:600;color:var(--ink)}
+
+.scenario-picker{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.scenario-btn{padding:14px 12px;text-align:left;cursor:pointer;background:rgba(255,255,255,.55)}
+.scenario-btn[aria-pressed="true"]{background:rgba(138,106,46,.1);border-left-color:var(--gold)}
+.sc-id{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.sc-name{font-size:13px;font-weight:600;color:var(--ink)}
+
+.faq-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.faq-card{padding:20px 18px;height:100%}
+.faq-card h3{font-size:15px;font-weight:600;color:var(--ink);line-height:1.35;margin-bottom:8px}
+.faq-card p{font-size:14px;color:var(--text2);line-height:1.65}
+
+.technical-bridge{
+  width:100%;max-width:none;margin:0;
+  padding:32px var(--content-inset) 24px;
+  background:var(--ink);color:rgba(247,244,239,.85);
+  border-top:2px solid var(--gold)
+}
+.technical-depth-wrap.is-open .technical-bridge{border-top:none}
+.technical-bridge .section-num{color:var(--gold2);margin-bottom:10px}
+.technical-bridge h2{
+  font-family:'Playfair Display',serif;font-size:26px;color:#f7f4ef;
+  margin-bottom:10px;line-height:1.2
+}
+.technical-bridge p{font-size:15px;line-height:1.65;max-width:none;color:rgba(247,244,239,.72)}
+
+[data-reveal]{opacity:0;transform:translateY(18px)}
+[data-reveal].is-visible{animation:cardRise .65s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes cardRise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+@media(max-width:900px){
+  .hero-layout{grid-template-columns:1fr}
+  .model-grid,.faq-grid,.compare-wrap[data-view="both"]{grid-template-columns:1fr}
+  .card-grid.cols-3,.card-grid.cols-4,.scenario-picker{grid-template-columns:1fr 1fr}
+  .layer2 .scenario-grid,.layer2 .metrics-strip{grid-template-columns:1fr 1fr}
+  .layer2 .dec-grid,.layer2 .insight-grid,.layer2 .limit-grid,.layer2 .fig-grid{grid-template-columns:1fr}
+  .formulation-eq-grid{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .metric-grid,.scenario-picker,.card-grid.cols-2{grid-template-columns:1fr}
+  .bar-row{grid-template-columns:1fr;gap:4px}
+  .bar-val{text-align:left}
+  .layer2 .scenario-grid,.layer2 .metrics-strip{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  [data-reveal]{opacity:1;transform:none}
+  .layer2 .l2-sec{opacity:1;transform:none;animation:none!important}
+  .layer2 .callout:hover,.layer2 .eq-block:hover,.layer2 .sc:hover,
+  .layer2 .ms:hover,.layer2 .dec:hover,.layer2 .insight:hover,.layer2 .limit:hover,
+  .layer2 .fig-block:hover,.layer2 .dt:hover{transform:none}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+
+/* IV&V project — pipeline, figures, test cases */
+.layer2 .pipeline-diagram{
+  max-width:min(640px,100%);
+  margin:14px auto;
+  padding:28px 24px;
+  background:var(--l2-card);
+  border-left:3px solid rgba(14,26,38,.08);
+  border-radius:2px;
+  display:flex;
+  flex-direction:column;
+  align-items:center
+}
+.layer2 .pipeline-diagram .pd-title{font-family:'Source Code Pro',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);text-align:center;margin-bottom:24px}
+.layer2 .mf-col{display:flex;flex-direction:column;align-items:center}
+.layer2 .mf-node{width:100%;max-width:340px;padding:14px 20px;text-align:center;background:var(--paper);border:1.5px solid var(--ink)}
+.layer2 .mf-node .mf-label{font-family:'Playfair Display',serif;font-size:14px;color:var(--ink);display:block;margin-bottom:4px}
+.layer2 .mf-node .mf-sub{font-family:'Source Code Pro',monospace;font-size:9px;color:var(--text3);line-height:1.5}
+.layer2 .mf-node.pd-score{border-color:var(--red);background:rgba(139,34,24,.04)}
+.layer2 .mf-node.pd-out{border-color:var(--green);flex:1;max-width:none;padding:12px}
+.layer2 .mf-arrow{width:2px;height:24px;background:var(--red);margin:0 auto;position:relative}
+.layer2 .mf-arrow::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--red)}
+.layer2 .mf-fork{width:100%;max-width:540px}
+.layer2 .mf-fork-stem{width:2px;height:20px;background:var(--red);margin:0 auto}
+.layer2 .mf-fork-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding-top:18px;position:relative}
+.layer2 .mf-fork-grid::before{content:'';position:absolute;top:0;left:16.67%;right:16.67%;height:2px;background:var(--ink);opacity:.2}
+.layer2 .mf-fork-grid .mf-node::before{content:'';display:block;width:2px;height:12px;background:var(--red);margin:0 auto 8px}
+.layer2 .code-block{background:var(--ink);padding:20px 24px;margin:14px 0;border-radius:2px;overflow-x:auto}
+.layer2 .cb-label{font-family:'Source Code Pro',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold2);display:block;margin-bottom:10px}
+.layer2 .code-block pre{font-family:'Source Code Pro',monospace;font-size:12px;color:rgba(255,255,255,.82);line-height:1.7}
+.layer2 .tok-key{color:#f0a8a0}.layer2 .tok-str{color:#a8d4a8}.layer2 .tok-com{color:rgba(255,255,255,.35)}
+.layer2 .fig-block .fig-media{
+  display:flex;align-items:center;justify-content:center;
+  background:#fff;padding:16px 18px;
+  overflow:hidden; /* no scroll frames */
+}
+/* Never crop figures: preserve native aspect ratio */
+.layer2 .fig-block img{
+  width:auto;max-width:100%;
+  height:auto;max-height:100%;
+  object-fit:contain;object-position:center;
+}
+/* Size caps (no scrolling, no “giant” blocks) */
+.layer2 .fig-block.ar-chart .fig-media{max-height:min(52vh,520px)}
+.layer2 .fig-block.ar-heatmap .fig-media{max-height:min(52vh,520px)}
+.layer2 .fig-block.ar-mbse-lg .fig-media{max-height:min(54vh,560px)}
+
+/* Two-up / responsive figure rows */
+.layer2 .fig-row{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;margin:14px 0
+}
+.layer2 .fig-row .fig-block{margin:0}
+.layer2 .fig-full{margin:14px 0}
+.layer2 .fig-row .fig-media{max-height:min(46vh,460px)}
+/* Allow the IDEF0 architecture diagram to show at full height (no crop) */
+.layer2 .fig-block.fig-tall .fig-media{max-height:none}
+/* Shrink full-height evidence diagrams without cropping (centered by flex) */
+.layer2 .fig-block.fig-tall img{
+  transform:scale(.8);
+  transform-origin:center;
+}
+/* Reduce surrounding whitespace for tall diagrams */
+.layer2 .fig-block.fig-tall{
+  margin:6px 0;
+}
+.layer2 .fig-block.fig-tall .fig-media{
+  padding:0;
+}
+.layer2 .fig-block.fig-tall figcaption{
+  padding:4px 8px;
+}
+/* Extra tightening for the C3-Q05 invariant-failure diagram tile */
+.layer2 .fig-block.fig-c3q05{
+  margin:2px auto !important;
+  max-width:80% !important;
+}
+.layer2 .fig-block.fig-c3q05 .fig-media{
+  padding:0 !important;
+}
+.layer2 .fig-block.fig-c3q05 img{
+  width:80% !important;
+  max-width:80% !important;
+  transform:none !important;
+}
+.layer2 .fig-block.fig-c3q05 figcaption{
+  padding:1px 4px !important;
+}
+/* Keep TC-2 side-by-side charts visually consistent */
+.layer2 .fig-block.fig-tc2 .fig-media{
+  height:360px;
+  max-height:360px;
+  padding:8px 10px;
+}
+.layer2 .fig-block.fig-tc2 img{
+  width:100%;
+  max-width:100%;
+  height:100%;
+  object-fit:contain;
+}
+.layer2 .fig-flow{display:flex;align-items:center;gap:10px;margin:8px 0 16px;font-family:'Source Code Pro',monospace;font-size:10px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase}
+.layer2 .fig-flow::before,.layer2 .fig-flow::after{content:'';flex:1;max-width:100px;height:1px;background:var(--border)}
+.layer2 .subsec-h{font-family:'Playfair Display',serif;font-size:20px;color:var(--ink);margin:20px 0 10px}
+.layer2 .subsec-h span{font-family:'Source Code Pro',monospace;font-size:10px;color:var(--gold);display:block;margin-bottom:4px;letter-spacing:.1em;text-transform:uppercase}
+.layer2 .lifecycle-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:14px 0}
+.layer2 .lc{padding:12px;background:var(--l2-card);font-size:12px;color:var(--text2);line-height:1.5;border-radius:2px}
+.layer2 .lc strong{display:block;font-family:'Source Code Pro',monospace;font-size:9px;color:var(--gold);margin-bottom:4px}
+.layer2 .tc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:14px 0}
+.layer2 .tc{padding:14px 12px;background:var(--l2-card);text-align:center;border-radius:2px}
+.layer2 .tc-id{font-family:'Source Code Pro',monospace;font-size:9px;color:var(--gold);letter-spacing:.1em;text-transform:uppercase}
+.layer2 .tc-name{font-size:11px;color:var(--text2);margin:6px 0}
+.layer2 .tc-pass{font-family:'Source Code Pro',monospace;font-size:11px;color:var(--green);font-weight:500}
+.layer2 .app-screen{border:.5px solid var(--border);margin:14px 0;overflow:hidden;border-radius:2px}
+.layer2 .app-bar{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--ink2)}
+.layer2 .app-dot{width:8px;height:8px;border-radius:50%}
+.layer2 .app-url{flex:1;font-family:'Source Code Pro',monospace;font-size:10px;color:var(--mist);padding:4px 10px;background:rgba(255,255,255,.06)}
+.layer2 .app-content{padding:20px;background:var(--paper2)}
+.layer2 .app-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.layer2 .app-card{padding:12px;background:var(--paper)}
+.layer2 .app-card-lbl{font-family:'Source Code Pro',monospace;font-size:9px;color:var(--text3);text-transform:uppercase}
+.layer2 .app-card-val{font-family:'Playfair Display',serif;font-size:20px;color:var(--ink)}
+.layer2 .app-card-val.pass{color:var(--green)}
+.overview-figure{margin:8px 0 0;border:.5px solid var(--border);background:#fff;padding:16px}
+.overview-figure img{width:100%;height:auto;max-height:min(42vw,380px);object-fit:contain;display:block;margin:0 auto}
+.overview-figure figcaption{font-family:'Source Code Pro',monospace;font-size:10px;color:var(--text3);padding:10px 0 0;line-height:1.5}
+.bar-fill.rust{background:var(--red)}
+@media(max-width:900px){.layer2 .lifecycle-grid,.layer2 .tc-grid,.layer2 .mf-fork-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.layer2 .lifecycle-grid,.layer2 .tc-grid,.layer2 .mf-fork-grid{grid-template-columns:1fr}}
+@media(max-width:900px){.layer2 .fig-row{grid-template-columns:1fr}}
+
+
+/* ── SHARED L2 CARD SYSTEM ── */
+/* Scoped to .layer2 so overview cards stay unchanged. Match infra / IVV / turbine. */
+
+.layer2{
+  --l2-card:rgba(255,255,255,.62);
+  --l2-card-hover:rgba(255,255,255,.95);
+  --l2-lift:translateY(-4px);
+  --content-gap:12px;
+  background:var(--paper);
+  padding:0 0 48px;
+}
+
+.layer2 .l2-nav{
+  position:sticky;top:var(--topbar-h,56px);z-index:90;
+  display:flex;flex-wrap:nowrap;align-items:center;gap:4px;
+  width:100%;margin:0;padding:6px 0 10px;min-height:var(--topbar-h,56px);box-sizing:border-box;
+  background:rgba(246,242,235,.92);backdrop-filter:blur(10px);
+  border-bottom:none;overflow-x:auto;scrollbar-width:thin
+}
+.layer2 .l2-nav-btn,
+.layer2 .l2-btn,
+.layer2 .l2-nav-item{
+  appearance:none;border:1px solid transparent;background:rgba(14,26,38,.06);
+  font-family:inherit;font-size:12px;font-weight:600;
+  padding:7px 11px;border-radius:2px;color:var(--text2);
+  cursor:pointer;white-space:nowrap;
+  transition:background .2s,color .2s,border-color .2s
+}
+.layer2 .l2-nav-btn:hover,.layer2 .l2-btn:hover,.layer2 .l2-nav-item:hover{
+  color:var(--ink);background:rgba(138,106,46,.12);border-color:rgba(138,106,46,.2)
+}
+.layer2 .l2-nav-btn.active,.layer2 .l2-btn.active,.layer2 .l2-nav-item.active{
+  color:var(--ink);background:rgba(138,106,46,.2);border-color:rgba(138,106,46,.35)
+}
+
+.layer2 .l2-sec,
+.layer2 .l2-section{
+  width:100%;max-width:none;margin:0;padding:28px 0 6px;border-bottom:none;
+  display:flex;flex-direction:column;gap:var(--content-gap);
+  opacity:0;transform:translateY(14px)
+}
+.layer2 .l2-sec > .l2-h,
+.layer2 .l2-sec > .l2-sec-header,
+.layer2 .l2-section > .l2-h,
+.layer2 .l2-section > .l2-sec-header{margin-bottom:0}
+.layer2 .l2-sec .prose,
+.layer2 .l2-section .prose,
+.layer2 .l2-sec .callout,
+.layer2 .l2-section .callout,
+.layer2 .l2-sec .eq-block,
+.layer2 .l2-sec .dt,
+.layer2 .l2-sec .arch-table,
+.layer2 .l2-sec .tool-table,
+.layer2 .l2-sec .scenario-grid,
+.layer2 .l2-sec .metrics-strip,
+.layer2 .l2-sec .metric-strip,
+.layer2 .l2-sec .perf-strip,
+.layer2 .l2-sec .dec-grid,
+.layer2 .l2-sec .insight-grid,
+.layer2 .l2-sec .limit-grid,
+.layer2 .l2-sec .compare-grid,
+.layer2 .l2-sec .contrib-grid,
+.layer2 .l2-sec .subsys-grid,
+.layer2 .l2-sec .agent-flow,
+.layer2 .l2-sec .tool-chain,
+.layer2 .l2-sec .fig-block,
+.layer2 .l2-sec .fig-grid,
+.layer2 .l2-sec .fig-full,
+.layer2 .l2-sec .pipeline-diagram,
+.layer2 .l2-sec .mermaid-grid,
+.layer2 .l2-sec .mermaid-flow,
+.layer2 .l2-sec .flow-wrap,
+.layer2 .l2-sec .code-block,
+.layer2 .l2-sec .iw-panel,
+.layer2 .l2-sec .app-screen{margin:0}
+
+.technical-depth-wrap.is-open .layer2 .l2-sec,
+.technical-depth-wrap.is-open .layer2 .l2-section{
+  animation:l2SecIn .55s cubic-bezier(.16,1,.3,1) forwards
+}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(2),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(2){animation-delay:.04s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(3),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(3){animation-delay:.08s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(4),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(4){animation-delay:.12s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(5),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(5){animation-delay:.16s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(6),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(6){animation-delay:.2s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(7),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(7){animation-delay:.24s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(8),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(8){animation-delay:.28s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(9),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(9){animation-delay:.32s}
+@keyframes l2SecIn{to{opacity:1;transform:none}}
+
+.layer2 .l2-h,
+.layer2 .l2-sec-header{
+  display:block;margin-bottom:18px;padding-bottom:0;border-bottom:none
+}
+.layer2 .l2-n,
+.layer2 .l2-sec-n{
+  display:block;font-family:'Source Code Pro',monospace;
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold,var(--gold2,var(--accent2,var(--teal2,var(--cobalt2)))));margin-bottom:6px
+}
+.layer2 .l2-t,
+.layer2 .l2-sec-t{
+  font-family:'Playfair Display',serif;font-size:26px;font-weight:700;
+  color:var(--ink);line-height:1.2;margin:0
+}
+.layer2 .prose{
+  max-width:none;font-size:15px;color:var(--text2);line-height:1.65;margin-bottom:0
+}
+.layer2 .prose p{margin-bottom:12px}
+.layer2 .prose p:last-child{margin-bottom:0}
+.layer2 .prose strong{color:var(--ink);font-weight:600}
+
+.layer2 .l2-card-surface,
+.layer2 .callout,
+.layer2 .eq-block,
+.layer2 .insight,
+.layer2 .limit,
+.layer2 .dec,
+.layer2 .contrib,
+.layer2 .compare-card,
+.layer2 .agent-box,
+.layer2 .ss,
+.layer2 .mermaid-card,
+.layer2 .mermaid-flow-card{
+  background:var(--l2-card);border:none;border-left:3px solid transparent;
+  border-radius:2px;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .callout,
+.layer2 .eq-block,
+.layer2 .insight,
+.layer2 .limit,
+.layer2 .dec,
+.layer2 .contrib,
+.layer2 .compare-card,
+.layer2 .agent-box,
+.layer2 .ss,
+.layer2 .mermaid-card,
+.layer2 .mermaid-flow-card{padding:20px 18px}
+.layer2 .callout:hover,
+.layer2 .eq-block:hover,
+.layer2 .insight:hover,
+.layer2 .limit:hover,
+.layer2 .dec:hover,
+.layer2 .contrib:hover,
+.layer2 .compare-card:hover,
+.layer2 .agent-box:hover,
+.layer2 .ss:hover,
+.layer2 .mermaid-card:hover,
+.layer2 .mermaid-flow-card:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);
+  border-left-color:var(--gold,var(--gold2,var(--accent,var(--teal2,var(--cobalt2)))))
+}
+.layer2 .callout{
+  font-size:14px;line-height:1.65;color:var(--text2);
+  border-left-color:var(--gold,var(--gold2,var(--accent,var(--teal2,var(--cobalt2)))));
+  background:rgba(255,255,255,.72)
+}
+.layer2 .callout strong{color:var(--ink);font-weight:600}
+
+.layer2 .dt,
+.layer2 .arch-table,
+.layer2 .tool-table{
+  width:100%;border-collapse:collapse;margin:0;font-size:14px;
+  background:var(--l2-card);border-radius:2px;overflow:hidden;
+  border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .dt:hover,
+.layer2 .arch-table:hover,
+.layer2 .tool-table:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);
+  border-left-color:var(--gold,var(--gold2,var(--accent,var(--teal2,var(--cobalt2)))))
+}
+.layer2 .dt th,
+.layer2 .arch-table th,
+.layer2 .tool-table th{
+  font-family:'Source Code Pro',monospace;font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--text3);padding:12px 16px;text-align:left;
+  background:rgba(236,232,223,.55);border-bottom:none
+}
+.layer2 .dt td,
+.layer2 .arch-table td,
+.layer2 .tool-table td{
+  padding:12px 16px;border-bottom:1px solid var(--border2);
+  color:var(--text2);vertical-align:top;line-height:1.55
+}
+.layer2 .dt tr:last-child td,
+.layer2 .arch-table tr:last-child td,
+.layer2 .tool-table tr:last-child td{border-bottom:none}
+.layer2 .dt td:first-child,
+.layer2 .arch-table td:first-child,
+.layer2 .tool-table td:first-child{
+  font-family:'Source Code Pro',monospace;font-size:11px;
+  color:var(--gold,var(--gold2,var(--accent2,var(--teal2,var(--cobalt2)))));font-weight:500
+}
+.layer2 .dt td.green,.layer2 .arch-table td.green{color:var(--green);font-weight:600}
+.layer2 .dt td.red,.layer2 .arch-table td.red{color:var(--red);font-weight:600}
+
+.layer2 .metrics-strip,
+.layer2 .metric-strip,
+.layer2 .perf-strip{
+  display:grid;gap:10px;background:transparent;margin:0
+}
+.layer2 .metrics-strip,
+.layer2 .metric-strip{grid-template-columns:repeat(4,1fr)}
+.layer2 .perf-strip{grid-template-columns:repeat(4,1fr)}
+.layer2 .ms,
+.layer2 .ms-item,
+.layer2 .ps{
+  padding:18px 16px;background:var(--l2-card);border-radius:2px;
+  border:none;border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .ms:hover,
+.layer2 .ms-item:hover,
+.layer2 .ps:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);
+  border-left-color:var(--gold,var(--gold2,var(--accent,var(--teal2,var(--cobalt2)))))
+}
+.layer2 .ms-lbl,
+.layer2 .ps-lbl{
+  font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text3);display:block;margin-bottom:6px
+}
+.layer2 .ms-val,
+.layer2 .ps-val{
+  font-family:'Playfair Display',serif;font-size:24px;font-weight:700;
+  color:var(--ink);display:block;margin-bottom:4px
+}
+.layer2 .ms-val.green,.layer2 .ms-val.cobalt,.layer2 .ps-val.teal{color:var(--green)}
+.layer2 .ms-val.cobalt{color:var(--accent,var(--cobalt))}
+.layer2 .ms-val.teal{color:var(--teal)}
+.layer2 .ms-note,.layer2 .ps-note{font-size:13px;color:var(--text2);line-height:1.5}
+
+.layer2 .scenario-grid{grid-template-columns:repeat(4,1fr)}
+.layer2 .sc{
+  padding:20px 18px;background:var(--l2-card);border-radius:2px;
+  border:none;border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .sc:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);
+  border-left-color:var(--gold,var(--gold2,var(--accent,var(--teal2,var(--cobalt2)))))
+}
+
+.layer2 .dec-grid,
+.layer2 .insight-grid,
+.layer2 .limit-grid,
+.layer2 .compare-grid,
+.layer2 .contrib-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
+  background:transparent;margin:0
+}
+.layer2 .subsys-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+  background:transparent;margin:0
+}
+.layer2 .insight-head,
+.layer2 .limit-head,
+.layer2 .contrib-head,
+.layer2 .compare-card h4{
+  font-size:15px;font-weight:600;color:var(--ink);margin-bottom:8px;line-height:1.35
+}
+.layer2 .compare-card h4{font-family:'Playfair Display',serif;font-size:18px}
+.layer2 .insight-body,
+.layer2 .limit-body,
+.layer2 .contrib-body,
+.layer2 .compare-card p{font-size:14px;color:var(--text2);line-height:1.65}
+.layer2 .ss-name{
+  font-family:'Source Code Pro',monospace;font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--teal2,var(--accent2,var(--cobalt2)));margin-bottom:8px
+}
+.layer2 .ss-req{font-size:12px;color:var(--text2);line-height:1.6}
+
+.layer2 .agent-flow{
+  display:flex;align-items:stretch;gap:10px;margin:0;background:transparent
+}
+.layer2 .agent-arrow{
+  display:flex;align-items:center;padding:0 2px;font-size:20px;color:var(--text3);
+  background:transparent;flex-shrink:0
+}
+.layer2 .agent-num{
+  font-family:'Source Code Pro',monospace;font-size:10px;
+  color:var(--accent2,var(--cobalt2));letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px
+}
+.layer2 .agent-name{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:8px}
+.layer2 .agent-desc{font-size:12px;color:var(--text2);line-height:1.65}
+
+.layer2 .tool-chain{display:flex;flex-direction:column;gap:10px;margin:0;background:transparent}
+.layer2 .tc-row{
+  display:grid;grid-template-columns:36px minmax(140px,.9fr) 1fr minmax(140px,.75fr);
+  gap:1px;background:var(--border);border-radius:2px;overflow:hidden;
+  border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),border-color .28s ease
+}
+.layer2 .tc-row:hover{transform:var(--l2-lift);border-left-color:var(--gold,var(--gold2))}
+.layer2 .tc-num,.layer2 .tc-name,.layer2 .tc-purpose,.layer2 .tc-leads{
+  padding:14px 16px;background:var(--l2-card);font-size:12px;color:var(--text2);line-height:1.5
+}
+.layer2 .tc-num{font-family:'Source Code Pro',monospace;color:var(--teal2,var(--accent2));background:var(--paper2)}
+.layer2 .tc-name{font-weight:600;color:var(--ink)}
+.layer2 .tc-leads{font-family:'Source Code Pro',monospace;font-size:10px;text-align:right;background:var(--paper2)}
+
+.layer2 .fig-block,
+.layer2 .fig-full{
+  margin:0;width:100%;max-width:100%;border:none;border-radius:2px;overflow:hidden;
+  background:var(--l2-card);border-left:3px solid rgba(14,26,38,.08);
+  transition:transform .32s cubic-bezier(.16,1,.3,1),border-color .28s ease
+}
+.layer2 .fig-block:hover,.layer2 .fig-full:hover{
+  border-left-color:var(--gold,var(--gold2));transform:var(--l2-lift)
+}
+.layer2 .fig-block img,.layer2 .fig-full img{
+  display:block;width:auto;max-width:100%;height:auto;
+  max-height:min(72vh,520px);object-fit:contain;object-position:center;
+  margin:0 auto;background:rgba(255,255,255,.45)
+}
+.layer2 .fig-block figcaption{
+  font-family:'Source Code Pro',monospace;font-size:11px;color:var(--text3);
+  padding:10px 16px;background:rgba(236,232,223,.4);line-height:1.5
+}
+.layer2 .fig-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;margin:0
+}
+.layer2 .fig-grid .fig-block{margin:0}
+
+.layer2 .mermaid-grid,
+.layer2 .mermaid-flow{max-width:min(880px,100%);margin:0}
+.layer2 .mermaid-flow-grid{display:flex;flex-direction:column;gap:22px}
+.layer2 .mermaid-card h3,
+.layer2 .mermaid-flow-card h3{
+  font-family:'Playfair Display',serif;font-size:19px;color:var(--ink);margin-bottom:6px
+}
+.layer2 .mermaid-card p,
+.layer2 .mermaid-flow-card p{font-size:13px;color:var(--text3);line-height:1.6;margin-bottom:16px}
+.layer2 .mermaid-chart .mermaid,
+.layer2 .mermaid{display:flex;justify-content:center;overflow-x:auto;padding:4px 0}
+.layer2 .mermaid svg{max-width:100%;height:auto;display:block;margin:0 auto}
+
+.layer2 .pipeline-diagram{
+  max-width:min(640px,100%);margin:0 auto;padding:28px 24px 32px;
+  background:var(--l2-card);border-radius:2px;border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease;
+  display:flex;flex-direction:column;align-items:center;width:100%;box-sizing:border-box
+}
+.layer2 .pipeline-diagram:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);
+  border-left-color:var(--gold,var(--gold2))
+}
+
+.layer2 .code-block{
+  margin:0;padding:20px 24px;border-radius:2px;overflow-x:auto;
+  background:var(--ink);border-left:3px solid rgba(255,255,255,.12);
+  transition:border-color .28s ease,transform .32s cubic-bezier(.16,1,.3,1)
+}
+.layer2 .code-block:hover{border-left-color:var(--gold2,var(--gold))}
+.layer2 .code-block pre,
+.layer2 .code-block .cb-label{color:rgba(255,255,255,.85)}
+
+.layer2 .flow-wrap,
+.layer2 .iw-panel{
+  margin:0;border-radius:2px;overflow:hidden;
+  border-left:3px solid rgba(255,255,255,.15);
+  transition:border-color .28s ease
+}
+.layer2 .flow-wrap:hover,.layer2 .iw-panel:hover{
+  border-left-color:var(--gold2,var(--gold,var(--accent2)))
+}
+
+.layer2 .app-screen{
+  margin:0;border-radius:2px;overflow:hidden;
+  background:var(--l2-card);border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .app-screen:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);
+  border-left-color:var(--gold,var(--gold2))
+}
+
+@media(max-width:900px){
+  .layer2 .metrics-strip,.layer2 .metric-strip,.layer2 .perf-strip,
+  .layer2 .scenario-grid{grid-template-columns:repeat(2,1fr)}
+  .layer2 .subsys-grid{grid-template-columns:1fr 1fr}
+  .layer2 .agent-flow{flex-direction:column}
+  .layer2 .agent-arrow{transform:rotate(90deg);justify-content:center;padding:4px 0}
+  .layer2 .tc-row{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  .layer2 .dec-grid,.layer2 .insight-grid,.layer2 .limit-grid,
+  .layer2 .compare-grid,.layer2 .contrib-grid,.layer2 .fig-grid,
+  .layer2 .metrics-strip,.layer2 .metric-strip,.layer2 .perf-strip,
+  .layer2 .scenario-grid,.layer2 .subsys-grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  .layer2 .l2-sec,.layer2 .l2-section{opacity:1;transform:none;animation:none!important}
+  .layer2 .callout:hover,.layer2 .insight:hover,.layer2 .ms:hover,.layer2 .fig-block:hover{
+    transform:none
+  }
+}
+
+/* ── SHARED L2 CARD EXTENSIONS ── */
+/* (reserved — extensions merged into block above) */
+
+</style>
+</head>
+<body>
+ CASE STUDY TEMPLATE. See CASE_STUDY_TEMPLATE.md 
+<!-- Quick start: cp case_study_template.html my_project.html → edit sections marked TEMPLATE -->
+<header class="topbar">
+<div class="topbar-brand">
+<div class="topbar-title">IV&amp;V of a Locally Deployed LLM System</div>
+<div class="topbar-meta mono">SYSEN 5250 · Anurag Yadav · May 2026</div>
+</div>
+<nav aria-label="Page sections" class="topbar-nav mono">
+<button class="is-active" data-section="overview" type="button">Overview</button>
+<button data-section="problem" type="button">Problem</button>
+<button data-section="model" type="button">Model</button>
+<button data-section="results" type="button">Results</button>
+<button data-section="testcases" type="button">Test cases</button>
+<button data-section="faq" type="button">FAQ</button>
+<button data-section="technical-depth" type="button">Technical</button>
+</nav>
+<div class="topbar-actions">
+<a aria-label="Download resume (PDF)" class="topbar-link mono" href="/assets/resume/Anurag_Yadav_Resume.pdf" target="_blank" rel="noopener noreferrer" download>Resume</a>
+<div aria-label="Contact links" class="topbar-contacts">
+<a aria-label="Email yadavanurag560@gmail.com" href="mailto:yadavanurag560@gmail.com"><img alt="" src="assets/footer-icons/email.png"/></a>
+<a aria-label="Email ay468@cornell.edu" href="mailto:ay468@cornell.edu"><img alt="" src="assets/footer-icons/email2.png"/></a>
+<a aria-label="Call (607) 262-3840" href="tel:+16072623840"><img alt="" src="assets/footer-icons/phone.png"/></a>
+<a aria-label="LinkedIn" href="https://www.linkedin.com/in/anurag-systems" rel="noopener noreferrer" target="_blank"><img alt="" src="assets/footer-icons/linkedin.png"/></a>
+<a aria-label="GitHub — Gemma 4B Integration V&amp;V repository" href="https://github.com/anuragyadav21/Gemma-4B-Integration-V-V" rel="noopener noreferrer" target="_blank"><img alt="" src="assets/footer-icons/github.png"/></a>
+</div>
+</div>
+</header>
+<main class="page">
+<div class="overview-body">
+<header class="hero" id="overview">
+<div class="hero-layout">
+<div class="hero-copy">
+<span class="hero-kicker mono">V&amp;V · Local LLM · Innoslate · Statistical TC suite</span>
+<h1>Local Gemma 4B. Five temperatures. Seven requirements, five tests.</h1>
+<p class="hero-lede">
+          Independent verification and validation of a locally deployed Gemma 4B model (Ollama) on a fixed 50-question benchmark at five decoding temperatures with five runs per cell. Every response was scored against an established evaluation rulebook; the work couples an Innoslate systems model (VR1–VR7), architecture diagrams, and formal statistical test cases TC-1–TC-5 with requirement traceability.
+        </p>
+</div>
+<div class="hero-metrics">
+<div class="metric-grid">
+<div class="metric-card" data-reveal=""><span class="metric-val good">PASS</span><span class="metric-lbl">All 5 test cases</span></div>
+<div class="metric-card" data-reveal=""><span class="metric-val">1,250</span><span class="metric-lbl">Scored observations</span></div>
+<div class="metric-card" data-reveal=""><span class="metric-val good">93.6%</span><span class="metric-lbl">Cells CV &lt; 0.10</span></div>
+<div class="metric-card" data-reveal=""><span class="metric-val good">T = 0.0</span><span class="metric-lbl">Pareto-optimal temp</span></div>
+</div>
+</div>
+</div>
+<figure class="overview-figure" data-reveal="">
+<img alt="TC-5 Pareto trade study" loading="lazy" src="../../outputs/figures/visualizations/plot08_trade_study_pareto_bubble.png"/>
+<figcaption>Headline result · TC-5 quality–variability trade-off (T=0.0 on Pareto frontier)</figcaption>
+</figure>
+</header>
+<section class="section" id="problem">
+<div class="section-head">
+<div class="section-num mono">01 · Problem</div>
+<h2>Why local LLMs need systems V&amp;V</h2>
+<p>Stakeholders need evidence that outputs are stable, correct, timely, and safe, not judged ad hoc per response.</p>
+</div>
+<div class="card-grid cols-3">
+<article class="card" data-reveal="">
+<h3>Verification requirements</h3>
+<p>Seven VRs in Innoslate cover consistency, correctness, latency, variability, hallucination control, semantic alignment, and multi-criteria acceptability, each allocated to formal TC-1–TC-5 gates.</p>
+<span class="card-tag mono">VR1–VR7 → TC-1–TC-5</span>
+</article>
+<article class="card" data-reveal="">
+<h3>Controlled experiment</h3>
+<p>50 questions × 5 temperatures × 5 runs = 1,250 scored observations. Fixed rulebook: weighted Likert dimensions, binary gates, semantic similarity, and latency.</p>
+<span class="card-tag mono">1,250 rows</span>
+</article>
+<article class="card" data-reveal="">
+<h3>Recorded acceptance</h3>
+<p>All five test cases PASS against documented thresholds in <code>acceptance_criteria.csv</code>. Formal PASS does not erase domain risk or invariant item failures.</p>
+<span class="card-tag mono">5 / 5 PASS</span>
+</article>
+</div>
+</section>
+<section class="section" id="model">
+<div class="section-head">
+<div class="section-num mono">02 · Model</div>
+<h2>MBSE structure and evaluation pipeline</h2>
+<p>Innoslate traceability, rulebook scoring, and statistical test execution, three layers side by side.</p>
+</div>
+<div class="model-grid">
+<div class="tab-panel" data-reveal="">
+<h3>Innoslate MBSE</h3>
+<p><strong>147 entities</strong> in the export: VR→TC <code>verifies</code> relationships, ten-part V&amp;V lifecycle, course artifacts EC.1–EC.7.</p>
+<ul>
+<li>Use cases, IDEF0, sequence views (PNG exports)</li>
+<li>Excel traceability matrix with observed PASS</li>
+<li>LML 4.94 model under <code>data/raw/systems/</code></li>
+</ul>
+</div>
+<div class="tab-panel" data-reveal="">
+<h3>Experimental design</h3>
+<p><strong>50-question benchmark</strong> across capability categories at temperatures 0.0, 0.3, 0.5, 0.7, 1.0.</p>
+<ul>
+<li>Five independent runs per (question, temperature) cell</li>
+<li>Composite score from weighted rubric (correctness 30%, etc.)</li>
+<li>Master dataset via <code>build_master_dataset.py</code></li>
+</ul>
+</div>
+<div class="tab-panel" data-reveal="">
+<h3>Statistical test suite</h3>
+<p><strong>Five formal test cases</strong> with scipy/statsmodels acceptance gates and a ten-plot evidence suite.</p>
+<ul>
+<li>TC-1 consistency (CV) · TC-2 accuracy · TC-3 latency</li>
+<li>TC-4 variability (ICC) · TC-5 Pareto trade study</li>
+<li>Outputs under <code>outputs/metrics/</code> and <code>outputs/figures/</code></li>
+</ul>
+</div>
+</div>
+</section>
+<section class="section" id="results">
+<div class="section-head">
+<div class="section-num mono">03 · Results</div>
+<h2>T = 0.0 vs T = 0.7</h2>
+<p>Pareto-optimal greedy decoding vs elevated-temperature peer. Full distributions and heatmaps are in the technical section.</p>
+</div>
+<div aria-label="Compare temperatures" class="compare-toggle mono" role="group">
+<button aria-pressed="true" data-view="both" type="button">Both</button>
+<button aria-pressed="false" data-view="optimized" type="button">T = 0.0</button>
+<button aria-pressed="false" data-view="baseline" type="button">T = 0.7</button>
+</div>
+<div class="compare-wrap" data-view="both" id="compareWrap">
+<div class="card compare-bars" data-reveal="" id="compareChartOptimized">
+<h3>T = 0.0 (Pareto frontier)</h3>
+<div class="bar-row"><span>Pass rate</span><div class="bar-track"><div class="bar-fill opt" style="width:100%"></div></div><span class="bar-val">0.880</span></div>
+<div class="bar-row"><span>Mean composite</span><div class="bar-track"><div class="bar-fill opt" style="width:100%"></div></div><span class="bar-val">4.330</span></div>
+<div class="bar-row"><span>Hallucination rate</span><div class="bar-track"><div class="bar-fill opt" style="width:66%"></div></div><span class="bar-val">0.100</span></div>
+<div class="bar-row"><span>Mean latency (s)</span><div class="bar-track"><div class="bar-fill opt" style="width:96%"></div></div><span class="bar-val">4.213</span></div>
+</div>
+<div class="card compare-bars" data-reveal="" id="compareChartBaseline">
+<h3>T = 0.7</h3>
+<div class="bar-row"><span>Pass rate</span><div class="bar-track"><div class="bar-fill rust" style="width:95%"></div></div><span class="bar-val">0.836</span></div>
+<div class="bar-row"><span>Mean composite</span><div class="bar-track"><div class="bar-fill rust" style="width:98%"></div></div><span class="bar-val">4.253</span></div>
+<div class="bar-row"><span>Hallucination rate</span><div class="bar-track"><div class="bar-fill rust" style="width:100%"></div></div><span class="bar-val">0.152</span></div>
+<div class="bar-row"><span>Mean latency (s)</span><div class="bar-track"><div class="bar-fill rust" style="width:100%"></div></div><span class="bar-val">4.379</span></div>
+</div>
+</div>
+</section>
+<section class="section" id="testcases">
+<div class="section-head">
+<div class="section-num mono">04 · Test cases</div>
+<h2>TC-1 through TC-5</h2>
+<p>All recorded PASS for this evaluation run. Select a test case for threshold and observed statistics.</p>
+</div>
+<div aria-label="Test cases" class="scenario-picker" role="list">
+<article aria-pressed="true" class="scenario-btn" data-reveal="">
+<div class="sc-id">TC-1</div>
+<div class="sc-name">Consistency</div>
+<div style="margin-top:8px;font-size:12px;color:var(--text2)">93.6% of cells CV &lt; 0.10 · PASS</div>
+</article>
+<article aria-pressed="false" class="scenario-btn" data-reveal="">
+<div class="sc-id">TC-2</div>
+<div class="sc-name">Accuracy</div>
+<div style="margin-top:8px;font-size:12px;color:var(--text2)">pass_rate=0.856 · temp coef p=0.354 · PASS</div>
+</article>
+<article aria-pressed="false" class="scenario-btn" data-reveal="">
+<div class="sc-id">TC-3</div>
+<div class="sc-name">Latency</div>
+<div style="margin-top:8px;font-size:12px;color:var(--text2)">kruskal_p=0.095 · order_p=0.259 · PASS</div>
+</article>
+<article aria-pressed="false" class="scenario-btn" data-reveal="">
+<div class="sc-id">TC-4</div>
+<div class="sc-name">Variability</div>
+<div style="margin-top:8px;font-size:12px;color:var(--text2)">min ICC=0.907 · Levene p=0.973 · PASS</div>
+</article>
+<article aria-pressed="false" class="scenario-btn" data-reveal="" style="grid-column:span 2">
+<div class="sc-id">TC-5</div>
+<div class="sc-name">Trade study</div>
+<div style="margin-top:8px;font-size:12px;color:var(--text2)">Pareto frontier at T=0.0 · mean 4.330 · std 0.777 · PASS</div>
+</article>
+</div>
+</section>
+<section class="section" id="faq">
+<div class="section-head">
+<div class="section-num mono">05 · FAQ</div>
+<h2>Common questions</h2>
+</div>
+<div class="faq-grid">
+<article class="faq-card" data-reveal="">
+<h3>How is “pass” decided?</h3>
+<p><code>03_summary_stats.py</code> builds acceptance criteria from TC outputs: TC-1 ≥90% cells CV&lt;0.10; TC-2 pass_rate≥0.75 with non-significant temperature terms; TC-3/TC-4 non-parametric and ICC gates; TC-5 ≥1 Pareto-non-dominated temperature. All five recorded PASS.</p>
+</article>
+<article class="faq-card" data-reveal="">
+<h3>What did temperature change?</h3>
+<p>Logistic temperature term p=0.354 (non-significant on pass/fail). Practical shifts remain: pass rate 0.836–0.880, hallucination 0.100–0.152, composite 4.253–4.330. T=0.0 on the Pareto frontier.</p>
+</article>
+<article class="faq-card" data-reveal="">
+<h3>What failed invariantly?</h3>
+<p>Question C3-Q05 (primality of 97) fails all 25 rows, a knowledge error, not sampling noise. Mitigation requires more than temperature tuning.</p>
+</article>
+<article class="faq-card" data-reveal="">
+<h3>Where are figures and Innoslate views?</h3>
+<p>Ten-plot suite, MBSE diagram exports, acceptance tables, and full conclusions are in the technical section below.</p>
+</article>
+</div>
+</section>
+</div><!-- /overview-body -->
+<section aria-label="Open technical report" class="overview-end" id="overview-end">
+<div class="overview-end-inner">
+<div class="overview-end-copy">
+<div class="section-num mono" style="color:var(--gold2)">Technical report</div>
+<h2>View full technical section</h2>
+<p>Experimental design, pipeline flowchart, VR traceability, Innoslate architecture, TC evidence plots, discussion, and conclusions.</p>
+</div>
+<div class="overview-end-action">
+<button aria-controls="technicalDepthWrap" aria-expanded="false" class="btn-open-technical" id="openTechnicalBtn" type="button">View full technical section ↓</button>
+</div>
+</div>
+</section>
+</main>
+<div class="technical-depth-wrap content-pad-tech" hidden="" id="technicalDepthWrap">
+<section class="technical-bridge scroll-anchor" id="technical-depth">
+<div class="section-num mono">06 · Technical depth</div>
+<h2>Framing, experiment, evidence, and conclusions</h2>
+<p>
+      Full case study: systems framing, experimental design, evaluation pipeline, verification requirements, Innoslate architecture views, test-case evidence with figures, recorded findings, and deployment conclusions.
+    </p>
+</section>
+<div class="layer2" id="layer2">
+<nav aria-label="Technical sections" class="l2-nav">
+<button class="l2-nav-btn active" data-l2="framing" type="button">Framing</button>
+<button class="l2-nav-btn" data-l2="experiment" type="button">Experiment</button>
+<button class="l2-nav-btn" data-l2="pipeline" type="button">Pipeline</button>
+<button class="l2-nav-btn" data-l2="requirements" type="button">Requirements</button>
+<button class="l2-nav-btn" data-l2="architecture" type="button">Architecture</button>
+<button class="l2-nav-btn" data-l2="results" type="button">Results</button>
+<button class="l2-nav-btn" data-l2="findings" type="button">Findings</button>
+<button class="l2-nav-btn" data-l2="conclusions" type="button">Conclusions</button>
+</nav>
+<div class="l2-sec scroll-anchor" id="l2-framing">
+<div class="l2-h"><span class="l2-n">01</span><h2 class="l2-t">Problem &amp; Systems Framing</h2></div>
+<div class="prose">
+<p>Large language models deployed locally for engineering or analytic tasks must be validated like any other system: stakeholders need evidence that outputs are stable, correct enough, timely, and safe to accept under explicit criteria, not judged ad hoc per response.</p>
+<p>The systems model (Innoslate export, LML 4.94) frames the system under test as a <strong>locally deployed LLM inference stack</strong> whose outputs are measured against a published rubric and verification metrics. Seven verification requirements define measurable reliability attributes; five formal test cases operationalize them with statistical acceptance gates recorded for this run.</p>
+</div>
+<div class="callout">
+<strong>Scope boundary:</strong> Aggregate binary-pass tests can read PASS while category-level hallucination rates, tail behavior, and invariant item failures (e.g., C3-Q05) still show deployment risk. The recorded analysis treats formal gates and practical figures together rather than collapsing them into a single headline metric.
+    </div>
+</div>
+<div class="l2-sec scroll-anchor" id="l2-experiment">
+<div class="l2-h"><span class="l2-n">02</span><h2 class="l2-t">Experimental Design</h2></div>
+<div class="prose">
+<p>The longitudinal dataset is built by <code>src/analysis/build_master_dataset.py</code> from five temperature-specific workbooks. Each row is one scored observation with rubric sub-scores, binary gates, semantic similarity (where applicable), and wall-clock latency.</p>
+</div>
+<div class="metrics-strip">
+<div class="ms"><span class="ms-lbl">Questions</span><span class="ms-val">50</span><span class="ms-note">Fixed benchmark bank</span></div>
+<div class="ms"><span class="ms-lbl">Temperatures</span><span class="ms-val">5</span><span class="ms-note">0.0, 0.3, 0.5, 0.7, 1.0</span></div>
+<div class="ms"><span class="ms-lbl">Runs / cell</span><span class="ms-val">5</span><span class="ms-note">n = 5 per (Q, T)</span></div>
+<div class="ms"><span class="ms-lbl">Total rows</span><span class="ms-val">1,250</span><span class="ms-note">250 per temperature</span></div>
+</div>
+<table class="dt">
+<thead><tr><th>Factor</th><th>Levels</th><th>Role in analysis</th></tr></thead>
+<tbody>
+<tr><td>question_id</td><td>50 items</td><td>Stratification for TC-1 cells, TC-2 pass rates, category plots</td></tr>
+<tr><td>temperature</td><td>0.0 – 1.0</td><td>Primary factor in TC-2, TC-3, TC-4, TC-5</td></tr>
+<tr><td>run</td><td>1 – 5</td><td>TC-1 consistency; TC-3 order effect</td></tr>
+<tr><td>composite_score</td><td>~1.55 – 5.0 (per summary)</td><td>Weighted Likert sum (rulebook weights)</td></tr>
+</tbody>
+</table>
+<div class="callout">
+<strong>Recorded composite rubric weights</strong> (from project report generator / rulebook): Correctness 30%, Coherence 20%, Completeness 15%, Hallucination-free 10%, Relevance 15%, Fluency 10%. Condition 1 (correctness gate), Condition 2 (hallucination flag), and semantic similarity support acceptability logic alongside Likert scores.
+    </div>
+</div>
+<div class="l2-sec scroll-anchor" id="l2-pipeline">
+<div class="l2-h"><span class="l2-n">03</span><h2 class="l2-t">Data &amp; Evaluation Pipeline</h2></div>
+<div class="prose"><p>The pipeline ingests temperature-stratified run data, applies <strong>rulebook-defined scoring and measurement fields</strong> to build the master dataset, runs TC-1–TC-5 statistical analyses, and produces summaries, figures, and reports. Scoring criteria are fixed before analysis, weighted rubric dimensions, binary conditions, similarity, and latency, not ad hoc review.</p></div>
+<div aria-label="V and V data pipeline flowchart" class="pipeline-diagram" role="img">
+<div class="pd-title">End-to-end V&amp;V data flow</div>
+<div class="mf-col">
+<div class="mf-node pd-input">
+<span class="mf-label">① Raw run workbooks</span>
+<span class="mf-sub">50 questions · 5 temperatures · 5 runs each</span>
+</div>
+<div aria-hidden="true" class="mf-arrow"></div>
+<div class="mf-node pd-score">
+<span class="mf-label">② Rulebook scoring</span>
+<span class="mf-sub">Weighted Likert · correctness &amp; hallucination gates · semantic similarity · latency</span>
+</div>
+<div aria-hidden="true" class="mf-arrow"></div>
+<div class="mf-node pd-data">
+<span class="mf-label">③ Master dataset</span>
+<span class="mf-sub">1,250 scored observations · composite score &amp; acceptability fields</span>
+</div>
+<div aria-hidden="true" class="mf-arrow"></div>
+<div class="mf-node pd-test">
+<span class="mf-label">④ Formal test cases</span>
+<span class="mf-sub">TC-1 consistency · TC-2 accuracy · TC-3 latency · TC-4 variability · TC-5 trade study</span>
+</div>
+<div aria-hidden="true" class="mf-arrow"></div>
+<div class="mf-fork">
+<div aria-hidden="true" class="mf-fork-stem"></div>
+<div class="mf-fork-grid">
+<div class="mf-node pd-out">
+<span class="mf-label">⑤a Acceptance</span>
+<span class="mf-sub">PASS / FAIL vs recorded gates</span>
+</div>
+<div class="mf-node pd-out">
+<span class="mf-label">⑤b Figures</span>
+<span class="mf-sub">Temperature &amp; category evidence plots</span>
+</div>
+<div class="mf-node pd-out">
+<span class="mf-label">⑤c Reports</span>
+<span class="mf-sub">Per-TC &amp; executive decision package</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="l2-sec scroll-anchor" id="l2-requirements">
+<div class="l2-h"><span class="l2-n">04</span><h2 class="l2-t">Verification Requirements &amp; Traceability</h2></div>
+<div class="prose"><p>Requirements below are normalized from the Innoslate export narrative (<code>outputs/reports/Innoslate_IV_V_Locally_Deployed_LLM_System_Report.md</code>). Allocation to test cases follows <code>verifies</code> / <code>verified by</code> relationships in the model.</p></div>
+<table class="dt">
+<thead><tr><th>ID</th><th>Requirement (summary)</th><th>Allocated TCs (export)</th></tr></thead>
+<tbody>
+<tr><td>VR1</td><td>Consistent outputs for identical inputs under fixed conditions</td><td>TC-1, TC-4</td></tr>
+<tr><td>VR2</td><td>Responses meet defined correctness criteria vs. reference answers</td><td>TC-2</td></tr>
+<tr><td>VR3</td><td>Responses within acceptable time bounds</td><td>TC-3</td></tr>
+<tr><td>VR4</td><td>Controlled variability across stochastic runs</td><td>TC-4</td></tr>
+<tr><td>VR5</td><td>Detect and prevent accepted hallucinated responses</td><td>TC-5</td></tr>
+<tr><td>VR6</td><td>Semantic alignment with references above thresholds</td><td>TC-1, TC-5</td></tr>
+<tr><td>VR7</td><td>Classify outputs acceptable via multi-criteria rules</td><td>TC-1 … TC-5</td></tr>
+</tbody>
+</table>
+<div class="insight-grid">
+<div class="insight">
+<div class="insight-head">Innoslate model (export facts)</div>
+<div class="insight-body">147 entities in the JSON extract; relationship types include decomposes, verifies, references, and sourced by. Process entities reference Parts 1–10 of a V&amp;V lifecycle (stakeholder needs through test planning).</div>
+</div>
+<div class="insight">
+<div class="insight-head">Excel traceability</div>
+<div class="insight-body"><code>data/reference/traceability_matrix.xlsx</code> (generated by <code>src/analysis/traceability.py</code>) records system requirements, VRs, TCs, methods, thresholds, observed results, and PASS/FAIL at the requirement level for this evaluation run.</div>
+</div>
+</div>
+</div>
+<div class="l2-sec scroll-anchor" id="l2-architecture">
+<div class="l2-h"><span class="l2-n">05</span><h2 class="l2-t">Innoslate Architecture &amp; MBSE Views</h2></div>
+<div class="prose">
+<p>Architecture views below are <strong>PNG exports from Innoslate</strong> (stored in <code>data/reference/innoslate/diagrams/</code>). They correspond to entities named in the systems report and JSON extract; geometry is not recoverable from <code>model.json</code> alone.</p>
+<p>The model organizes a <strong>ten-part V&amp;V lifecycle</strong> (Parts 1–10): stakeholder needs → architecture (functional/physical IDEF0, use cases) → interaction and behavior verification → requirements baselining → trade studies → verification requirements → test execution. Course artifacts EC.1–EC.7 (test suites and final project) are linked in the export.</p>
+</div>
+<div class="lifecycle-grid">
+<div class="lc"><strong>Part 1–2</strong>Stakeholder needs; function &amp; physical IDEF0; use cases</div>
+<div class="lc"><strong>Part 3–4</strong>Verify interactions; model interactions; behavior</div>
+<div class="lc"><strong>Part 5–6</strong>Baseline requirements; verification requirements (VR1–VR7)</div>
+<div class="lc"><strong>Part 7–8</strong>Trade studies; maintain VRs; test planning</div>
+<div class="lc"><strong>Part 9–10</strong>Execute test suites (TC-1–TC-5); evidence &amp; reports</div>
+</div>
+<div aria-label="Innoslate diagrams (two-up)" class="fig-row">
+<figure class="fig-block ar-mbse-lg">
+<div class="fig-media">
+<img alt="UC.0 Local LLM use cases" loading="lazy" src="../../data/reference/innoslate/diagrams/usecase/uc0_local_llm_use_cases.png"/>
+</div>
+<figcaption>UC.0 · Local LLM use cases, operational context and actors</figcaption>
+</figure>
+<figure class="fig-block ar-mbse-lg">
+<div class="fig-media">
+<img alt="UC-1 Evaluate LLM Reliability" loading="lazy" src="../../data/reference/innoslate/diagrams/usecase/uc1_evaluate_llm_reliability.png"/>
+</div>
+<figcaption>UC-1 · Evaluate LLM Reliability, evaluation scenario mapped to TC-1–TC-5</figcaption>
+</figure>
+</div>
+<figure class="fig-block ar-mbse-lg fig-full fig-tall">
+<div class="fig-media">
+<img alt="Function Architecture IDEF0-A0" loading="lazy" src="../../data/reference/innoslate/diagrams/idef0/function_architecture_idef0_a0.png"/>
+</div>
+<figcaption>Function IDEF0-A0, control and data flows for the V&amp;V pipeline</figcaption>
+</figure>
+<div class="callout">
+<strong>Traceability link:</strong> VR entities <code>verify</code> TC entities in Innoslate; <code>src/analysis/traceability.py</code> materializes the same allocation into <code>data/reference/traceability_matrix.xlsx</code> with observed PASS results for this run.
+    </div>
+</div>
+<div class="l2-sec scroll-anchor" id="l2-results">
+<div class="l2-h"><span class="l2-n">06</span><h2 class="l2-t">Test Cases, Evidence &amp; Trade Study</h2></div>
+<div class="prose"><p>Acceptance from <code>outputs/summaries/acceptance_criteria.csv</code>. Figures below are the <strong>canonical suite</strong> from <code>outputs/figures/visualizations/</code> (one chart per test theme, with no duplicate metric-script PNGs).</p></div>
+<div class="app-screen">
+<div class="app-bar">
+<div class="app-dot" style="background:#e74c3c"></div>
+<div class="app-dot" style="background:#f39c12"></div>
+<div class="app-dot" style="background:#27ae60"></div>
+<div class="app-url">outputs/summaries/acceptance_criteria.csv</div>
+</div>
+<div class="app-content">
+<div class="app-grid" style="margin-bottom:12px">
+<div class="app-card"><div class="app-card-lbl">Overall</div><div class="app-card-val pass">PASS</div></div>
+<div class="app-card"><div class="app-card-lbl">Test cases passed</div><div class="app-card-val pass">5 / 5</div></div>
+</div>
+<table class="dt" style="margin:0">
+<thead><tr><th>Test case</th><th>Threshold (recorded)</th><th>Observed (recorded)</th><th>Decision</th></tr></thead>
+<tbody>
+<tr><td>TC-1</td><td>CV &lt; 0.10 for ≥90% of (question, temperature) cells</td><td>93.6% cells consistent</td><td class="green">PASS</td></tr>
+<tr><td>TC-2</td><td>pass_rate ≥ 0.75; χ² and temp coef p ≥ 0.05</td><td>pass_rate=0.856, chi_p=0.791, temp_p=0.354</td><td class="green">PASS</td></tr>
+<tr><td>TC-3</td><td>Kruskal p ≥ 0.05; Spearman(order) p ≥ 0.05</td><td>kruskal_p=0.095, order_p=0.259</td><td class="green">PASS</td></tr>
+<tr><td>TC-4</td><td>Levene/Bartlett p ≥ 0.05; min ICC(1,1) ≥ 0.75</td><td>levene_p=0.973, bartlett_p=0.981, min_icc=0.907</td><td class="green">PASS</td></tr>
+<tr><td>TC-5</td><td>≥1 non-dominated temperature on mean–std frontier</td><td>frontier=0.0</td><td class="green">PASS</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="tc-grid">
+<div class="tc"><div class="tc-id">TC-1</div><div class="tc-name">Consistency</div><div class="tc-pass">PASS</div></div>
+<div class="tc"><div class="tc-id">TC-2</div><div class="tc-name">Accuracy</div><div class="tc-pass">PASS</div></div>
+<div class="tc"><div class="tc-id">TC-3</div><div class="tc-name">Latency</div><div class="tc-pass">PASS</div></div>
+<div class="tc"><div class="tc-id">TC-4</div><div class="tc-name">Variability</div><div class="tc-pass">PASS</div></div>
+<div class="tc"><div class="tc-id">TC-5</div><div class="tc-name">Trade study</div><div class="tc-pass">PASS</div></div>
+</div>
+<div class="insight-grid">
+<div class="insight">
+<div class="insight-head">TC-1 (consistency)</div>
+<div class="insight-body">Per (question_id, temperature) coefficient of variation across five runs. Outputs: <code>outputs/metrics/consistency/tc1_consistency.csv</code>, <code>tc1_cv_heatmap.png</code>. Companion figure: <code>outputs/figures/plot03_consistency_cv_heatmap.png</code>.</div>
+</div>
+<div class="insight">
+<div class="insight-head">TC-2 (accuracy)</div>
+<div class="insight-body">Pass rates, Wilson CIs, chi-square on temperature × pass/fail, logistic regression with temperature and categoricals. Outputs under <code>outputs/metrics/accuracy/</code> (e.g. <code>tc2_chi_square.txt</code>, <code>tc2_logistic_regression.txt</code>).</div>
+</div>
+<div class="insight">
+<div class="insight-head">TC-3 (latency)</div>
+<div class="insight-body">Non-parametric tests across temperatures and Spearman correlation of run index with latency. Primary acceptance uses Kruskal–Wallis (recorded p = 0.095). Outputs: <code>outputs/metrics/latency/tc3_stats.txt</code>, <code>outputs/figures/plot05_latency_boxplot_temp_run.png</code>.</div>
+</div>
+<div class="insight">
+<div class="insight-head">TC-4 (variability)</div>
+<div class="insight-body">Levene/Bartlett on composite score variance; ICC(1,1) by temperature. Outputs: <code>outputs/metrics/variability/tc4_levene_bartlett.txt</code>, <code>tc4_icc_by_temperature.csv</code>.</div>
+</div>
+</div>
+<div class="callout">
+<strong>TC-3 nuance:</strong> Acceptance uses Kruskal–Wallis (p = 0.095) and run-order Spearman (p = 0.259). Latency stats are in <code>outputs/metrics/latency/tc3_stats.txt</code>—no separate chart shown here (distributions are skewed; ANOVA p = 0.023 is secondary).
+    </div>
+<h3 class="subsec-h"><span>Evidence · TC-1</span>Consistency</h3>
+<div class="fig-gallery">
+<figure class="fig-block ar-heatmap fig-tall">
+<div class="fig-media">
+<img alt="TC-1 CV heatmap" loading="lazy" src="../../outputs/figures/visualizations/plot03_consistency_cv_heatmap.png"/>
+</div>
+<figcaption>93.6% of (question, temperature) cells with CV &lt; 0.10; localized spikes up to 0.221</figcaption>
+</figure>
+</div>
+<h3 class="subsec-h"><span>Evidence · TC-2</span>Accuracy &amp; domain effects</h3>
+<div class="fig-row">
+<figure class="fig-block ar-chart fig-tc2">
+<div class="fig-media">
+<img alt="Pass rate by temperature" loading="lazy" src="../../outputs/figures/visualizations/plot04_pass_rate_by_temperature_ci.png"/>
+</div>
+<figcaption>Pass rate by T (95% CI); aggregate 0.856</figcaption>
+</figure>
+<figure class="fig-block ar-chart fig-tc2">
+<div class="fig-media">
+<img alt="Score by category" loading="lazy" src="../../outputs/figures/visualizations/plot02_grouped_bar_mean_std_category_temp.png"/>
+</div>
+<figcaption>Mean composite by category × temperature</figcaption>
+</figure>
+</div>
+<h3 class="subsec-h"><span>Evidence · VR5</span>Hallucination by domain</h3>
+<div class="fig-gallery">
+<figure class="fig-block ar-chart fig-tall">
+<div class="fig-media">
+<img alt="Hallucination by category" loading="lazy" src="../../outputs/figures/visualizations/plot06_hallucination_rate_temp_category.png"/>
+</div>
+<figcaption>Behavioural/Safety ~40% vs Factual/Analytical ~1% mean flag rate (see final_decision_report.md)</figcaption>
+</figure>
+</div>
+<h3 class="subsec-h"><span>TC-5 · Summary table</span>Temperature comparison</h3>
+<table class="dt">
+<thead><tr><th>T</th><th>n</th><th>Mean score</th><th>Std</th><th>CV</th><th>Pass rate</th><th>Halluc. rate</th><th>Mean latency (s)</th></tr></thead>
+<tbody>
+<tr><td>0.0</td><td>250</td><td>4.330</td><td>0.777</td><td>0.179</td><td>0.880</td><td>0.100</td><td>4.213</td></tr>
+<tr><td>0.3</td><td>250</td><td>4.267</td><td>0.803</td><td>0.188</td><td>0.852</td><td>0.132</td><td>4.458</td></tr>
+<tr><td>0.5</td><td>250</td><td>4.281</td><td>0.779</td><td>0.182</td><td>0.856</td><td>0.128</td><td>4.219</td></tr>
+<tr><td>0.7</td><td>250</td><td>4.253</td><td>0.788</td><td>0.185</td><td>0.836</td><td>0.152</td><td>4.379</td></tr>
+<tr><td>1.0</td><td>250</td><td>4.288</td><td>0.798</td><td>0.186</td><td>0.856</td><td>0.136</td><td>4.266</td></tr>
+</tbody>
+</table>
+<div class="callout">
+<strong>Pareto result (recorded):</strong> Temperature <strong>0.0</strong> on the frontier (<code>frontier=0.0</code>). T = 0.5 is a near-peer (mean 4.281 vs 4.330). Full suite (plot01–plot10): <code>python3 src/analysis/02_visualize.py</code>.
+    </div>
+<div class="prose"><p>Per-TC Word reports: <code>outputs/reports/test_cases/TC-*.docx</code>.</p></div>
+</div>
+<div class="l2-sec scroll-anchor" id="l2-findings">
+<div class="l2-h"><span class="l2-n">07</span><h2 class="l2-t">Discussion &amp; Recorded Findings</h2></div>
+<div class="prose"><p>The following points are taken from <code>outputs/reports/final_decision_report.md</code> (discussion section aligned with plots plot01–plot10). They are interpretive but grounded in stored outputs, not speculative product claims.</p></div>
+<div class="insight-grid">
+<div class="insight">
+<div class="insight-head">Temperature vs. binary pass</div>
+<div class="insight-body">Logistic temperature term p = 0.354 (non-significant) while summary tables show higher hallucination at elevated T and category shifts in plot02/plot10. Formal PASS on TC-2 does not rule out practical drift in variability and hallucination.</div>
+</div>
+<div class="insight">
+<div class="insight-head">Localized inconsistency</div>
+<div class="insight-body">~93.6% of cells meet CV &lt; 0.10, but plot03 shows localized CV up to <strong>0.221</strong> for some question–temperature pairs.</div>
+</div>
+<div class="insight">
+<div class="insight-head">Invariant failure: C3-Q05</div>
+<div class="insight-body">All 25 evaluated rows fail (primality of 97)—classified as knowledge/reasoning failure, not Monte Carlo noise.</div>
+</div>
+<div class="insight">
+<div class="insight-head">Hallucination by category</div>
+<div class="insight-body">plot06: highest mean hallucination flag rate for Behavioural / Safety (~40%) vs Factual / Analytical (~1%) in the discussion text, domain-dependent, not temperature-only.</div>
+</div>
+<div class="insight">
+<div class="insight-head">Semantic similarity</div>
+<div class="insight-body">Mean semantic similarity ~0.393–0.397 across T (stable; full KDE in plot07 in repo, not repeated here).</div>
+</div>
+<div class="insight">
+<div class="insight-head">Deployment read at T = 0.0</div>
+<div class="insight-body">Lowest recorded hallucination rate (0.100), highest mean composite (4.330), fastest mean latency (4.213 s), and Pareto frontier membership, at the cost of fully greedy decoding at T = 0.0.</div>
+</div>
+</div>
+<h3 class="subsec-h"><span>Invariant failure</span>C3-Q05 (primality)</h3>
+<div class="fig-gallery">
+<figure class="fig-block ar-heatmap fig-tall fig-c3q05">
+<div class="fig-media">
+<img alt="Difficulty by temperature" loading="lazy" src="../../outputs/figures/visualizations/plot10_difficulty_temperature_heatmap.png"/>
+</div>
+<figcaption>Mean score by difficulty × temperature, C3-Q05 fails all 25 runs (knowledge error, not noise)</figcaption>
+</figure>
+</div>
+</div>
+<div class="l2-sec scroll-anchor" id="l2-conclusions">
+<div class="l2-h"><span class="l2-n">08</span><h2 class="l2-t">Conclusions</h2></div>
+<div class="prose" style="max-width:820px">
+<p>This project treated a locally hosted Gemma 4B model as a <strong>systems engineering artifact</strong> under explicit V&amp;V scope. Stakeholder needs and operational use cases were captured in Innoslate; verification requirements were decomposed into five formal test cases with statistical acceptance criteria; and the final decision rested on a fixed experimental design (fifty benchmark questions, five decoding temperatures, five runs per cell, 1,250 scored observations).</p>
+<p>Against those gates, the system <strong>passes all five test cases</strong>. Consistency testing shows that 93.6% of question–temperature cells stay below a coefficient-of-variation threshold of 0.10, with greedy decoding at temperature zero behaving deterministically. Accuracy testing yields an aggregate pass rate of 0.856, above the required 0.75, without a statistically significant temperature effect on binary pass/fail. Latency and variability tests meet their non-parametric and homogeneity criteria at the levels recorded in this run. The temperature trade study identifies <strong>T = 0.0</strong> on the quality–variability Pareto frontier, with the lowest hallucination rate (0.100), the highest mean composite score (4.330), and the fastest mean response time among the settings tested.</p>
+<p>The overall verdict is therefore <strong>acceptable for the defined V&amp;V scope</strong>, with an important qualification: acceptance on formal tests does not mean uniform safety across domains. Hallucination risk remains concentrated in behavioural and safety-oriented items, while factual and analytical items perform far better. Semantic similarity is stable across temperatures, which supports the interpretation that decoding temperature mainly shifts risk and tail behaviour rather than core meaning. At the item level, the primality question on 97 fails on every run, a persistent knowledge error that no amount of temperature tuning can remove.</p>
+<p>For deployment, the evidence supports operating at <strong>temperature zero</strong> when the priority is maximum repeatability, lowest recorded hallucination rate, and Pareto-efficient mean quality. Temperature 0.5 remains a practical near-peer on mean score and variability and may be worth revisiting if slightly more stochastic diversity is desired without a large quality penalty. Any production use should still layer domain controls, especially for behavioural and safety content, and human or tool-based review for high-stakes reasoning, given the invariant failure on selected knowledge items.</p>
+<p>Requirements trace forward into tests, tests produce stored metrics and plots, and those outputs support a documented accept/reject call. Next increments would add asset-level interaction diagrams, extended simulation, and mitigations for known item failures such as C3-Q05.</p>
+</div>
+<p><a class="code-link" href="https://github.com/anuragyadav21/Gemma-4B-Integration-V-V" rel="noopener noreferrer" target="_blank">GitHub: Gemma-4B Integration V&amp;V evaluation pipeline ↗</a></p>
+<div class="callout" style="max-width:820px">
+<strong>Bottom line:</strong> PASS on TC-1 through TC-5 · 1,250 observations · recommended operating point T = 0.0 · aggregate pass rate 0.856 · 93.6% of consistency cells under CV &lt; 0.10 · monitor behavioural/safety categories and known knowledge failures before relying on the model without oversight.
+    </div>
+</div>
+</div>
+</div>
+<footer class="conc-bar" id="contact">
+<div class="conc-inner">
+<div class="conc-left">
+<p class="conc-name">Anurag Yadav</p>
+<div class="conc-copy">
+<p class="conc-course mono">Ithaca, NY · Cornell University · M.Eng. Systems Engineering</p>
+<p class="conc-course mono">Capital programs · Digital engineering · Mission-critical infrastructure</p>
+</div>
+</div>
+<div class="conc-right">
+<ul aria-label="Contact" class="conc-links mono">
+<li><a href="mailto:yadavanurag560@gmail.com"><img alt="" src="assets/footer-icons/email.png"/>yadavanurag560@gmail.com</a></li>
+<li><a href="mailto:ay468@cornell.edu"><img alt="" src="assets/footer-icons/email2.png"/>ay468@cornell.edu</a></li>
+<li><a href="tel:+16072623840"><img alt="" src="assets/footer-icons/phone.png"/>(607) 262-3840</a></li>
+<li><a href="https://www.linkedin.com/in/anurag-systems" rel="noopener noreferrer" target="_blank"><img alt="" src="assets/footer-icons/linkedin.png"/>LinkedIn</a></li>
+<li><a href="https://github.com/anuragyadav21/Gemma-4B-Integration-V-V" rel="noopener noreferrer" target="_blank"><img alt="" src="assets/footer-icons/github.png"/>GitHub</a></li>
+<li><a href="/assets/resume/Anurag_Yadav_Resume.pdf" target="_blank" rel="noopener noreferrer" download><img alt="" src="assets/footer-icons/resume.svg"/>Resume</a></li>
+</ul>
+</div>
+</div>
+</footer>
+<script>
+(function () {
+  function ids(selector) {
+    return Array.prototype.map.call(document.querySelectorAll(selector), function (el) {
+      return el.id;
+    }).filter(Boolean);
+  }
+
+  const overviewIds = ids(".overview-body .scroll-anchor, .overview-body > .hero, .overview-body > .section, .overview-end");
+  const techIds = ids(".layer2 .l2-sec.scroll-anchor");
+  const techBridgeId = "technical-depth";
+  const technicalWrap = document.getElementById("technicalDepthWrap");
+  const openTechnicalBtn = document.getElementById("openTechnicalBtn");
+  const navBtns = document.querySelectorAll(".topbar-nav button[data-section]");
+  let technicalOpen = false;
+  let navObserver = null;
+
+  function setActiveSection(id) {
+    var inTech = techIds.indexOf(id) !== -1 || id === techBridgeId;
+    navBtns.forEach(function (btn) {
+      var sec = btn.getAttribute("data-section");
+      if (inTech) {
+        btn.classList.toggle("is-active", sec === "technical-depth");
+      } else {
+        btn.classList.toggle("is-active", sec === id);
+      }
+    });
+  }
+
+  function openTechnical(scrollTargetId) {
+    if (!technicalWrap || technicalOpen) return;
+    technicalOpen = true;
+    technicalWrap.hidden = false;
+    technicalWrap.classList.add("is-open");
+    technicalWrap.setAttribute("aria-hidden", "false");
+    if (openTechnicalBtn) {
+      openTechnicalBtn.setAttribute("aria-expanded", "true");
+      openTechnicalBtn.textContent = "Technical section open";
+      openTechnicalBtn.disabled = true;
+      openTechnicalBtn.style.opacity = "0.65";
+      openTechnicalBtn.style.cursor = "default";
+    }
+    setActiveSection(techBridgeId);
+    startTechNavObserver();
+    const targetId = scrollTargetId || techBridgeId;
+    requestAnimationFrame(function () {
+      const target = document.getElementById(targetId);
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  navBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      const id = btn.getAttribute("data-section");
+      if (id === "technical-depth" && !technicalOpen) {
+        openTechnical(techBridgeId);
+        return;
+      }
+      if (id === "technical-depth" && technicalOpen) {
+        const target = document.getElementById(techBridgeId);
+        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+      const target = document.getElementById(id);
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+
+  if (openTechnicalBtn) {
+    openTechnicalBtn.addEventListener("click", function () {
+      openTechnical(techBridgeId);
+    });
+  }
+
+  function startOverviewNavObserver() {
+    if (navObserver) navObserver.disconnect();
+    navObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          setActiveSection(entry.target.id);
+        });
+      },
+      { rootMargin: "-42% 0px -42% 0px", threshold: 0 }
+    );
+    overviewIds.forEach(function (id) {
+      const el = document.getElementById(id);
+      if (el) navObserver.observe(el);
+    });
+  }
+
+  function startTechNavObserver() {
+    if (navObserver) navObserver.disconnect();
+    navObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          setActiveSection(entry.target.id);
+        });
+      },
+      { rootMargin: "-42% 0px -42% 0px", threshold: 0 }
+    );
+    [techBridgeId].concat(techIds).forEach(function (id) {
+      const el = document.getElementById(id);
+      if (el) navObserver.observe(el);
+    });
+  }
+
+  startOverviewNavObserver();
+
+  const revealObs = new IntersectionObserver(
+    function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-visible");
+        revealObs.unobserve(entry.target);
+      });
+    },
+    { threshold: 0.08, rootMargin: "0px 0px -8% 0px" }
+  );
+  document.querySelectorAll("[data-reveal]").forEach(function (el, i) {
+    el.style.animationDelay = (i % 6) * 0.08 + "s";
+    revealObs.observe(el);
+  });
+
+  document.querySelectorAll(".compare-bars .bar-fill").forEach(function (bar, i) {
+    var w = bar.style.width;
+    if (!w) return;
+    bar.dataset.targetWidth = w;
+    bar.style.width = "0";
+    bar.style.setProperty("--bar-delay", i * 90 + "ms");
+  });
+  const barObs = new IntersectionObserver(
+    function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("bars-ready");
+        entry.target.querySelectorAll(".bar-fill").forEach(function (bar) {
+          bar.style.width = bar.dataset.targetWidth || "";
+        });
+        barObs.unobserve(entry.target);
+      });
+    },
+    { threshold: 0.2 }
+  );
+  document.querySelectorAll(".compare-bars").forEach(function (chart) {
+    barObs.observe(chart);
+  });
+
+  var compareWrap = document.getElementById("compareWrap");
+  document.querySelectorAll(".compare-toggle button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var view = btn.getAttribute("data-view");
+      if (compareWrap) compareWrap.setAttribute("data-view", view);
+      document.querySelectorAll(".compare-toggle button").forEach(function (b) {
+        b.setAttribute("aria-pressed", b === btn ? "true" : "false");
+      });
+    });
+  });
+
+  document.querySelectorAll(".scenario-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      document.querySelectorAll(".scenario-btn").forEach(function (b) {
+        b.setAttribute("aria-pressed", "false");
+      });
+      btn.setAttribute("aria-pressed", "true");
+    });
+  });
+
+  const l2Btns = document.querySelectorAll(".l2-nav-btn");
+  l2Btns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      const key = btn.getAttribute("data-l2");
+      const el = document.getElementById("l2-" + key);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      l2Btns.forEach(function (b) { b.classList.toggle("active", b === btn); });
+    });
+  });
+  const l2Obs = new IntersectionObserver(
+    function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        const id = entry.target.id;
+        l2Btns.forEach(function (b) {
+          b.classList.toggle("active", id === "l2-" + b.getAttribute("data-l2"));
+        });
+        if (technicalOpen) setActiveSection(id);
+      });
+    },
+    { threshold: 0.22, rootMargin: "-20% 0px -55% 0px" }
+  );
+  techIds.forEach(function (fullId) {
+    const el = document.getElementById(fullId);
+    if (el) l2Obs.observe(el);
+  });
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    document.querySelectorAll("[data-reveal]").forEach(function (el) {
+      el.classList.add("is-visible");
+    });
+    document.querySelectorAll(".bar-fill").forEach(function (bar) {
+      if (bar.dataset.targetWidth) bar.style.width = bar.dataset.targetWidth;
+    });
+  }
+})();
+</script>
+</body>
+</html>

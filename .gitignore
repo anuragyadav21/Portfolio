@@ -49,7 +49,7 @@ docs/
 ~$*
 
 # Source project archive (large drafts; not used by the Vite build)
-Projects/
+/Projects/
 
 # Stale duplicate V-model at repo root (canonical: public/v-model-portfolio.html)
 v_model_portfolio_v3.html

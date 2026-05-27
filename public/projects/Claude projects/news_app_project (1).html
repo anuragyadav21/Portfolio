@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>News for People in a Hurry — Anurag Yadav</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&amp;family=Source+Code+Pro:wght@400;500&amp;family=Libre+Franklin:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#0f1a22;--ink2:#182635;
+  --paper:#f6f2eb;--paper2:#ece8df;
+  --cobalt:#1a3a5c;--cobalt2:#2a5480;
+  --sage:#1a4a38;--sage2:#2a6b52;
+  --gold:#8a6a2e;--gold2:#b08940;
+  --mist:#6b8fa5;--amber:#c47c1a;
+  --text:#1a2838;--text2:#4a6070;--text3:#7a92a5;
+  --border:rgba(15,26,34,.1);--border2:rgba(15,26,34,.06);
+  --green:#1b5c38;--red:#8b2218;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Libre Franklin',sans-serif;background:var(--paper);color:var(--text);overflow-x:hidden}
+
+/* ── RIBBON ── */
+.ribbon{display:flex;align-items:center;justify-content:space-between;padding:20px 32px;background:var(--ink);border-bottom:2px solid var(--cobalt2);cursor:pointer;text-decoration:none;transition:background .2s;user-select:none}
+.ribbon:hover{background:var(--ink2)}
+.rib-left{display:flex;align-items:center;gap:16px}
+.rib-tag{font-family:'Source Code Pro',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--cobalt2);background:rgba(26,58,92,.18);border:.5px solid var(--cobalt2);padding:3px 9px}
+.rib-title{font-family:'Playfair Display',serif;font-size:20px;color:#fff;line-height:1}
+.rib-sub{font-family:'Source Code Pro',monospace;font-size:10px;color:var(--mist);margin-top:3px;letter-spacing:.06em}
+.rib-metrics{display:flex;gap:24px}
+.rm{text-align:right}.rm-val{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold2);display:block}
+.rm-lbl{font-family:'Source Code Pro',monospace;font-size:9px;color:var(--mist);letter-spacing:.08em;text-transform:uppercase}
+.rib-caret{color:var(--cobalt2);font-size:18px;margin-left:20px;transition:transform .3s}
+
+/* ── LAYER 1 ── */
+
+.layer1.open{display:block}
+.l1-hero{display:grid;grid-template-columns:1fr 1fr;border-bottom:.5px solid var(--border)}
+.l1-left{padding:52px 48px 44px 56px}
+.l1-eye{font-family:'Source Code Pro',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--cobalt2);margin-bottom:14px}
+.l1-title{font-family:'Playfair Display',serif;font-size:40px;line-height:1.08;color:var(--ink);margin-bottom:12px}
+.l1-title em{font-style:italic;color:var(--cobalt)}
+.l1-tag{font-size:14px;color:var(--text2);line-height:1.7;max-width:480px;margin-bottom:26px}
+.l1-badges{display:flex;gap:8px;flex-wrap:wrap}
+.l1-badge{font-family:'Source Code Pro',monospace;font-size:10px;padding:4px 10px;border:.5px solid var(--border);color:var(--text3)}
+.l1-right{padding:52px 56px 44px 40px;background:var(--paper2);border-left:.5px solid var(--border);display:flex;flex-direction:column;justify-content:center}
+.stat-row{padding:14px 0;border-bottom:.5px solid var(--border);display:flex;align-items:baseline;justify-content:space-between}
+.stat-row:last-child{border-bottom:none}
+.stat-lbl{font-family:'Source Code Pro',monospace;font-size:10px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase}
+.stat-val{font-family:'Playfair Display',serif;font-size:20px;color:var(--ink)}
+.stat-val.green{color:var(--green)}
+
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:.5px solid var(--border)}
+.qa-item{padding:30px 40px;border-right:.5px solid var(--border);border-bottom:.5px solid var(--border)}
+.qa-item:nth-child(2n){border-right:none}
+.qa-item:nth-last-child(-n+2){border-bottom:none}
+.qa-q{font-family:'Source Code Pro',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--cobalt2);margin-bottom:10px}
+.qa-a{font-size:14px;color:var(--text2);line-height:1.75}
+.qa-a strong{color:var(--text);font-weight:600}
+.l1-foot{display:flex;align-items:center;justify-content:space-between;padding:18px 40px;background:var(--paper2);border-top:.5px solid var(--border)}
+.l1-foot-note{font-size:13px;color:var(--text3);font-style:italic}
+.btn-deep{font-family:'Source Code Pro',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:10px 20px;background:var(--ink);color:#fff;border:none;cursor:pointer;transition:background .2s}
+.btn-deep:hover{background:var(--cobalt)}
+
+/* ── LAYER 2 ── */
+.layer2{background:var(--paper)}.layer2.open{display:block}
+.l2-nav{position:sticky;top:0;z-index:50;display:flex;background:rgba(246,242,235,.96);backdrop-filter:blur(12px);border-bottom:.5px solid var(--border);padding:0 40px;overflow-x:auto}
+.l2-btn{font-family:'Source Code Pro',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:14px 16px;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;transition:color .2s}
+.l2-btn.active,.l2-btn:hover{color:var(--ink);border-bottom-color:var(--cobalt2)}
+.l2-sec{padding:64px 56px;border-bottom:.5px solid var(--border)}.l2-sec:last-child{border-bottom:none}
+.l2-h{display:flex;align-items:baseline;gap:16px;margin-bottom:32px;padding-bottom:14px;border-bottom:.5px solid var(--border)}
+.l2-n{font-family:'Source Code Pro',monospace;font-size:11px;color:var(--cobalt2);letter-spacing:.12em}
+.l2-t{font-family:'Playfair Display',serif;font-size:30px;color:var(--ink)}
+.prose{max-width:720px;font-size:15px;color:var(--text2);line-height:1.85}
+.prose p{margin-bottom:14px}.prose p:last-child{margin-bottom:0}
+.prose strong{color:var(--text);font-weight:600}
+.callout{padding:16px 22px;border-left:3px solid var(--cobalt2);background:rgba(26,58,92,.05);margin:20px 0;font-size:14px;color:var(--text2);line-height:1.7}
+.callout strong{color:var(--ink)}
+
+/* app screenshot placeholder */
+.app-screen{width:100%;background:var(--ink);border:.5px solid var(--border);margin:24px 0;position:relative;overflow:hidden}
+.app-bar{height:40px;background:#1a2d3e;display:flex;align-items:center;padding:0 16px;gap:8px;border-bottom:0.5px solid rgba(255,255,255,.08)}
+.app-dot{width:10px;height:10px;border-radius:50%}
+.app-url{font-family:'Source Code Pro',monospace;font-size:11px;color:rgba(255,255,255,.3);margin-left:8px}
+.app-content{padding:32px 40px}
+.app-headline{font-family:'Playfair Display',serif;font-style:italic;font-size:13px;color:rgba(255,255,255,.35);margin-bottom:20px;letter-spacing:.04em}
+.app-title{font-family:'Playfair Display',serif;font-size:28px;color:#fff;margin-bottom:6px}
+.app-sub{font-size:13px;color:rgba(255,255,255,.5);margin-bottom:24px}
+.app-tabs{display:flex;gap:0;border-bottom:0.5px solid rgba(255,255,255,.1);margin-bottom:28px}
+.app-tab{font-family:'Source Code Pro',monospace;font-size:11px;padding:8px 16px;color:rgba(255,255,255,.4);border-bottom:2px solid transparent;cursor:default}
+.app-tab.act{color:#fff;border-bottom-color:var(--cobalt2)}
+.app-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.app-card{background:rgba(255,255,255,.05);border:.5px solid rgba(255,255,255,.08);padding:16px;border-radius:2px}
+.app-card-tag{font-family:'Source Code Pro',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.app-card-hed{font-size:12px;font-weight:600;color:#fff;line-height:1.4;margin-bottom:8px}
+.app-card-body{font-size:11px;color:rgba(255,255,255,.5);line-height:1.5}
+.app-signal{background:rgba(26,92,52,.15);border:.5px solid rgba(42,107,82,.4);padding:16px;margin-top:16px}
+.app-signal-label{font-family:'Source Code Pro',monospace;font-size:9px;color:var(--sage2);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.app-signal-body{font-size:12px;color:rgba(255,255,255,.6);line-height:1.6}
+
+/* flow diagram */
+.flow-wrap{background:var(--ink);border:.5px solid var(--border);padding:40px;margin:24px 0;overflow-x:auto}
+.flow-title{font-family:'Source Code Pro',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--cobalt2);margin-bottom:24px}
+.flow-svg-wrap{min-width:700px}
+
+/* Mermaid — data flow (render only when technical panel is open) */
+.mermaid-flow{margin:24px 0 0}
+.mermaid-flow-grid{display:grid;grid-template-columns:1fr;gap:22px;width:100%;max-width:min(980px,100%);margin:0 auto}
+.mermaid-flow-card{padding:22px 24px 26px;background:var(--paper2);border:.5px solid var(--border)}
+.mermaid-flow-card h3{font-family:'Playfair Display',serif;font-size:19px;color:var(--ink);margin-bottom:6px}
+.mermaid-flow-card p{font-size:13px;color:var(--text3);line-height:1.6;margin-bottom:18px;max-width:68ch}
+.mermaid-chart{width:100%;overflow:visible;-webkit-overflow-scrolling:touch}
+.mermaid-chart .mermaid{display:flex;justify-content:center;width:100%;overflow:visible}
+.mermaid-chart .mermaid svg{display:block;margin:0 auto;max-width:100%;height:auto;width:100%}
+pre.mermaid{
+  display:block;width:100%;max-width:100%;margin:0;padding:0;
+  white-space:pre;overflow:visible;
+  background:transparent;border:none;
+  font-family:'Source Code Pro',monospace;font-size:11px;line-height:1.45;
+  color:var(--text3)
+}
+pre.mermaid[data-rendered]{display:none}
+
+/* arch table */
+.arch-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:13px}
+.arch-table th{font-family:'Source Code Pro',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);padding:9px 14px;text-align:left;border-bottom:.5px solid var(--border);background:var(--paper2)}
+.arch-table td{padding:12px 14px;border-bottom:.5px solid var(--border2);color:var(--text2);vertical-align:top;line-height:1.6}
+.arch-table tr:last-child td{border-bottom:none}
+.arch-table td:first-child{font-family:'Source Code Pro',monospace;font-size:11px;color:var(--cobalt2);white-space:nowrap}
+.arch-table td code{font-family:'Source Code Pro',monospace;font-size:11px;background:var(--paper2);padding:1px 5px;border:.5px solid var(--border2);color:var(--cobalt)}
+
+/* tool table */
+.tool-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:13px}
+.tool-table th{font-family:'Source Code Pro',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);padding:9px 14px;text-align:left;border-bottom:.5px solid var(--border);background:var(--paper2)}
+.tool-table td{padding:11px 14px;border-bottom:.5px solid var(--border2);color:var(--text2);line-height:1.6;vertical-align:top}
+.tool-table tr:last-child td{border-bottom:none}
+.tool-table td:first-child{font-family:'Source Code Por',monospace;font-family:'Source Code Pro',monospace;font-size:11px;color:var(--cobalt2);font-weight:500}
+
+/* agent pipeline */
+.agent-flow{display:flex;align-items:stretch;gap:0;margin:24px 0;background:var(--border);gap:1px}
+.agent-box{flex:1;padding:24px 20px;background:var(--paper)}
+.agent-num{font-family:'Source Code Pro',monospace;font-size:10px;color:var(--cobalt2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.agent-name{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:8px}
+.agent-desc{font-size:12px;color:var(--text2);line-height:1.65}
+.agent-arrow{display:flex;align-items:center;padding:0 4px;font-size:20px;color:var(--text3);background:var(--paper)}
+
+/* code block */
+.code-block{background:var(--ink);padding:24px 28px;margin:20px 0;overflow-x:auto}
+.code-block pre{font-family:'Source Code Pro',monospace;font-size:12px;color:rgba(255,255,255,.75);line-height:1.7}
+.code-block .cb-label{font-family:'Source Code Pro',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--cobalt2);margin-bottom:12px;display:block}
+.tok-key{color:#7eb8f7}
+.tok-str{color:#a8d4a8}
+.tok-com{color:rgba(255,255,255,.35)}
+.tok-punc{color:rgba(255,255,255,.5)}
+
+/* metric strip */
+.metric-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin:20px 0}
+.ms-item{padding:20px 18px;background:var(--paper)}
+.ms-val{font-family:'Playfair Display',serif;font-size:24px;color:var(--ink);display:block;margin-bottom:4px}
+.ms-val.cobalt{color:var(--cobalt)}
+.ms-lbl{font-family:'Source Code Pro',monospace;font-size:9px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:3px}
+.ms-note{font-size:11px;color:var(--text3)}
+
+/* contribution cards */
+.contrib-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--border);margin:20px 0}
+.contrib{padding:24px 28px;background:var(--paper)}
+.contrib-head{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:8px}
+.contrib-body{font-size:13px;color:var(--text2);line-height:1.7}
+
+/* file tree */
+.file-tree{background:var(--ink);padding:24px 28px;margin:20px 0;font-family:'Source Code Pro',monospace;font-size:12px;line-height:1.9}
+.ft-dir{color:var(--cobalt2)}
+.ft-file{color:rgba(255,255,255,.65)}
+.ft-comment{color:rgba(255,255,255,.3)}
+
+/* insight grid */
+.insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--border);margin:20px 0}
+.insight{padding:24px 28px;background:var(--paper)}
+.insight-head{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:8px}
+.insight-body{font-size:13px;color:var(--text2);line-height:1.7}
+
+/* screenshot placeholder */
+.screen-placeholder{background:var(--paper2);border:.5px solid var(--border);border-left:3px solid var(--cobalt2);padding:24px 28px;margin:24px 0;font-size:13px;color:var(--text2);line-height:1.65}
+.screen-placeholder strong{color:var(--ink)}
+
+/* conc bar */
+.conc-bar{padding:32px 56px;background:var(--ink2);border-top:2px solid var(--cobalt2)}
+.conc-title{font-family:'Playfair Display',serif;font-size:22px;color:#fff;margin-bottom:10px}
+.conc-body{font-size:14px;color:var(--mist);line-height:1.75;max-width:760px}
+.code-link{font-family:'Source Code Pro',monospace;font-size:11px;color:var(--cobalt2);border-bottom:.5px solid var(--cobalt2);text-decoration:none}
+.code-link:hover{color:var(--ink)}
+
+.scroll-anchor{scroll-margin-top:50px}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.layer1.open,.layer2.open{animation:slideDown .2s ease}
+
+/* ── Figures (uniform sizing) ── */
+.fig-block{
+  margin:22px auto;
+  border:.5px solid var(--border);
+  overflow:hidden;
+  max-width:min(980px,100%);
+  background:var(--paper2);
+}
+.fig-block img{
+  display:block;
+  width:auto;
+  max-width:100%;
+  height:auto;
+  max-height:min(62vh,620px);
+  object-fit:contain;
+  object-position:center;
+  margin:0 auto;
+  background:rgba(255,255,255,.55);
+}
+.fig-block figcaption{
+  font-family:'Source Code Pro',monospace;
+  font-size:10px;
+  color:var(--text3);
+  padding:8px 14px;
+  border-top:.5px solid var(--border);
+  line-height:1.5;
+  letter-spacing:.02em;
+  background:var(--paper2);
+  text-wrap:balance;
+}
+.fig-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin:22px auto;
+  max-width:min(1100px,100%);
+}
+.fig-grid .fig-block{margin:0;max-width:100%}
+@media(max-width:900px){.fig-grid{grid-template-columns:1fr}}
+
+
+/* ── MERGED INTERACTIVE ENTRY LAYER ── */
+:root{--topbar-h:56px;--page-gutter:clamp(20px,4.5vw,56px);--pad-x:clamp(18px,2.2vw,32px);--content-inset:calc(var(--page-gutter) + var(--pad-x));}
+.mono{font-family:'Source Code Pro',monospace}
+
+.topbar{
+  position:sticky;top:0;z-index:120;
+  display:flex;flex-wrap:nowrap;align-items:center;justify-content:space-between;
+  gap:10px;min-height:var(--topbar-h);padding:0 var(--page-gutter);
+  background:linear-gradient(180deg,#121f2c 0%,var(--ink) 100%);
+  border-bottom:2px solid var(--cobalt2);
+}
+.topbar-brand{flex:0 0 auto;min-width:max-content}
+.topbar-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#f7f4ef;line-height:1.15;white-space:nowrap}
+.topbar-meta{font-size:10px;color:rgba(247,244,239,.82);letter-spacing:.05em;margin-top:3px;white-space:nowrap}
+.topbar-nav{display:flex;flex:1;min-width:0;gap:6px;justify-content:center;align-items:center;overflow-x:auto;padding:2px 0}
+.topbar-nav button{appearance:none;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.06);color:rgba(247,244,239,.78);padding:7px 10px;border-radius:2px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .2s,color .2s,border-color .2s}
+.topbar-nav button:hover{color:#f7f4ef;background:rgba(138,106,46,.18);border-color:rgba(176,137,64,.25)}
+.topbar-nav button.is-active{color:#f7f4ef;background:rgba(138,106,46,.28);border-color:rgba(176,137,64,.45)}
+.topbar-link{flex-shrink:0;font-size:12px;font-weight:500;color:#f7f4ef;text-decoration:none;white-space:nowrap;padding:8px 10px;border-radius:2px;border:1px solid rgba(255,255,255,.12)}
+.topbar-link:hover{background:rgba(138,106,46,.2);border-color:var(--gold2)}
+.topbar-actions{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.topbar-contacts{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.topbar-contacts a{width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;opacity:.95;transition:opacity .2s ease,transform .2s ease}
+.topbar-contacts a:hover{opacity:1;transform:translateY(-1px)}
+.topbar-contacts img{width:24px;height:24px;display:block}
+
+main.page{width:100%;max-width:none;margin:0;padding:0 0 24px}
+.overview-body,.technical-depth-wrap.content-pad-tech{padding-left:var(--content-inset);padding-right:var(--content-inset);width:100%;box-sizing:border-box}
+
+.hero{padding:24px 0 16px}
+.hero-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(260px,.85fr);gap:20px 28px;align-items:start}
+.hero-kicker{display:inline-block;margin-bottom:12px;padding:4px 10px;background:rgba(26,58,92,.12);font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--cobalt2)}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(30px,3.2vw,44px);line-height:1.12;color:var(--ink);margin-bottom:12px}
+.hero h1 em{font-style:italic;color:var(--cobalt)}
+.hero-lede{font-size:17px;line-height:1.65;color:var(--text2);max-width:72ch}
+.metric-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.metric-card,.card,.tab-panel,.faq-card{border:none;border-left:3px solid transparent;background:rgba(255,255,255,.62);transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease}
+.metric-card{padding:18px 16px}
+.metric-card:hover,.card:hover,.tab-panel:hover,.faq-card:hover{transform:translateY(-4px);background:rgba(255,255,255,.95);border-left-color:var(--cobalt2)}
+.metric-val{display:block;font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.metric-val.good{color:var(--green)}
+.metric-lbl{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
+
+.section{padding:24px 0 4px;scroll-margin-top:calc(var(--topbar-h) + 12px)}
+.section-head{margin-bottom:12px}
+.section-num{font-family:'Source Code Pro',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--cobalt2);margin-bottom:6px}
+.section-head h2{font-family:'Playfair Display',serif;font-size:26px;color:var(--ink);margin-bottom:6px}
+.section-head p{font-size:15px;color:var(--text2);line-height:1.6}
+.card-grid{display:grid;gap:10px}
+.card-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.card{padding:20px 18px}
+.card h3{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:8px}
+.card p{font-size:14px;color:var(--text2);line-height:1.6}
+.card-tag{display:inline-block;margin-top:10px;font-size:11px;color:var(--cobalt2);font-weight:500}
+
+.model-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.tab-panel{padding:20px 18px}
+.tab-panel ul{margin:12px 0 0 18px;font-size:14px;color:var(--text2)}
+.overview-feature{margin-top:12px}
+.overview-body .overview-screens{
+  display:flex;flex-direction:column;gap:16px;margin-top:14px;width:100%
+}
+.overview-body .overview-screens .fig-block{
+  max-width:min(980px,100%);margin:0 auto;width:100%
+}
+.overview-body .overview-screens .fig-block img{
+  width:auto;max-width:100%;height:auto;max-height:none;
+  display:block;margin:0 auto;object-fit:contain;object-position:center;background:#fff
+}
+
+.faq-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.faq-card{padding:20px 18px;height:100%}
+.faq-card h3{font-size:15px;font-weight:600;color:var(--ink);line-height:1.35;margin-bottom:8px}
+.faq-card p{font-size:14px;color:var(--text2);line-height:1.65}
+
+.overview-end{margin:20px 0 0;padding:14px 0;background:var(--ink);color:rgba(247,244,239,.85);border-top:2px solid var(--cobalt2)}
+.overview-end-inner{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px 28px;align-items:center;padding:0}
+.overview-end-copy .section-num{color:var(--gold2)}
+.overview-end h2{font-family:'Playfair Display',serif;font-size:19px;color:#f7f4ef;margin-bottom:6px;line-height:1.25}
+.overview-end p{font-size:13px;line-height:1.55;color:rgba(247,244,239,.72);margin:0;max-width:56ch}
+.btn-open-technical{font-family:'Source Code Pro',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:10px 18px;background:var(--cobalt);color:#fff;border:none;cursor:pointer;white-space:nowrap;transition:background .2s,transform .2s}
+.btn-open-technical:hover{background:var(--cobalt2);transform:translateY(-1px)}
+
+.technical-depth-wrap{display:none}
+.technical-depth-wrap.is-open{display:block;animation:slideDown .25s ease}
+.technical-bridge{width:100%;max-width:none;margin:0;padding:32px 0 24px;background:var(--ink);color:rgba(247,244,239,.85);border-top:2px solid var(--cobalt2)}
+.technical-bridge .section-num{color:var(--gold2);margin-bottom:10px}
+.technical-bridge h2{font-family:'Playfair Display',serif;font-size:26px;color:#f7f4ef;margin-bottom:10px;line-height:1.2}
+.technical-bridge p{font-size:15px;line-height:1.65;color:rgba(247,244,239,.72)}
+
+.layer2{background:var(--paper);padding:0 0 48px}
+.technical-depth-wrap.is-open .layer2{display:block}
+.layer2 .l2-nav{position:sticky;top:var(--topbar-h);z-index:90}
+.layer2 .l2-sec{padding:64px 0;border-bottom:.5px solid var(--border)}
+.layer2 .l2-sec:last-child{border-bottom:none}
+
+/* News app screenshots — sharp at native size, never forced upscale */
+.fig-block.fig-dist-full .fig-media{
+  display:flex;justify-content:center;align-items:center;padding:0;background:#fff
+}
+.fig-block.fig-dist-full img,
+.overview-body .overview-screens .fig-block img,
+.layer2 .fig-block.fig-dist-full img{
+  width:auto;max-width:100%;height:auto;max-height:none;
+  object-fit:contain;object-position:center;margin:0 auto;display:block
+}
+
+.conc-bar{
+  width:100vw;margin:0;margin-left:calc(50% - 50vw);
+  padding:28px var(--content-inset) 32px;box-sizing:border-box;
+  background:var(--ink);border-top:2px solid var(--cobalt2)
+}
+.conc-inner{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);align-items:start;gap:20px 36px;max-width:none}
+.conc-name{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:rgba(247,244,239,.94);line-height:1.24;margin:0}
+.conc-left{min-width:0}
+.conc-right{min-width:0;justify-self:end}
+.conc-links{list-style:none;display:grid;grid-template-columns:repeat(2,max-content);gap:10px 18px;margin:0;padding:0;justify-content:end}
+.conc-links a{font-size:13px;color:var(--gold2);text-decoration:none;border-bottom:1px solid rgba(176,137,64,.35);transition:color .2s,border-color .2s;display:inline-flex;align-items:center;gap:6px}
+.conc-links a:hover{color:#f7f4ef;border-bottom-color:var(--gold2)}
+.conc-links img{width:14px;height:14px;display:block;flex:0 0 14px}
+.conc-course{width:100%;margin:0;font-size:11px;letter-spacing:.06em;line-height:1.6;color:rgba(247,244,239,.78)}
+.conc-copy{width:100%;display:flex;flex-direction:column;gap:8px;margin-top:4px}
+@media(max-width:900px){.hero-layout,.model-grid,.faq-grid,.card-grid.cols-3{grid-template-columns:1fr}}
+@media(max-width:640px){.conc-inner{grid-template-columns:1fr}.conc-right{justify-self:start}.conc-links{grid-template-columns:1fr;justify-content:start}}
+
+
+/* ── SHARED L2 CARD SYSTEM ── */
+/* Scoped to .layer2 so overview cards stay unchanged. Match infra / IVV / turbine. */
+
+.layer2{
+  --l2-card:rgba(255,255,255,.62);
+  --l2-card-hover:rgba(255,255,255,.95);
+  --l2-lift:translateY(-4px);
+  --content-gap:12px;
+  background:var(--paper);
+  padding:0 0 48px;
+}
+
+.layer2 .l2-nav{
+  position:sticky;top:var(--topbar-h,56px);z-index:90;
+  display:flex;flex-wrap:nowrap;align-items:center;gap:4px;
+  width:100%;margin:0;padding:6px 0 10px;min-height:var(--topbar-h,56px);box-sizing:border-box;
+  background:rgba(246,242,235,.92);backdrop-filter:blur(10px);
+  border-bottom:none;overflow-x:auto;scrollbar-width:thin
+}
+.layer2 .l2-nav-btn,
+.layer2 .l2-btn,
+.layer2 .l2-nav-item{
+  appearance:none;border:1px solid transparent;background:rgba(14,26,38,.06);
+  font-family:inherit;font-size:12px;font-weight:600;
+  padding:7px 11px;border-radius:2px;color:var(--text2);
+  cursor:pointer;white-space:nowrap;
+  transition:background .2s,color .2s,border-color .2s
+}
+.layer2 .l2-nav-btn:hover,.layer2 .l2-btn:hover,.layer2 .l2-nav-item:hover{
+  color:var(--ink);background:rgba(138,106,46,.12);border-color:rgba(138,106,46,.2)
+}
+.layer2 .l2-nav-btn.active,.layer2 .l2-btn.active,.layer2 .l2-nav-item.active{
+  color:var(--ink);background:rgba(138,106,46,.2);border-color:rgba(138,106,46,.35)
+}
+
+.layer2 .l2-sec,
+.layer2 .l2-section{
+  width:100%;max-width:none;margin:0;padding:28px 0 6px;border-bottom:none;
+  display:flex;flex-direction:column;gap:var(--content-gap);
+  opacity:0;transform:translateY(14px)
+}
+.layer2 .l2-sec > .l2-h,
+.layer2 .l2-sec > .l2-sec-header,
+.layer2 .l2-section > .l2-h,
+.layer2 .l2-section > .l2-sec-header{margin-bottom:0}
+.layer2 .l2-sec .prose,
+.layer2 .l2-section .prose,
+.layer2 .l2-sec .callout,
+.layer2 .l2-section .callout,
+.layer2 .l2-sec .eq-block,
+.layer2 .l2-sec .dt,
+.layer2 .l2-sec .arch-table,
+.layer2 .l2-sec .tool-table,
+.layer2 .l2-sec .scenario-grid,
+.layer2 .l2-sec .metrics-strip,
+.layer2 .l2-sec .metric-strip,
+.layer2 .l2-sec .perf-strip,
+.layer2 .l2-sec .dec-grid,
+.layer2 .l2-sec .insight-grid,
+.layer2 .l2-sec .limit-grid,
+.layer2 .l2-sec .compare-grid,
+.layer2 .l2-sec .contrib-grid,
+.layer2 .l2-sec .subsys-grid,
+.layer2 .l2-sec .agent-flow,
+.layer2 .l2-sec .tool-chain,
+.layer2 .l2-sec .fig-block,
+.layer2 .l2-sec .fig-grid,
+.layer2 .l2-sec .fig-full,
+.layer2 .l2-sec .code-block,
+.layer2 .l2-sec .iw-panel{margin:0}
+
+.technical-depth-wrap.is-open .layer2 .l2-sec,
+.technical-depth-wrap.is-open .layer2 .l2-section{
+  animation:l2SecIn .55s cubic-bezier(.16,1,.3,1) forwards
+}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(2),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(2){animation-delay:.04s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(3),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(3){animation-delay:.08s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(4),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(4){animation-delay:.12s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(5),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(5){animation-delay:.16s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(6),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(6){animation-delay:.2s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(7),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(7){animation-delay:.24s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(8),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(8){animation-delay:.28s}
+.technical-depth-wrap.is-open .layer2 .l2-sec:nth-child(9),
+.technical-depth-wrap.is-open .layer2 .l2-section:nth-child(9){animation-delay:.32s}
+@keyframes l2SecIn{to{opacity:1;transform:none}}
+
+.layer2 .l2-h,
+.layer2 .l2-sec-header{
+  display:block;margin-bottom:18px;padding-bottom:0;border-bottom:none
+}
+.layer2 .l2-n,
+.layer2 .l2-sec-n{
+  display:block;font-family:'Source Code Pro',monospace;
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold,var(--gold2,var(--accent2,var(--teal2,var(--cobalt2)))));margin-bottom:6px
+}
+.layer2 .l2-t,
+.layer2 .l2-sec-t{
+  font-family:'Playfair Display',serif;font-size:26px;font-weight:700;
+  color:var(--ink);line-height:1.2;margin:0
+}
+.layer2 .prose{
+  max-width:none;font-size:15px;color:var(--text2);line-height:1.65;margin-bottom:0
+}
+.layer2 .prose p{margin-bottom:12px}
+.layer2 .prose p:last-child{margin-bottom:0}
+.layer2 .prose strong{color:var(--ink);font-weight:600}
+
+.layer2 .l2-card-surface,
+.layer2 .callout,
+.layer2 .eq-block,
+.layer2 .insight,
+.layer2 .limit,
+.layer2 .dec,
+.layer2 .contrib,
+.layer2 .compare-card,
+.layer2 .agent-box,
+.layer2 .ss,
+.layer2 .mermaid-card,
+.layer2 .mermaid-flow-card{
+  background:var(--l2-card);border:none;border-left:3px solid transparent;
+  border-radius:2px;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .callout,
+.layer2 .eq-block,
+.layer2 .insight,
+.layer2 .limit,
+.layer2 .dec,
+.layer2 .contrib,
+.layer2 .compare-card,
+.layer2 .agent-box,
+.layer2 .ss,
+.layer2 .mermaid-card,
+.layer2 .mermaid-flow-card{padding:20px 18px}
+.layer2 .callout:hover,
+.layer2 .eq-block:hover,
+.layer2 .insight:hover,
+.layer2 .limit:hover,
+.layer2 .dec:hover,
+.layer2 .contrib:hover,
+.layer2 .compare-card:hover,
+.layer2 .agent-box:hover,
+.layer2 .ss:hover,
+.layer2 .mermaid-card:hover,
+.layer2 .mermaid-flow-card:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);
+  border-left-color:var(--gold,var(--gold2,var(--accent,var(--teal2,var(--cobalt2)))))
+}
+.layer2 .callout{
+  font-size:14px;line-height:1.65;color:var(--text2);
+  border-left-color:var(--gold,var(--gold2,var(--accent,var(--teal2,var(--cobalt2)))));
+  background:rgba(255,255,255,.72)
+}
+.layer2 .callout strong{color:var(--ink);font-weight:600}
+
+.layer2 .dt,
+.layer2 .arch-table,
+.layer2 .tool-table{
+  width:100%;border-collapse:collapse;margin:0;font-size:14px;
+  background:var(--l2-card);border-radius:2px;overflow:hidden;
+  border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .dt:hover,
+.layer2 .arch-table:hover,
+.layer2 .tool-table:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);
+  border-left-color:var(--gold,var(--gold2,var(--accent,var(--teal2,var(--cobalt2)))))
+}
+.layer2 .dt th,
+.layer2 .arch-table th,
+.layer2 .tool-table th{
+  font-family:'Source Code Pro',monospace;font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--text3);padding:12px 16px;text-align:left;
+  background:rgba(236,232,223,.55);border-bottom:none
+}
+.layer2 .dt td,
+.layer2 .arch-table td,
+.layer2 .tool-table td{
+  padding:12px 16px;border-bottom:1px solid var(--border2);
+  color:var(--text2);vertical-align:top;line-height:1.55
+}
+.layer2 .dt tr:last-child td,
+.layer2 .arch-table tr:last-child td,
+.layer2 .tool-table tr:last-child td{border-bottom:none}
+.layer2 .dt td:first-child,
+.layer2 .arch-table td:first-child,
+.layer2 .tool-table td:first-child{
+  font-family:'Source Code Pro',monospace;font-size:11px;
+  color:var(--gold,var(--gold2,var(--accent2,var(--teal2,var(--cobalt2)))));font-weight:500
+}
+.layer2 .dt td.green,.layer2 .arch-table td.green{color:var(--green);font-weight:600}
+.layer2 .dt td.red,.layer2 .arch-table td.red{color:var(--red);font-weight:600}
+
+.layer2 .metrics-strip,
+.layer2 .metric-strip,
+.layer2 .perf-strip{
+  display:grid;gap:10px;background:transparent;margin:0
+}
+.layer2 .metrics-strip,
+.layer2 .metric-strip{grid-template-columns:repeat(4,1fr)}
+.layer2 .perf-strip{grid-template-columns:repeat(4,1fr)}
+.layer2 .ms,
+.layer2 .ms-item,
+.layer2 .ps{
+  padding:18px 16px;background:var(--l2-card);border-radius:2px;
+  border:none;border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .ms:hover,
+.layer2 .ms-item:hover,
+.layer2 .ps:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);
+  border-left-color:var(--gold,var(--gold2,var(--accent,var(--teal2,var(--cobalt2)))))
+}
+.layer2 .ms-lbl,
+.layer2 .ps-lbl{
+  font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text3);display:block;margin-bottom:6px
+}
+.layer2 .ms-val,
+.layer2 .ps-val{
+  font-family:'Playfair Display',serif;font-size:24px;font-weight:700;
+  color:var(--ink);display:block;margin-bottom:4px
+}
+.layer2 .ms-val.green,.layer2 .ms-val.cobalt,.layer2 .ps-val.teal{color:var(--green)}
+.layer2 .ms-val.cobalt{color:var(--accent,var(--cobalt))}
+.layer2 .ms-val.teal{color:var(--teal)}
+.layer2 .ms-note,.layer2 .ps-note{font-size:13px;color:var(--text2);line-height:1.5}
+
+.layer2 .scenario-grid{grid-template-columns:repeat(4,1fr)}
+.layer2 .sc{
+  padding:20px 18px;background:var(--l2-card);border-radius:2px;
+  border:none;border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .sc:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);
+  border-left-color:var(--gold,var(--gold2,var(--accent,var(--teal2,var(--cobalt2)))))
+}
+
+.layer2 .dec-grid,
+.layer2 .insight-grid,
+.layer2 .limit-grid,
+.layer2 .compare-grid,
+.layer2 .contrib-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
+  background:transparent;margin:0
+}
+.layer2 .subsys-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+  background:transparent;margin:0
+}
+.layer2 .insight-head,
+.layer2 .limit-head,
+.layer2 .contrib-head,
+.layer2 .compare-card h4{
+  font-size:15px;font-weight:600;color:var(--ink);margin-bottom:8px;line-height:1.35
+}
+.layer2 .compare-card h4{font-family:'Playfair Display',serif;font-size:18px}
+.layer2 .insight-body,
+.layer2 .limit-body,
+.layer2 .contrib-body,
+.layer2 .compare-card p{font-size:14px;color:var(--text2);line-height:1.65}
+.layer2 .ss-name{
+  font-family:'Source Code Pro',monospace;font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--teal2,var(--accent2,var(--cobalt2)));margin-bottom:8px
+}
+.layer2 .ss-req{font-size:12px;color:var(--text2);line-height:1.6}
+
+.layer2 .agent-flow{
+  display:flex;align-items:stretch;gap:10px;margin:0;background:transparent
+}
+.layer2 .agent-arrow{
+  display:flex;align-items:center;padding:0 2px;font-size:20px;color:var(--text3);
+  background:transparent;flex-shrink:0
+}
+.layer2 .agent-num{
+  font-family:'Source Code Pro',monospace;font-size:10px;
+  color:var(--accent2,var(--cobalt2));letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px
+}
+.layer2 .agent-name{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:8px}
+.layer2 .agent-desc{font-size:12px;color:var(--text2);line-height:1.65}
+
+.layer2 .tool-chain{display:flex;flex-direction:column;gap:10px;margin:0;background:transparent}
+.layer2 .tc-row{
+  display:grid;grid-template-columns:36px minmax(140px,.9fr) 1fr minmax(140px,.75fr);
+  gap:1px;background:var(--border);border-radius:2px;overflow:hidden;
+  border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),border-color .28s ease
+}
+.layer2 .tc-row:hover{transform:var(--l2-lift);border-left-color:var(--gold,var(--gold2))}
+.layer2 .tc-num,.layer2 .tc-name,.layer2 .tc-purpose,.layer2 .tc-leads{
+  padding:14px 16px;background:var(--l2-card);font-size:12px;color:var(--text2);line-height:1.5
+}
+.layer2 .tc-num{font-family:'Source Code Pro',monospace;color:var(--teal2,var(--accent2));background:var(--paper2)}
+.layer2 .tc-name{font-weight:600;color:var(--ink)}
+.layer2 .tc-leads{font-family:'Source Code Pro',monospace;font-size:10px;text-align:right;background:var(--paper2)}
+
+.layer2 .fig-block,
+.layer2 .fig-full{
+  margin:0;width:100%;max-width:100%;border:none;border-radius:2px;overflow:hidden;
+  background:var(--l2-card);border-left:3px solid rgba(14,26,38,.08);
+  transition:transform .32s cubic-bezier(.16,1,.3,1),border-color .28s ease
+}
+.layer2 .fig-block:hover,.layer2 .fig-full:hover{
+  border-left-color:var(--gold,var(--gold2));transform:var(--l2-lift)
+}
+.layer2 .fig-block img,.layer2 .fig-full img{
+  display:block;width:auto;max-width:100%;height:auto;
+  object-fit:contain;object-position:center;
+  margin:0 auto;background:rgba(255,255,255,.45)
+}
+.layer2 .fig-block figcaption{
+  font-family:'Source Code Pro',monospace;font-size:11px;color:var(--text3);
+  padding:10px 16px;background:rgba(236,232,223,.4);line-height:1.5
+}
+.layer2 .fig-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;margin:0
+}
+.layer2 .fig-grid .fig-block{margin:0}
+
+.layer2 .mermaid-grid,
+.layer2 .mermaid-flow{width:100%;max-width:min(980px,100%);margin:0 auto}
+.layer2 .mermaid-flow-grid{display:flex;flex-direction:column;gap:22px;width:100%}
+.layer2 .mermaid-card h3,
+.layer2 .mermaid-flow-card h3{
+  font-family:'Playfair Display',serif;font-size:19px;color:var(--ink);margin-bottom:6px
+}
+.layer2 .mermaid-card p,
+.layer2 .mermaid-flow-card p{font-size:13px;color:var(--text3);line-height:1.6;margin-bottom:16px}
+.layer2 .mermaid-chart{width:100%;overflow:visible}
+.layer2 .mermaid-chart .mermaid,
+.layer2 .mermaid{display:flex;justify-content:center;overflow:visible;padding:4px 0;width:100%}
+.layer2 .mermaid svg{width:100%;max-width:100%;height:auto;display:block;margin:0 auto}
+
+/* Diagram + mock UI centering */
+.layer2 .l2-sec .mermaid-flow,
+.layer2 .l2-sec .mermaid-grid,
+.layer2 .l2-sec .flow-wrap,
+.layer2 .l2-sec .app-screen{
+  width:100%;max-width:min(980px,100%);margin-left:auto;margin-right:auto
+}
+.layer2 .l2-sec .app-screen{max-width:min(920px,100%)}
+.layer2 .l2-sec .fig-block.fig-dist-full,
+.layer2 .l2-sec .fig-grid .fig-block.fig-dist-full{
+  overflow:visible;width:100%;max-width:min(980px,100%);margin-left:auto;margin-right:auto
+}
+.layer2 .l2-sec .fig-block.fig-dist-full img,
+.layer2 .l2-sec .fig-grid .fig-block.fig-dist-full img{
+  width:auto;max-width:100%;height:auto;max-height:none;object-fit:contain;margin:0 auto
+}
+.layer2 .l2-sec .fig-grid .fig-block.fig-dist-full{grid-column:1 / -1;justify-self:center}
+.overview-body .overview-feature .app-screen{
+  width:100%;max-width:min(920px,100%);margin:0 auto
+}
+.edgeLabel,.edgeLabel p{background-color:transparent!important}
+.edgeLabel rect{opacity:0!important;fill:transparent!important}
+
+.layer2 .pipeline-diagram{
+  max-width:min(640px,100%);margin:0 auto;padding:28px 24px 32px;
+  background:var(--l2-card);border-radius:2px;border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .pipeline-diagram:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);
+  border-left-color:var(--gold,var(--gold2))
+}
+
+.layer2 .code-block{
+  margin:0;padding:20px 24px;border-radius:2px;overflow-x:auto;
+  background:var(--ink);border-left:3px solid rgba(255,255,255,.12);
+  transition:border-color .28s ease,transform .32s cubic-bezier(.16,1,.3,1)
+}
+.layer2 .code-block:hover{border-left-color:var(--gold2,var(--gold))}
+.layer2 .code-block pre,
+.layer2 .code-block .cb-label{color:rgba(255,255,255,.85)}
+
+.layer2 .flow-wrap,
+.layer2 .iw-panel{
+  margin:0;border-radius:2px;overflow:hidden;
+  border-left:3px solid rgba(255,255,255,.15);
+  transition:border-color .28s ease
+}
+.layer2 .flow-wrap:hover,.layer2 .iw-panel:hover{
+  border-left-color:var(--gold2,var(--gold,var(--accent2)))
+}
+
+.layer2 .app-screen{
+  margin:0 auto;border-radius:2px;overflow:hidden;
+  max-width:min(920px,100%);width:100%;
+  background:var(--l2-card);border-left:3px solid transparent;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease
+}
+.layer2 .app-screen:hover{
+  transform:var(--l2-lift);background:var(--l2-card-hover);
+  border-left-color:var(--gold,var(--gold2))
+}
+
+@media(max-width:900px){
+  .layer2 .metrics-strip,.layer2 .metric-strip,.layer2 .perf-strip,
+  .layer2 .scenario-grid{grid-template-columns:repeat(2,1fr)}
+  .layer2 .subsys-grid{grid-template-columns:1fr 1fr}
+  .layer2 .agent-flow{flex-direction:column}
+  .layer2 .agent-arrow{transform:rotate(90deg);justify-content:center;padding:4px 0}
+  .layer2 .tc-row{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  .layer2 .dec-grid,.layer2 .insight-grid,.layer2 .limit-grid,
+  .layer2 .compare-grid,.layer2 .contrib-grid,.layer2 .fig-grid,
+  .layer2 .metrics-strip,.layer2 .metric-strip,.layer2 .perf-strip,
+  .layer2 .scenario-grid,.layer2 .subsys-grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  .layer2 .l2-sec,.layer2 .l2-section{opacity:1;transform:none;animation:none!important}
+  .layer2 .callout:hover,.layer2 .insight:hover,.layer2 .ms:hover,.layer2 .fig-block:hover{
+    transform:none
+  }
+}
+
+/* ── SHARED L2 CARD EXTENSIONS ── */
+/* (reserved — extensions merged into block above) */
+
+</style>
+</head>
+<body>
+<header class="topbar">
+<div class="topbar-brand">
+<div class="topbar-title">News for People in a Hurry</div>
+<div class="topbar-meta mono">SYSEN 5381 · Cornell · Spring 2026</div>
+</div>
+<nav aria-label="Page sections" class="topbar-nav mono">
+<button class="is-active" data-section="overview" type="button">Overview</button>
+<button data-section="problem" type="button">Problem</button>
+<button data-section="model" type="button">Model</button>
+<button data-section="results" type="button">Results</button>
+<button data-section="faq" type="button">FAQ</button>
+<button data-section="technical-depth" type="button">Technical</button>
+</nav>
+<div class="topbar-actions">
+<a aria-label="Download resume (PDF)" class="topbar-link mono" href="/assets/resume/Anurag_Yadav_Resume.pdf" target="_blank" rel="noopener noreferrer" download>Resume</a>
+<div aria-label="Contact links" class="topbar-contacts">
+<a aria-label="Email yadavanurag560@gmail.com" href="mailto:yadavanurag560@gmail.com"><img alt="" src="assets/footer-icons/email.png"/></a>
+<a aria-label="Email ay468@cornell.edu" href="mailto:ay468@cornell.edu"><img alt="" src="assets/footer-icons/email2.png"/></a>
+<a aria-label="Call (607) 262-3840" href="tel:+16072623840"><img alt="" src="assets/footer-icons/phone.png"/></a>
+<a aria-label="LinkedIn" href="https://www.linkedin.com/in/anurag-systems" rel="noopener noreferrer" target="_blank"><img alt="" src="assets/footer-icons/linkedin.png"/></a>
+<a aria-label="GitHub — DS AI for Systems Eng Project repository" href="https://github.com/anuragyadav21/DS-AIforSystemsEng-Project1" rel="noopener noreferrer" target="_blank"><img alt="" src="assets/footer-icons/github.png"/></a>
+</div>
+</div>
+</header>
+<main class="page">
+<div class="overview-body">
+<header class="hero scroll-anchor" id="overview">
+<div class="hero-layout">
+<div class="hero-copy">
+<span class="hero-kicker mono">AI · Multi-agent · SYSEN 5381</span>
+<h1>Real-time news.<br/><em>Three agents.<br/>One validation layer.</em></h1>
+<p class="hero-lede">Most AI news tools pass feeds through a model and publish the output with limited checking. This project uses a validation-first pipeline: ingest live NYT feeds, summarise by section, run a 3-agent workflow that cross-links stories, scores world mood, and cross-references the narrative against live Yahoo Finance data before anything is shown to the user.</p>
+</div>
+<div class="hero-metrics">
+<div class="metric-grid">
+<div class="metric-card" data-reveal=""><span class="metric-val">3</span><span class="metric-lbl">Agent pipeline</span></div>
+<div class="metric-card" data-reveal=""><span class="metric-val">Live</span><span class="metric-lbl">Deployed · Posit Cloud</span></div>
+<div class="metric-card" data-reveal=""><span class="metric-val">6</span><span class="metric-lbl">News sections + Signal Studio</span></div>
+<div class="metric-card" data-reveal=""><span class="metric-val good">2</span><span class="metric-lbl">External APIs</span></div>
+</div>
+</div>
+</div>
+</header>
+<section class="section scroll-anchor" id="problem">
+<div class="section-head">
+<div class="section-num mono">01 · Problem</div>
+<h2>AI news needs ground-truth validation</h2>
+<p>Most tools publish model output unchecked, this app cross-references narrative against live market data before display.</p>
+</div>
+<div class="card-grid cols-3">
+<article class="card" data-reveal=""><h3>Validation-first news</h3><p>Pulls live NYT Top Stories across 6 sections, enriches each article with AI-generated summaries (tone-configurable), sentiment scores, and impact labels, then runs a 3-agent pipeline in the background: Agent 1 finds cross-section links, Agent 2 scores world mood and editorial sta…</p><span class="card-tag mono">NYT · 6 sections</span></article>
+<article class="card" data-reveal=""><h3>QC layer</h3><p>Most AI news apps display whatever the model returns. This one validates. Agent 3 specifically asks: does the sentiment and narrative the AI produced about markets actually match what the markets did? If the summary says "tech sector concern" but NASDAQ is up 2%, that's flagged a…</p><span class="card-tag mono">Agent 3 · markets</span></article>
+<article class="card" data-reveal=""><h3>3-agent pipeline</h3><p>Section packets (per-tab headlines + summaries + sentiment counts) feed Agent 1 (cross_section_agent) which links stories across topic areas. Agent 2 (world_sentiment_agent) consumes Agent 1 output plus the original packets to produce mood score and editorial stance. Agent 3 (mar…</p><span class="card-tag mono">Sequential workflow</span></article>
+</div>
+</section>
+<section class="section scroll-anchor" id="model">
+<div class="section-head">
+<div class="section-num mono">02 · Model</div>
+<h2>Ingest → enrich → three-agent validate</h2>
+<p>NYT feeds, per-article enrichment, then cross-section linking, mood scoring, and market validation.</p>
+</div>
+<div class="model-grid">
+<div class="tab-panel" data-reveal=""><h3>Ingest</h3><ul><li>NYT Top Stories API</li><li>Parallel section fetch</li><li>Deduped article pool</li></ul></div>
+<div class="tab-panel" data-reveal=""><h3>Enrich</h3><ul><li>Summaries · sentiment</li><li>Impact labels</li><li>Quick-then-full UI</li></ul></div>
+<div class="tab-panel" data-reveal=""><h3>Validate</h3><ul><li>Cross-section links</li><li>World mood score</li><li>News vs market check</li></ul></div>
+</div>
+<div class="overview-feature">
+<div class="overview-screens">
+<figure class="fig-block fig-dist-full" data-reveal="">
+<div class="fig-media">
+<img alt="Signal Studio dashboard with global insight, mood metrics, and QC evidence score" decoding="async" height="1590" loading="lazy" src="assets/news-app/signal-studio-overview.png" width="2706"/>
+</div>
+<figcaption>Live Signal Studio — global insight bar, section scores, mood/market/signal/confidence metrics, QC evidence</figcaption>
+</figure>
+<figure class="fig-block fig-dist-full" data-reveal="">
+<div class="fig-media">
+<img alt="Three-agent pipeline output with causal flow and market pulse charts" decoding="async" height="1226" loading="lazy" src="assets/news-app/agent-pipeline-dashboard.png" width="2456"/>
+</div>
+<figcaption>Agent outputs — cross-section links (Agent 1), global mood (Agent 2), news vs market validation (Agent 3)</figcaption>
+</figure>
+</div>
+</div>
+</section>
+<section class="section scroll-anchor" id="results">
+<div class="section-head">
+<div class="section-num mono">03 · Results</div>
+<h2>Shipped multi-agent product</h2>
+<p>Live deployment with validation-first architecture and tool-calling research dives.</p>
+</div>
+<div class="card-grid cols-3">
+<article class="card" data-reveal=""><h3>Deployed</h3><p><strong>Live</strong> on Posit Cloud, 6 sections plus Signal Studio for agent output.</p><span class="card-tag mono">Production-shaped</span></article>
+<article class="card" data-reveal=""><h3>Your contribution</h3><p>I designed and built the QC validation architecture and Agent 3 (market_validation_agent). The cross-reference between AI narrative and live market data. The framing, that validating AI output is a systems engineering problem, a prompt engineering problem , and also came from a…</p></article>
+<article class="card" data-reveal=""><h3>Research tools</h3><p>Each article card has a "Dive deeper" link that fires the research agent, a multi-round tool-calling loop (max 6 rounds) that can call wikipedia_lookup(query) to ground entities and yahoo_finance_quote(ticker) for market context on finance-related stories. The agent posts to Cha…</p></article>
+</div>
+</section>
+<section class="section scroll-anchor" id="faq">
+<div class="section-head"><div class="section-num mono">04 · FAQ</div><h2>Common questions</h2></div>
+<div class="faq-grid">
+<article class="faq-card" data-reveal=""><h3>Quick-then-full UI</h3><p>The UI renders two passes deliberately. First pass: deterministic placeholders and fast workflow snapshot paint immediately. The user sees content before any LLM call completes. Second pass: background process replaces placeholders with full LLM-generated section briefs and the complete 3-agent result. This prevents blank-screen wait and matches how production AI apps should handle latency. The UX pattern is as deliberate as the architecture.</p></article>
+<article class="faq-card" data-reveal=""><h3>Research agent</h3><p>Each article card has a "Dive deeper" link that fires the research agent, a multi-round tool-calling loop (max 6 rounds) that can call wikipedia_lookup(query) to ground entities and yahoo_finance_quote(ticker) for market context on finance-related stories. The agent posts to Chat Completions with tools defined, handles tool_calls responses, appends role:tool messages, and iterates until it produces a complete research brief. Results cached per a…</p></article>
+<article class="faq-card" data-reveal=""><h3>QC / validation</h3><p>Most AI news apps display whatever the model returns. This one validates. Agent 3 specifically asks: does the sentiment and narrative the AI produced about markets actually match what the markets did? If the summary says "tech sector concern" but NASDAQ is up 2%, that's flagged as divergence. This is a systems engineering mindset applied to an AI product, treat the LLM output as an untrusted component, verify it against external ground truth, su…</p></article>
+<article class="faq-card" data-reveal=""><h3>Full report</h3><p>Open the technical section for architecture tables, data-flow diagram, agent pipeline, code structure, and deployment notes.</p></article>
+</div>
+</section>
+<section aria-label="Open technical report" class="overview-end" id="overview-end">
+<div class="overview-end-inner" style="padding:14px var(--content-inset)">
+<div class="overview-end-copy">
+<div class="section-num mono">Technical report</div>
+<h2>Open full architecture and agent documentation</h2>
+<p>Architecture through reflection, with data-flow SVG, agent pipeline, and code tables.</p>
+</div>
+<div class="overview-end-action">
+<button aria-controls="technicalDepthWrap" aria-expanded="false" class="btn-open-technical" id="openTechnicalBtn" type="button">View full technical section ↓</button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<div aria-hidden="true" class="technical-depth-wrap content-pad-tech" hidden="" id="technicalDepthWrap">
+<section class="technical-bridge scroll-anchor" id="technical-depth">
+<div class="section-num mono">Technical depth</div>
+<h2>Architecture, agents, and deployment</h2>
+<p>Full SYSEN 5381 technical documentation preserved below.</p>
+</section>
+<div class="layer2" id="layer2">
+<nav aria-label="Technical sections" class="l2-nav">
+<button class="l2-nav-btn active" data-l2="architecture" type="button">Architecture</button>
+<button class="l2-nav-btn" data-l2="dataflow" type="button">Data flow</button>
+<button class="l2-nav-btn" data-l2="agents" type="button">Agents</button>
+<button class="l2-nav-btn" data-l2="tools" type="button">Tool calling</button>
+<button class="l2-nav-btn" data-l2="ui" type="button">UI pattern</button>
+<button class="l2-nav-btn" data-l2="code" type="button">Code structure</button>
+<button class="l2-nav-btn" data-l2="deployment" type="button">Deployment</button>
+<button class="l2-nav-btn" data-l2="reflection" type="button">Reflection</button>
+</nav>
+<!-- ARCHITECTURE -->
+<div class="l2-sec scroll-anchor" id="l2-architecture">
+<div class="l2-h"><span class="l2-n">01</span><h2 class="l2-t">System Architecture</h2></div>
+<div class="prose">
+<p>The app is built on Python Shiny (ASGI-compatible, deployed via uvicorn). The architecture separates concerns cleanly: data ingestion, article enrichment, agentic orchestration, and research are distinct modules with defined interfaces.</p>
+</div>
+<table class="arch-table">
+<thead><tr><th>Component</th><th>Role</th><th>Interaction</th></tr></thead>
+<tbody>
+<tr><td><code>app.py</code></td><td>Shiny server, reactive state, refresh cycle, pagination, arms agent pipeline after first paint</td><td>Calls <code>modules/*</code>, <code>agents/workflow.py</code>, <code>research_agent</code></td></tr>
+<tr><td><code>config.py</code></td><td>Loads <code>.env</code> from cwd and parents; exposes API keys, <code>NYT_SECTIONS</code>, <code>OPENAI_MODEL</code></td><td>Read by all network modules at import time</td></tr>
+<tr><td><code>modules/data_fetch.py</code></td><td>NYT HTTP client with short-lived failure cache; returns pandas DataFrame of articles</td><td>Bearer <code>NYT_API_KEY</code>; parallel section requests via httpx</td></tr>
+<tr><td><code>modules/categorization.py</code></td><td>Breaking/trending heuristics, category filters, card selection, pure DataFrame transforms</td><td>No network calls; stateless</td></tr>
+<tr><td><code>modules/ai_services.py</code></td><td>OpenAI calls for sentiment analysis and tone-configurable summaries</td><td>Bearer <code>OPENAI_API_KEY</code>; batched per article</td></tr>
+<tr><td><code>modules/impact_classifier.py</code></td><td>OpenAI batch impact labels: High / Medium / Low per article</td><td>Bearer <code>OPENAI_API_KEY</code></td></tr>
+<tr><td><code>agents/workflow.py</code></td><td>Orchestrates <code>generate_section_briefs</code> then <code>run_multi_agent_workflow</code> — Agent 1 → 2 → 3; prefetches market snapshot</td><td>Drives the 3-agent sequential pipeline</td></tr>
+<tr><td><code>agents/market_data.py</code></td><td>yfinance → snapshot JSON; default universe ^GSPC, ^IXIC, ^DJI, GC=F, CL=F, BTC-USD; 10-min cache</td><td>Called by Agent 3 and workflow prefetch</td></tr>
+<tr><td><code>ui/agent_views.py</code></td><td>Signal Studio tab, renders workflow JSON, section payloads, agent outputs</td><td>Driven by <code>agent_workflow_state</code> reactive in <code>app.py</code></td></tr>
+<tr><td><code>research_agent/</code></td><td>Multi-round tool-calling loop; Wikipedia + Yahoo tools; per-URL brief cache</td><td>Triggered by "Dive deeper" per article card</td></tr>
+</tbody>
+</table>
+</div>
+<!-- DATA FLOW -->
+<div class="l2-sec scroll-anchor" id="l2-dataflow">
+<div class="l2-h"><span class="l2-n">02</span><h2 class="l2-t">Data Flow</h2></div>
+<div class="prose"><p>Articles enter through parallel NYT section fetches, are enriched per-article, then feed both the card UI and the agentic pipeline. The flow below traces every data path from API key configuration to rendered output.</p></div>
+<div class="mermaid-flow">
+<div class="mermaid-flow-grid">
+<div class="mermaid-flow-card">
+<h3>1 · Ingest and enrich</h3>
+<p>NYT sections are fetched in parallel, classified, then each article gets sentiment, impact, and tone-configurable summaries.</p>
+<div class="mermaid-chart">
+<pre class="mermaid" data-diagram="ingest">flowchart TD
+    NYT[NYT Top Stories API] --&gt; FETCH[data_fetch.py]
+    KEYS[API keys in .env] --&gt; FETCH
+    FETCH --&gt; CAT[categorization.py]
+    CAT --&gt; AI[ai_services.py]
+    CAT --&gt; IMP[impact_classifier.py]
+    OAI[OpenAI API] --&gt; AI
+    OAI --&gt; IMP
+    AI --&gt; ENR[Enriched article records]
+    IMP --&gt; ENR</pre>
+</div>
+</div>
+<div class="mermaid-flow-card">
+<h3>2 · UI and on-demand research</h3>
+<p>Enriched records drive the card grid; “Dive deeper” triggers a separate tool-calling loop (Wikipedia + Yahoo Finance).</p>
+<div class="mermaid-chart">
+<pre class="mermaid" data-diagram="ui">flowchart LR
+    ENR[Enriched articles] --&gt; CARDS[News cards UI]
+    ENR --&gt; BRIEF[Section briefs]
+    CARDS --&gt; DIVE[Dive deeper]
+    DIVE --&gt; RES[research_agent]
+    OAI2[OpenAI API] --&gt; RES</pre>
+</div>
+</div>
+<div class="mermaid-flow-card">
+<h3>3 · Signal Studio pipeline</h3>
+<p>Section briefs feed a sequential 3-agent workflow; Agent 3 cross-checks narrative against a live yfinance snapshot (QC contribution).</p>
+<div class="mermaid-chart">
+<pre class="mermaid" data-diagram="agents">flowchart LR
+    BRIEF2[Section briefs] --&gt; A1[Agent 1 cross_section]
+    A1 --&gt; A2[Agent 2 world_sentiment]
+    A2 --&gt; A3[Agent 3 market_validation]
+    MKT[market_data.py] --&gt; A3
+    A3 --&gt; SIG[Signal Studio]</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="callout">
+<strong>No vector database:</strong> "RAG" here means retrieval at request time from Wikipedia and Yahoo Finance endpoints, plus structured market history from yfinance in market_data.py. There is no separate vector store. This is a deliberate architecture choice: freshness over recall, real-time grounding over indexed similarity.
+    </div>
+</div>
+<!-- AGENTS -->
+<div class="l2-sec scroll-anchor" id="l2-agents">
+<div class="l2-h"><span class="l2-n">03</span><h2 class="l2-t">Three-Agent Pipeline</h2></div>
+<div class="prose"><p>The pipeline runs sequentially. Each agent consumes the previous agent's output plus the original section packets. The workflow is orchestrated by <code>agents/workflow.py</code>, which first generates section briefs then fires the three-agent chain.</p></div>
+<div class="agent-flow">
+<div class="agent-box">
+<div class="agent-num">Agent 1</div>
+<div class="agent-name">cross_section_agent</div>
+<div class="agent-desc">Input: section packets (headlines, summaries, sentiment counts per tab). Finds thematic connections across sections, a business story that connects to a world development, a technology story that links to policy. Output: cross-section link map passed to Agent 2.</div>
+</div>
+<div class="agent-arrow">→</div>
+<div class="agent-box">
+<div class="agent-num">Agent 2</div>
+<div class="agent-name">world_sentiment_agent</div>
+<div class="agent-desc">Input: Agent 1 output + original section packets. Produces world mood score and editorial stance, is the aggregate news narrative optimistic, neutral, or negative? What is the dominant theme of the day's coverage? Output fed to Agent 3.</div>
+</div>
+<div class="agent-arrow">→</div>
+<div class="agent-box" style="background:rgba(42,107,82,.06);border:.5px solid rgba(42,107,82,.2)">
+<div class="agent-num" style="color:var(--sage2)">Agent 3 ★</div>
+<div class="agent-name">market_validation_agent</div>
+<div class="agent-desc">Input: Agent 2 output. Compares news narrative to live market data via tool calling: <code>get_market_snapshot(symbols)</code> → fetches S&amp;P 500, NASDAQ, Dow, Gold, Oil, BTC. Flags divergence: if narrative says "concern" but markets are up, that contradiction is surfaced explicitly. Fallback: JSON mode with prefetched snapshot if tool path fails.</div>
+</div>
+</div>
+<div class="metric-strip">
+<div class="ms-item"><span class="ms-lbl">Market universe</span><span class="ms-val cobalt">6</span><span class="ms-note">^GSPC · ^IXIC · ^DJI · GC=F · CL=F · BTC-USD</span></div>
+<div class="ms-item"><span class="ms-lbl">Market cache TTL</span><span class="ms-val">10 min</span><span class="ms-note">When no symbol list passed</span></div>
+<div class="ms-item"><span class="ms-lbl">Tool fallback</span><span class="ms-val">JSON mode</span><span class="ms-note">Prefetched snapshot when tool path fails</span></div>
+<div class="ms-item"><span class="ms-lbl">Pipeline pattern</span><span class="ms-val">Sequential</span><span class="ms-note">1 → 2 → 3 · shared context</span></div>
+</div>
+<div class="callout">
+<strong>Why sequential and not parallel?</strong> Agent 2 needs Agent 1's cross-section links to produce an accurate mood score. Agent 3 needs Agent 2's narrative framing to know what to validate against the market data. The dependencies are real, parallelising would require each agent to independently reconstruct context that the previous agent already computed.
+    </div>
+<figure class="fig-block fig-dist-full">
+<div class="fig-media">
+<img alt="Live three-agent Signal Studio output from deployment" decoding="async" height="1226" loading="lazy" src="assets/news-app/agent-pipeline-dashboard.png" width="2456"/>
+</div>
+<figcaption>Production UI — Agent 1 causal flow, Agent 2 mood card, Agent 3 market pulse vs narrative</figcaption>
+</figure>
+</div>
+<!-- TOOLS -->
+<div class="l2-sec scroll-anchor" id="l2-tools">
+<div class="l2-h"><span class="l2-n">04</span><h2 class="l2-t">Tool Calling Implementation</h2></div>
+<div class="prose"><p>Two distinct tool-calling contexts: the research agent (per-article deep dives) and the Signal Studio market validation tool. Both use OpenAI's function calling format. Tools defined in the API call, tool_calls parsed from responses, results appended as role:tool messages.</p></div>
+<div style="font-family:'Source Code Pro',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--cobalt2);margin-bottom:12px;margin-top:24px">Research Agent Tools, research_agent/tools.py</div>
+<table class="tool-table">
+<thead><tr><th>Tool</th><th>Purpose</th><th>Parameters</th><th>Returns</th><th>Cache</th></tr></thead>
+<tbody>
+<tr><td>wikipedia_lookup</td><td>Ground entities in English Wikipedia, resolves ambiguous names, provides factual context for claims in articles</td><td><code>query</code> (required string); <code>max_extract_chars</code> (int, default 1500)</td><td>Plain text: resolved title + truncated extract, or error string</td><td>24h in-process per query</td></tr>
+<tr><td>yahoo_finance_quote</td><td>Optional market context for clearly market-related stories, price, name, change data</td><td><code>ticker</code> (required string)</td><td>Plain text JSON subset of yfinance <code>info</code> (price, name, change %)</td><td>15 min per ticker</td></tr>
+</tbody>
+</table>
+<div style="font-family:'Source Code Pro',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--cobalt2);margin-bottom:12px;margin-top:28px">Signal Studio Market Tool, agents/market_validation_agent.py</div>
+<table class="tool-table">
+<thead><tr><th>Tool</th><th>Purpose</th><th>Parameters</th><th>Returns</th><th>Cache</th></tr></thead>
+<tbody>
+<tr><td>get_market_snapshot</td><td>Let Agent 3 request a fresh subset of market symbols. The model decides which symbols are relevant to the current news narrative</td><td><code>symbols</code> (required array of strings)</td><td>JSON string of snapshot dict from <code>fetch_market_snapshot(symbols)</code></td><td>10 min when no symbol list; agents/market_data.py</td></tr>
+</tbody>
+</table>
+<div class="prose" style="margin-top:20px">
+<p><strong>Research agent loop (research_agent/agent.py, run_research_brief):</strong></p>
+</div>
+<div class="code-block">
+<span class="cb-label">Agent loop, max 6 rounds</span>
+<pre><span class="tok-com"># Post to Chat Completions with tools defined</span>
+response = openai.chat.completions.create(
+    model=<span class="tok-str">"gpt-4o"</span>,
+    messages=messages,
+    tools=[wikipedia_lookup_schema, yahoo_finance_quote_schema]
+)
+
+<span class="tok-com"># Handle tool_calls in response</span>
+<span class="tok-key">while</span> response.choices[0].finish_reason == <span class="tok-str">"tool_calls"</span>:
+    tool_calls = response.choices[0].message.tool_calls
+    <span class="tok-key">for</span> tc <span class="tok-key">in</span> tool_calls:
+        result = dispatch_tool(tc.function.name, tc.function.arguments)
+        messages.append({
+            <span class="tok-str">"role"</span>: <span class="tok-str">"tool"</span>,
+            <span class="tok-str">"tool_call_id"</span>: tc.id,
+            <span class="tok-str">"content"</span>: result
+        })
+    response = openai.chat.completions.create(...)  <span class="tok-com"># next round</span>
+    rounds += 1
+    <span class="tok-key">if</span> rounds &gt;= MAX_ROUNDS: <span class="tok-key">break</span>
+
+<span class="tok-com"># Cache result per article URL (brief_cache.py)</span>
+cache[article_url] = response.choices[0].message.content</pre>
+</div>
+</div>
+<!-- UI PATTERN -->
+<div class="l2-sec scroll-anchor" id="l2-ui">
+<div class="l2-h"><span class="l2-n">05</span><h2 class="l2-t">UI Architecture: Quick-then-Full Pattern</h2></div>
+<div class="prose">
+<p>The app uses a deliberate two-pass rendering strategy that treats LLM latency as a first-class design constraint. The same way infrastructure systems treat uncertainty as a design input rather than an implementation afterthought.</p>
+</div>
+<div class="insight-grid">
+<div class="insight">
+<div class="insight-head">Pass 1: Immediate render (deterministic)</div>
+<div class="insight-body">On first paint: deterministic placeholders for all card positions, fast workflow snapshot with structural metadata (section counts, article IDs, timestamps). User sees content immediately. No blank-screen wait. The UI is interactive before any LLM call completes.</div>
+</div>
+<div class="insight">
+<div class="insight-head">Pass 2: Background enrichment (LLM-driven)</div>
+<div class="insight-body">Background process replaces placeholders with: full AI-generated section briefs per tab, complete 3-agent Signal Studio result, sentiment scores and impact labels per article. Each replacement is a reactive update. The Shiny reactive graph handles ordering automatically.</div>
+</div>
+<div class="insight">
+<div class="insight-head">Signal Studio rendering</div>
+<div class="insight-body"><code>ui/agent_views.py</code> renders the workflow JSON from <code>agent_workflow_state</code> — the reactive variable in <code>app.py</code> that the workflow populates. Agent outputs are structured JSON: Agent 1 links, Agent 2 mood score, Agent 3 market comparison. All rendered as formatted sections in the Signal Studio tab.</div>
+</div>
+<div class="insight">
+<div class="insight-head">Research modal (Dive deeper)</div>
+<div class="insight-body">Each article card exposes a "Dive deeper" trigger that fires <code>run_research_brief(article_url, article_context)</code>. The research agent result is rendered in a modal overlay, cached per URL so repeated clicks on the same article are instant.</div>
+</div>
+</div>
+</div>
+<!-- CODE STRUCTURE -->
+<div class="l2-sec scroll-anchor" id="l2-code">
+<div class="l2-h"><span class="l2-n">06</span><h2 class="l2-t">Code Structure &amp; APIs</h2></div>
+<div class="file-tree">
+<span class="cb-label" style="font-size:9px;letter-spacing:.12em;color:rgba(107,163,247,.7);display:block;margin-bottom:12px">FILE STRUCTURE: AppV1/</span>
+<span class="ft-dir">AppV1/</span><br/>
+<span class="ft-file">├── app.py</span><span class="ft-comment">          # Shiny server · reactive state · refresh · pagination · arms pipeline</span><br/>
+<span class="ft-file">├── config.py</span><span class="ft-comment">       # Keys · model id · NYT_SECTIONS list</span><br/>
+<span class="ft-file">├── Procfile</span><span class="ft-comment">        # uvicorn app:app --host 0.0.0.0 --port ${PORT:-8080}</span><br/>
+<span class="ft-file">├── requirements.txt</span><span class="ft-comment">  # shiny · httpx · python-dotenv · pandas · uvicorn[standard] · yfinance</span><br/>
+<span class="ft-dir">├── agents/</span><br/>
+<span class="ft-file">│ ├── workflow.py</span><span class="ft-comment">   # Orchestrates section briefs → Agent 1 → 2 → 3</span><br/>
+<span class="ft-file">│ ├── market_data.py</span><span class="ft-comment"> # yfinance snapshot · 10-min cache · default universe</span><br/>
+<span class="ft-file">│ ├── cross_section_agent.py</span><br/>
+<span class="ft-file">│ ├── world_sentiment_agent.py</span><br/>
+<span class="ft-file">│ └── market_validation_agent.py</span><span class="ft-comment">  # ★ QC layer, news vs markets</span><br/>
+<span class="ft-dir">├── modules/</span><br/>
+<span class="ft-file">│ ├── data_fetch.py</span><span class="ft-comment">    # NYT HTTP client · parallel fetch · failure cache</span><br/>
+<span class="ft-file">│ ├── categorization.py</span><span class="ft-comment"> # Breaking/trending heuristics · pure DataFrame</span><br/>
+<span class="ft-file">│ ├── ai_services.py</span><span class="ft-comment">   # Sentiment + summaries (OpenAI)</span><br/>
+<span class="ft-file">│ └── impact_classifier.py</span><span class="ft-comment"> # Impact labels (OpenAI)</span><br/>
+<span class="ft-dir">├── research_agent/</span><br/>
+<span class="ft-file">│ ├── agent.py</span><span class="ft-comment">     # run_research_brief · tool loop · max 6 rounds</span><br/>
+<span class="ft-file">│ ├── tools.py</span><span class="ft-comment">     # wikipedia_lookup · yahoo_finance_quote · dispatch_tool</span><br/>
+<span class="ft-file">│ └── brief_cache.py</span><span class="ft-comment"> # Per-URL cache · Wikipedia 24h · Yahoo 15m</span><br/>
+<span class="ft-dir">├── ui/</span><br/>
+<span class="ft-file">│ ├── agent_views.py</span><span class="ft-comment"> # Signal Studio rendering · workflow JSON → formatted sections</span><br/>
+<span class="ft-file">│ └── layout.py</span><br/>
+<span class="ft-dir">└── www/</span><br/>
+<span class="ft-file">    └── styles.css</span>
+</div>
+<div class="prose" style="margin-top:20px"><p><strong>Representative API endpoints:</strong></p></div>
+<div class="code-block">
+<pre><span class="tok-com"># NYT Top Stories</span>
+<span class="tok-str">https://api.nytimes.com/svc/topstories/v2/{section}.json?api-key=...</span>
+
+<span class="tok-com"># OpenAI Chat Completions (sentiment, summaries, impact, agents, research)</span>
+<span class="tok-str">https://api.openai.com/v1/chat/completions</span>
+
+<span class="tok-com"># Wikipedia (search + extract)</span>
+<span class="tok-str">https://en.wikipedia.org/w/api.php</span>
+<span class="tok-str">https://en.wikipedia.org/api/rest_v1/page/summary/{title}</span></pre>
+</div>
+</div>
+<!-- DEPLOYMENT -->
+<div class="l2-sec scroll-anchor" id="l2-deployment">
+<div class="l2-h"><span class="l2-n">07</span><h2 class="l2-t">Deployment</h2></div>
+<div class="prose">
+<p>Deployed live on Posit Cloud. The app is ASGI-compatible in recent Shiny versions, served via uvicorn. The Procfile enables Heroku-style platform deployment.</p>
+</div>
+<div class="code-block">
+<span class="cb-label">Procfile</span>
+<pre><span class="tok-key">web</span>: uvicorn app:app --host 0.0.0.0 --port <span class="tok-str">${PORT:-8080}</span></pre>
+</div>
+<div class="code-block">
+<span class="cb-label">Local development</span>
+<pre><span class="tok-com"># From AppV1 directory:</span>
+shiny run app.py
+
+<span class="tok-com"># From repo root:</span>
+shiny run AppV1/app.py
+
+<span class="tok-com"># Environment setup:</span>
+<span class="tok-com"># See SETUP_ENV.md — NYT_API_KEY and OPENAI_API_KEY in .env</span></pre>
+</div>
+<div class="metric-strip">
+<div class="ms-item"><span class="ms-lbl">Live URL</span><span class="ms-val cobalt" style="font-size:14px">Posit Cloud</span><span class="ms-note">019d8404...share.connect.posit.cloud</span></div>
+<div class="ms-item"><span class="ms-lbl">Runtime</span><span class="ms-val">Python</span><span class="ms-note">Shiny for Python · ASGI · uvicorn</span></div>
+<div class="ms-item"><span class="ms-lbl">Required env vars</span><span class="ms-val">2</span><span class="ms-note">NYT_API_KEY · OPENAI_API_KEY</span></div>
+<div class="ms-item"><span class="ms-lbl">Core packages</span><span class="ms-val">6</span><span class="ms-note">shiny · httpx · dotenv · pandas · uvicorn · yfinance</span></div>
+</div>
+</div>
+<!-- REFLECTION -->
+<div class="l2-sec scroll-anchor" id="l2-reflection">
+<div class="l2-h"><span class="l2-n">08</span><h2 class="l2-t">Reflection</h2></div>
+<div class="prose">
+<p>Most of the engineering work here is outside the model calls: reliable NYT ingestion, caching, fallbacks when tool calling fails, and checking the agent narrative against Yahoo Finance before anything reaches the UI.</p>
+</div>
+<div class="contrib-grid">
+<div class="contrib">
+<div class="contrib-head">V&amp;V applied to an AI product</div>
+<div class="contrib-body">Agent 3 compares the generated narrative to live market data before display. That is the same cross-check pattern used in the Gemma IV&amp;V project, applied here as a small production step rather than a separate test harness.</div>
+</div>
+<div class="contrib">
+<div class="contrib-head">What building production AI taught me</div>
+<div class="contrib-body">Failures showed up at interfaces: cache keys, tool-call parsing, and JSON fallback when function calling failed. Latency shaped the quick-then-full UI pattern; without it, users waited on a blank screen while the three-agent chain finished.</div>
+</div>
+<div class="contrib">
+<div class="contrib-head">Why the QC layer is rare</div>
+<div class="contrib-body">Many demos stop at model output. Agent 3 adds a short market-validation pass (a few dozen lines of Python) so obvious narrative–market mismatches are caught before render.</div>
+</div>
+<div class="contrib">
+<div class="contrib-head">Team context</div>
+<div class="contrib-body">5-person team, SYSEN 5381 Data Science and AI for Systems Engineering. I owned QC validation architecture and Agent 3 (<code>market_validation_agent</code>). Teammates built ingestion, the UI, and section brief generation.</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<footer class="conc-bar" id="contact">
+<div class="conc-inner">
+<div class="conc-left">
+<p class="conc-name">Anurag Yadav</p>
+<div class="conc-copy">
+<p class="conc-course mono">Ithaca, NY · Cornell University · M.Eng. Systems Engineering</p>
+<p class="conc-course mono">Capital programs · Digital engineering · Mission-critical infrastructure</p>
+</div>
+</div>
+<div class="conc-right">
+<ul aria-label="Contact" class="conc-links mono">
+<li><a href="mailto:yadavanurag560@gmail.com"><img alt="" src="assets/footer-icons/email.png"/>yadavanurag560@gmail.com</a></li>
+<li><a href="mailto:ay468@cornell.edu"><img alt="" src="assets/footer-icons/email2.png"/>ay468@cornell.edu</a></li>
+<li><a href="tel:+16072623840"><img alt="" src="assets/footer-icons/phone.png"/>(607) 262-3840</a></li>
+<li><a href="https://www.linkedin.com/in/anurag-systems" rel="noopener noreferrer" target="_blank"><img alt="" src="assets/footer-icons/linkedin.png"/>LinkedIn</a></li>
+<li><a href="https://github.com/anuragyadav21/DS-AIforSystemsEng-Project1" rel="noopener noreferrer" target="_blank"><img alt="" src="assets/footer-icons/github.png"/>GitHub</a></li>
+<li><a href="/assets/resume/Anurag_Yadav_Resume.pdf" target="_blank" rel="noopener noreferrer" download><img alt="" src="assets/footer-icons/resume.svg"/>Resume</a></li>
+</ul>
+</div>
+</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.3/dist/mermaid.min.js"></script>
+<script>
+mermaid.initialize({
+  startOnLoad: false,
+  securityLevel: "loose",
+  theme: "base",
+  themeVariables: {
+    primaryColor: "#ece8df",
+    primaryTextColor: "#1a2838",
+    primaryBorderColor: "#1a3a5c",
+    lineColor: "#2a5480",
+    secondaryColor: "#f6f2eb",
+    tertiaryColor: "#ffffff",
+    fontFamily: "Libre Franklin, sans-serif",
+    fontSize: "14px"
+  },
+  flowchart: {
+    useMaxWidth: true,
+    htmlLabels: true,
+    curve: "basis",
+    padding: 24,
+    nodeSpacing: 55,
+    rankSpacing: 65,
+    diagramPadding: 16
+  }
+});
+
+async function renderMermaidCharts(scope) {
+  var root = scope || document.getElementById("technicalDepthWrap");
+  if (!root) return;
+  if (root.id === "technicalDepthWrap" && (!root.classList.contains("is-open") || root.hidden)) return;
+  if (typeof mermaid === "undefined") return;
+
+  var nodes = root.querySelectorAll("pre.mermaid:not([data-rendered])");
+  if (!nodes.length) return;
+
+  for (var i = 0; i < nodes.length; i++) {
+    var el = nodes[i];
+    var src = (el.textContent || "").trim();
+    if (!src) continue;
+    var id = "news-mmd-" + (el.getAttribute("data-diagram") || i) + "-" + Math.random().toString(36).slice(2, 7);
+    try {
+      var result = await mermaid.render(id, src);
+      var existing = el.nextElementSibling;
+      if (existing && existing.classList && existing.classList.contains("mermaid-rendered")) {
+        existing.remove();
+      }
+      el.insertAdjacentHTML("afterend", result.svg);
+      var svg = el.nextElementSibling;
+      if (svg && svg.tagName === "svg") {
+        svg.classList.add("mermaid-rendered");
+        svg.removeAttribute("style");
+        svg.setAttribute("width", "100%");
+        svg.style.maxWidth = "100%";
+        svg.style.height = "auto";
+        svg.style.display = "block";
+        svg.style.margin = "0 auto";
+      }
+      el.setAttribute("data-rendered", "true");
+      el.style.display = "none";
+    } catch (err) {
+      el.removeAttribute("data-rendered");
+      el.style.display = "block";
+      el.insertAdjacentHTML("afterend", "<p class=\"mermaid-error\" style=\"color:#8b2218;font-size:13px;padding:12px;\">Diagram could not render.</p>");
+      console.warn("Mermaid:", err.message || err);
+    }
+  }
+}
+
+function renderTechnicalMermaid() {
+  var wrap = document.getElementById("technicalDepthWrap");
+  if (!wrap || !wrap.classList.contains("is-open")) return;
+  renderMermaidCharts(wrap);
+}
+</script>
+<script>
+(function () {
+  function ids(selector) {
+    return Array.prototype.map.call(document.querySelectorAll(selector), function (el) {
+      return el.id;
+    }).filter(Boolean);
+  }
+
+  const overviewIds = ids(".overview-body .scroll-anchor, .overview-body > .hero, .overview-body > .section, .overview-end");
+  const techIds = ids(".layer2 .l2-sec.scroll-anchor");
+  const techBridgeId = "technical-depth";
+
+  const technicalWrap = document.getElementById("technicalDepthWrap");
+  const openTechnicalBtn = document.getElementById("openTechnicalBtn");
+  const navBtns = document.querySelectorAll(".topbar-nav button[data-section]");
+  let technicalOpen = false;
+  let navObserver = null;
+
+  function setActiveSection(id) {
+    var inTech = techIds.indexOf(id) !== -1 || id === techBridgeId;
+    navBtns.forEach(function (btn) {
+      var sec = btn.getAttribute("data-section");
+      if (inTech) {
+        btn.classList.toggle("is-active", sec === "technical-depth");
+      } else {
+        btn.classList.toggle("is-active", sec === id);
+      }
+    });
+  }
+
+  function openTechnical(scrollTargetId) {
+    if (!technicalWrap || technicalOpen) return;
+    technicalOpen = true;
+    technicalWrap.hidden = false;
+    technicalWrap.classList.add("is-open");
+    technicalWrap.setAttribute("aria-hidden", "false");
+    if (openTechnicalBtn) {
+      openTechnicalBtn.setAttribute("aria-expanded", "true");
+      openTechnicalBtn.textContent = "Technical section open";
+      openTechnicalBtn.disabled = true;
+      openTechnicalBtn.style.opacity = "0.65";
+      openTechnicalBtn.style.cursor = "default";
+    }
+    setActiveSection(techBridgeId);
+    startTechNavObserver();
+    requestAnimationFrame(function () {
+      setTimeout(renderTechnicalMermaid, 80);
+      setTimeout(renderTechnicalMermaid, 350);
+      setTimeout(renderTechnicalMermaid, 800);
+    });
+    const targetId = scrollTargetId || techBridgeId;
+    requestAnimationFrame(function () {
+      const target = document.getElementById(targetId);
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  navBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      const id = btn.getAttribute("data-section");
+      if (id === "technical-depth" && !technicalOpen) {
+        openTechnical(techBridgeId);
+        return;
+      }
+      if (id === "technical-depth" && technicalOpen) {
+        const target = document.getElementById(techBridgeId);
+        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+      const target = document.getElementById(id);
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+
+  if (openTechnicalBtn) {
+    openTechnicalBtn.addEventListener("click", function () {
+      openTechnical(techBridgeId);
+    });
+  }
+
+  function startOverviewNavObserver() {
+    if (navObserver) navObserver.disconnect();
+    navObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          setActiveSection(entry.target.id);
+        });
+      },
+      { rootMargin: "-42% 0px -42% 0px", threshold: 0 }
+    );
+    overviewIds.forEach(function (id) {
+      const el = document.getElementById(id);
+      if (el) navObserver.observe(el);
+    });
+  }
+
+  function startTechNavObserver() {
+    if (navObserver) navObserver.disconnect();
+    navObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          setActiveSection(entry.target.id);
+        });
+      },
+      { rootMargin: "-42% 0px -42% 0px", threshold: 0 }
+    );
+    [techBridgeId].concat(techIds).forEach(function (id) {
+      const el = document.getElementById(id);
+      if (el) navObserver.observe(el);
+    });
+  }
+
+  startOverviewNavObserver();
+
+  const l2Btns = document.querySelectorAll(".l2-nav-btn, .l2-btn");
+  l2Btns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      const key = btn.getAttribute("data-l2");
+      if (!key) return;
+      const el = document.getElementById("l2-" + key);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      l2Btns.forEach(function (b) { b.classList.toggle("active", b === btn); });
+      if (key === "dataflow") {
+        setTimeout(renderTechnicalMermaid, 200);
+      }
+    });
+  });
+
+  const l2Obs = new IntersectionObserver(
+    function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        const id = entry.target.id.replace("l2-", "");
+        l2Btns.forEach(function (b) {
+          const k = b.getAttribute("data-l2");
+          if (k) b.classList.toggle("active", k === id);
+        });
+        if (technicalOpen) setActiveSection(entry.target.id);
+      });
+    },
+    { threshold: 0.22, rootMargin: "-20% 0px -55% 0px" }
+  );
+  techIds.forEach(function (fullId) {
+    const el = document.getElementById(fullId);
+    if (el) l2Obs.observe(el);
+  });
+
+  document.querySelectorAll("[data-reveal]").forEach(function (el, i) {
+    el.style.animationDelay = (i % 6) * 0.08 + "s";
+    el.classList.add("is-visible");
+  });
+})();
+</script>
+</body>
+</html>
