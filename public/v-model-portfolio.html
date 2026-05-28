@@ -8,12 +8,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Lora:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#f5f1ea;font-family:"Plus Jakarta Sans","Segoe UI",sans-serif;color:#172230}
+html{overflow-x:clip;-webkit-text-size-adjust:100%}
+body{background:#f5f1ea;font-family:"Plus Jakarta Sans","Segoe UI",sans-serif;color:#172230;overflow-x:clip;max-width:100%}
 
 .wrap{padding:20px 24px 28px;max-width:100%;margin:0 auto}
 
-.canvas-wrap{position:relative;width:100%;background:#fcfaf6;border:.75px solid rgba(23,34,48,.14);border-radius:8px;overflow:hidden;box-shadow:0 8px 30px rgba(23,34,48,.04)}
-svg.vmap{width:100%;display:block}
+.canvas-wrap{position:relative;width:100%;max-width:100%;background:#fcfaf6;border:.75px solid rgba(23,34,48,.14);border-radius:8px;overflow:hidden;box-shadow:0 8px 30px rgba(23,34,48,.04)}
+svg.vmap{width:100%;display:block;max-width:100%;height:auto}
 
 .vnode{cursor:pointer}
 .vnode rect{
@@ -34,8 +35,13 @@ svg.vmap{width:100%;display:block}
   stroke-width:2.2!important;
 }
 
-@media(max-width:640px){
+@media(max-width:768px){
   .wrap{padding:16px 16px 24px}
+}
+
+@media(max-width:480px){
+  .wrap{padding:12px 12px 20px}
+  .canvas-wrap{border-radius:6px}
 }
 </style>
 </head>

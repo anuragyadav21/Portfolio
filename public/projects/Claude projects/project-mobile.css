@@ -1,0 +1,378 @@
+/* Shared mobile fixes for portfolio project HTML pages.
+   Desktop styles unchanged — overrides apply only at breakpoints. */
+
+html {
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
+main.page,
+.overview-body,
+.technical-depth-wrap,
+.layer1,
+.layer2 {
+  max-width: 100%;
+  min-width: 0;
+}
+
+img,
+video,
+svg,
+canvas,
+iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.flow-wrap,
+.mermaid-flow,
+.mermaid-chart,
+.mermaid-svg-static {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Tablet (≤1024px) ── */
+@media (max-width: 1024px) {
+  .conc-bar,
+  .overview-end,
+  .technical-bridge {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    box-sizing: border-box;
+  }
+
+  .flow-svg-wrap {
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  :root {
+    --page-gutter: clamp(16px, 3vw, 32px);
+    --pad-x: clamp(14px, 2vw, 24px);
+  }
+
+  .topbar {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    gap: 8px 10px;
+  }
+
+  .topbar-brand {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .topbar-title {
+    white-space: normal;
+    font-size: clamp(17px, 4vw, 22px);
+    line-height: 1.2;
+  }
+
+  .topbar-meta {
+    white-space: normal;
+    line-height: 1.45;
+  }
+
+  .topbar-nav {
+    order: 3;
+    flex: 1 1 100%;
+    min-width: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+
+  .topbar-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .topbar-actions {
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+
+  .topbar-contacts {
+    flex-wrap: wrap;
+  }
+
+  .hero-layout,
+  .model-grid,
+  .card-grid.cols-3,
+  .card-grid.cols-4,
+  .faq-grid,
+  .fig-grid,
+  .l1-hero,
+  .qa-grid,
+  .overview-end-inner,
+  .conc-inner,
+  .exp-grid,
+  .layer2 .app-grid,
+  .layer2 .mf-fork-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  #twin-simulator .sim-layout {
+    flex-direction: column;
+  }
+
+  #twin-simulator .gauges-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .layer2 .tc-row,
+  .layer2 .arch-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .l1-left,
+  .l1-right {
+    padding: 36px var(--content-inset);
+  }
+
+  .l1-right {
+    border-left: 0;
+    border-top: 0.5px solid var(--border, rgba(15, 26, 34, 0.1));
+  }
+
+  .ribbon {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 18px var(--page-gutter);
+  }
+
+  .rib-metrics {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+  }
+
+  .rm {
+    text-align: left;
+  }
+}
+
+/* ── Mobile (≤768px) ── */
+@media (max-width: 768px) {
+  .topbar {
+    min-height: auto;
+  }
+
+  .topbar-nav button,
+  .topbar-link,
+  .l2-btn,
+  .layer2 .l2-nav-btn,
+  .layer2 .l2-nav-item {
+    min-height: 44px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .topbar-contacts a {
+    width: 44px;
+    height: 44px;
+  }
+
+  .section,
+  .layer2 .l2-sec,
+  .l2-sec {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+
+  .section-head h2,
+  .l2-t {
+    font-size: clamp(22px, 6vw, 28px);
+  }
+
+  .hero h1,
+  .l1-title {
+    font-size: clamp(26px, 7.5vw, 36px);
+  }
+
+  .hero-lede,
+  .prose,
+  .section-head p {
+    font-size: 15px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .hero-cta,
+  .btn-open-technical,
+  .btn-deep {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .overview-end-inner {
+    gap: 14px;
+  }
+
+  .overview-end h2 {
+    font-size: 17px;
+  }
+
+  .conc-bar {
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+
+  .conc-name {
+    font-size: 20px;
+  }
+
+  .conc-links {
+    grid-template-columns: 1fr;
+    justify-content: start;
+  }
+
+  .conc-right {
+    justify-self: start;
+  }
+
+  .layer2 .l2-nav,
+  .l2-nav {
+    padding-left: var(--page-gutter);
+    padding-right: var(--page-gutter);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .layer2 .l2-nav::-webkit-scrollbar,
+  .l2-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .layer2 .metrics-strip,
+  .layer2 .metric-strip,
+  .layer2 .perf-strip,
+  .layer2 .scenario-grid,
+  .layer2 .subsys-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .agent-flow {
+    flex-direction: column;
+  }
+
+  .agent-arrow {
+    transform: rotate(90deg);
+  }
+
+  .insight-grid,
+  .dec-grid,
+  .compare-grid,
+  .limit-grid,
+  .contrib-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .metric-card:hover,
+  .card:hover,
+  .tab-panel:hover,
+  .faq-card:hover,
+  .layer2 .fig-block:hover,
+  .layer2 .callout:hover {
+    transform: none;
+  }
+}
+
+/* ── Small mobile (≤480px) ── */
+@media (max-width: 480px) {
+  :root {
+    --page-gutter: 14px;
+    --pad-x: 12px;
+  }
+
+  .topbar-title {
+    font-size: 16px;
+  }
+
+  .topbar-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .topbar-link {
+    font-size: 11px;
+    padding: 8px 10px;
+  }
+
+  .hero h1 em {
+    display: inline;
+  }
+
+  .layer2 .metrics-strip,
+  .layer2 .metric-strip,
+  .layer2 .perf-strip,
+  .layer2 .scenario-grid,
+  .layer2 .subsys-grid,
+  .stat-row,
+  #twin-simulator .gauges-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .l1-foot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px var(--content-inset);
+  }
+
+  .rib-tag {
+    font-size: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .metric-card:hover,
+  .card:hover,
+  .tab-panel:hover,
+  .layer2 .fig-block:hover {
+    transform: none !important;
+  }
+}

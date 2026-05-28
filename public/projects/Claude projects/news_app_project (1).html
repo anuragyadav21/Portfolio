@@ -4,6 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="project-mobile.css" rel="stylesheet"/>
 <title>News for People in a Hurry — Anurag Yadav</title>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&amp;family=Source+Code+Pro:wght@400;500&amp;family=Libre+Franklin:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
@@ -258,6 +259,8 @@ pre.mermaid[data-rendered]{display:none}
 .topbar-nav button.is-active{color:#f7f4ef;background:rgba(138,106,46,.28);border-color:rgba(176,137,64,.45)}
 .topbar-link{flex-shrink:0;font-size:12px;font-weight:500;color:#f7f4ef;text-decoration:none;white-space:nowrap;padding:8px 10px;border-radius:2px;border:1px solid rgba(255,255,255,.12)}
 .topbar-link:hover{background:rgba(138,106,46,.2);border-color:var(--gold2)}
+.topbar-link--primary{background:var(--cobalt);border-color:var(--cobalt2);font-weight:600}
+.topbar-link--primary:hover{background:var(--cobalt2);border-color:var(--gold2)}
 .topbar-actions{display:flex;align-items:center;gap:10px;flex:0 0 auto}
 .topbar-contacts{display:flex;align-items:center;gap:10px;flex:0 0 auto}
 .topbar-contacts a{width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;opacity:.95;transition:opacity .2s ease,transform .2s ease}
@@ -273,6 +276,15 @@ main.page{width:100%;max-width:none;margin:0;padding:0 0 24px}
 .hero h1{font-family:'Playfair Display',serif;font-size:clamp(30px,3.2vw,44px);line-height:1.12;color:var(--ink);margin-bottom:12px}
 .hero h1 em{font-style:italic;color:var(--cobalt)}
 .hero-lede{font-size:17px;line-height:1.65;color:var(--text2);max-width:72ch}
+.hero-actions{display:flex;flex-wrap:wrap;gap:10px 14px;margin-top:18px;align-items:center}
+.hero-cta{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:'Source Code Pro',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  padding:11px 18px;background:var(--cobalt);color:#fff;border:.5px solid var(--cobalt2);
+  text-decoration:none;transition:background .2s,transform .2s,border-color .2s
+}
+.hero-cta:hover{background:var(--cobalt2);border-color:var(--gold2);transform:translateY(-1px)}
+.hero-cta-note{font-size:13px;color:var(--text3);line-height:1.5}
 .metric-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .metric-card,.card,.tab-panel,.faq-card{border:none;border-left:3px solid transparent;background:rgba(255,255,255,.62);transition:transform .32s cubic-bezier(.16,1,.3,1),background .28s ease,border-color .28s ease}
 .metric-card{padding:18px 16px}
@@ -338,6 +350,17 @@ main.page{width:100%;max-width:none;margin:0;padding:0 0 24px}
 .fig-block.fig-dist-full .fig-media{
   display:flex;justify-content:center;align-items:center;padding:0;background:#fff
 }
+.fig-block.fig-dist-full .fig-media a{
+  display:block;text-decoration:none;cursor:pointer
+}
+.fig-block.fig-dist-full .fig-media a:focus-visible{
+  outline:2px solid var(--cobalt2);outline-offset:2px
+}
+.fig-block.fig-live-link:hover{border-color:var(--cobalt2)}
+.fig-block figcaption a{
+  color:var(--cobalt2);text-decoration:none;border-bottom:.5px solid rgba(26,58,92,.35)
+}
+.fig-block figcaption a:hover{color:var(--ink);border-bottom-color:var(--cobalt2)}
 .fig-block.fig-dist-full img,
 .overview-body .overview-screens .fig-block img,
 .layer2 .fig-block.fig-dist-full img{
@@ -812,6 +835,7 @@ main.page{width:100%;max-width:none;margin:0;padding:0 0 24px}
 <button data-section="technical-depth" type="button">Technical</button>
 </nav>
 <div class="topbar-actions">
+<a aria-label="Open live news app demo" class="topbar-link topbar-link--primary mono" href="https://news-project-1-6yfz.onrender.com/" rel="noopener noreferrer" target="_blank">Live demo ↗</a>
 <a aria-label="Download resume (PDF)" class="topbar-link mono" href="/assets/resume/Anurag_Yadav_Resume.pdf" target="_blank" rel="noopener noreferrer" download>Resume</a>
 <div aria-label="Contact links" class="topbar-contacts">
 <a aria-label="Email yadavanurag560@gmail.com" href="mailto:yadavanurag560@gmail.com"><img alt="" src="assets/footer-icons/email.png"/></a>
@@ -830,6 +854,10 @@ main.page{width:100%;max-width:none;margin:0;padding:0 0 24px}
 <span class="hero-kicker mono">AI · Multi-agent · SYSEN 5381</span>
 <h1>Real-time news.<br/><em>Three agents.<br/>One validation layer.</em></h1>
 <p class="hero-lede">Most AI news tools pass feeds through a model and publish the output with limited checking. This project uses a validation-first pipeline: ingest live NYT feeds, summarise by section, run a 3-agent workflow that cross-links stories, scores world mood, and cross-references the narrative against live Yahoo Finance data before anything is shown to the user.</p>
+<div class="hero-actions">
+<a aria-label="Open live news app demo" class="hero-cta" href="https://news-project-1-6yfz.onrender.com/" rel="noopener noreferrer" target="_blank">Live demo ↗</a>
+<span class="hero-cta-note mono">Deployed app · NYT feeds · Signal Studio</span>
+</div>
 </div>
 <div class="hero-metrics">
 <div class="metric-grid">
@@ -866,17 +894,21 @@ main.page{width:100%;max-width:none;margin:0;padding:0 0 24px}
 </div>
 <div class="overview-feature">
 <div class="overview-screens">
-<figure class="fig-block fig-dist-full" data-reveal="">
+<figure class="fig-block fig-dist-full fig-live-link" data-reveal="">
 <div class="fig-media">
+<a aria-label="Open live news app — Signal Studio dashboard" href="https://news-project-1-6yfz.onrender.com/" rel="noopener noreferrer" target="_blank">
 <img alt="Signal Studio dashboard with global insight, mood metrics, and QC evidence score" decoding="async" height="1590" loading="lazy" src="assets/news-app/signal-studio-overview.png" width="2706"/>
+</a>
 </div>
-<figcaption>Live Signal Studio — global insight bar, section scores, mood/market/signal/confidence metrics, QC evidence</figcaption>
+<figcaption>Live Signal Studio — global insight bar, section scores, mood/market/signal/confidence metrics, QC evidence · <a href="https://news-project-1-6yfz.onrender.com/" rel="noopener noreferrer" target="_blank">Open live app ↗</a></figcaption>
 </figure>
-<figure class="fig-block fig-dist-full" data-reveal="">
+<figure class="fig-block fig-dist-full fig-live-link" data-reveal="">
 <div class="fig-media">
+<a aria-label="Open live news app — three-agent pipeline dashboard" href="https://news-project-1-6yfz.onrender.com/" rel="noopener noreferrer" target="_blank">
 <img alt="Three-agent pipeline output with causal flow and market pulse charts" decoding="async" height="1226" loading="lazy" src="assets/news-app/agent-pipeline-dashboard.png" width="2456"/>
+</a>
 </div>
-<figcaption>Agent outputs — cross-section links (Agent 1), global mood (Agent 2), news vs market validation (Agent 3)</figcaption>
+<figcaption>Agent outputs — cross-section links (Agent 1), global mood (Agent 2), news vs market validation (Agent 3) · <a href="https://news-project-1-6yfz.onrender.com/" rel="noopener noreferrer" target="_blank">Open live app ↗</a></figcaption>
 </figure>
 </div>
 </div>
@@ -1039,11 +1071,13 @@ main.page{width:100%;max-width:none;margin:0;padding:0 0 24px}
 <div class="callout">
 <strong>Why sequential and not parallel?</strong> Agent 2 needs Agent 1's cross-section links to produce an accurate mood score. Agent 3 needs Agent 2's narrative framing to know what to validate against the market data. The dependencies are real, parallelising would require each agent to independently reconstruct context that the previous agent already computed.
     </div>
-<figure class="fig-block fig-dist-full">
+<figure class="fig-block fig-dist-full fig-live-link">
 <div class="fig-media">
+<a aria-label="Open live news app — three-agent Signal Studio output" href="https://news-project-1-6yfz.onrender.com/" rel="noopener noreferrer" target="_blank">
 <img alt="Live three-agent Signal Studio output from deployment" decoding="async" height="1226" loading="lazy" src="assets/news-app/agent-pipeline-dashboard.png" width="2456"/>
+</a>
 </div>
-<figcaption>Production UI — Agent 1 causal flow, Agent 2 mood card, Agent 3 market pulse vs narrative</figcaption>
+<figcaption>Production UI — Agent 1 causal flow, Agent 2 mood card, Agent 3 market pulse vs narrative · <a href="https://news-project-1-6yfz.onrender.com/" rel="noopener noreferrer" target="_blank">Open live app ↗</a></figcaption>
 </figure>
 </div>
 <!-- TOOLS -->

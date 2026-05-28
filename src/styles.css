@@ -2802,3 +2802,459 @@ main > section.section-visible .sec-header::before {
     padding: 22px 20px;
   }
 }
+
+/* ── Mobile responsiveness (tablet · phone · small phone) ─────────────────
+   Desktop layout unchanged above these breakpoints. */
+
+html {
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
+main,
+.app-shell {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+img,
+video,
+svg,
+iframe {
+  max-width: 100%;
+}
+
+@media (max-width: 1024px) {
+  nav {
+    padding: 0 28px;
+  }
+
+  .sec {
+    padding: 72px 40px;
+  }
+
+  #contact {
+    padding: 80px 40px;
+    gap: 48px;
+  }
+
+  footer {
+    padding: 24px 40px;
+  }
+
+  .hero-l {
+    padding: 72px 40px 48px;
+  }
+
+  .hero-r {
+    padding: 48px 40px 72px;
+  }
+
+  .pc-main {
+    grid-template-columns: 1fr;
+  }
+
+  .lesson-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .life-spotlight {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .life-studio-gallery {
+    grid-template-columns: 1fr;
+    height: auto !important;
+  }
+
+  .life-studio-stack {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-template-rows: none !important;
+    grid-auto-rows: 72px;
+    min-height: auto;
+  }
+
+  .vmodel-frame {
+    min-height: 480px;
+  }
+}
+
+@media (max-width: 768px) {
+  nav {
+    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 12px 10px;
+    height: auto;
+    padding: 14px 20px 16px;
+  }
+
+  .nav-brand {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+  }
+
+  .nav-utils {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    gap: 8px;
+  }
+
+  .nav-links {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    flex: none;
+    display: flex;
+    gap: 14px 16px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-logo-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 42vw;
+  }
+
+  .nav-icon-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .nav-resume {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  #hero {
+    padding-top: 56px;
+  }
+
+  .hero-l {
+    padding: 64px 24px 32px;
+  }
+
+  .hero-r {
+    padding: 40px 24px 64px;
+  }
+
+  .sec,
+  #contact {
+    padding: 64px 24px;
+  }
+
+  .sec-header::before {
+    display: none;
+  }
+
+  .sec-header::after {
+    transform: none;
+    opacity: 0.45;
+  }
+
+  .sec-t {
+    font-size: clamp(26px, 6.5vw, 34px);
+  }
+
+  .hero-h1 {
+    font-size: clamp(34px, 9vw, 42px);
+  }
+
+  .hero-identity-degree {
+    white-space: normal;
+  }
+
+  .hero-cta-row {
+    gap: 10px;
+  }
+
+  .cta {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .pc-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pc-top {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .pc-more {
+    position: static;
+    opacity: 1;
+    margin-top: 8px;
+  }
+
+  .epc-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .life-spotlight {
+    grid-template-columns: 1fr;
+  }
+
+  .life-ribbon-cell {
+    border-right: 0;
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .life-ribbon-cell:last-child {
+    border-bottom: 0;
+  }
+
+  .life-ribbon-copy {
+    padding: 22px 24px;
+  }
+
+  .life-ribbon-media {
+    padding: 16px 24px 22px;
+  }
+
+  .life-studio-gallery {
+    grid-template-columns: 1fr;
+    height: auto !important;
+  }
+
+  .life-studio-stack {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: none !important;
+    grid-auto-rows: 72px;
+    min-height: auto;
+  }
+
+  .life-studio-stack .life-gallery-item {
+    grid-column: auto !important;
+    min-height: 72px;
+  }
+
+  .life-studio-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .life-thread {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .tl {
+    display: grid;
+  }
+
+  .tl-item,
+  .tl-item:not(:first-child) {
+    padding: 22px 0;
+    border-right: 0;
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.07);
+  }
+
+  .tl-item:last-child {
+    border-bottom: 0;
+  }
+
+  #contact {
+    gap: 36px;
+  }
+
+  .ct-title {
+    font-size: clamp(40px, 12vw, 52px);
+  }
+
+  .ctl {
+    grid-template-columns: 72px minmax(0, 1fr) auto;
+    padding: 14px 16px;
+  }
+
+  footer {
+    display: grid;
+    gap: 12px;
+    padding: 24px;
+  }
+
+  .modal-body,
+  .modal-header {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .ms-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .vmodel-frame {
+    min-height: 420px;
+  }
+
+  .app-loader-line {
+    left: 24px;
+    right: 24px;
+  }
+
+  [data-reveal="left"]:not([data-visible]),
+  [data-reveal="right"]:not([data-visible]) {
+    transform: translateY(12px);
+  }
+
+  .pc:hover,
+  .pc[data-visible]:hover,
+  .es[data-visible]:hover,
+  .lesson-card:hover,
+  .ctl:hover,
+  .ctl[data-visible]:hover {
+    transform: none;
+  }
+
+  .ctl:hover,
+  .ctl[data-visible]:hover {
+    transform: none;
+  }
+
+  .modal-bg {
+    padding: 20px 12px;
+  }
+
+  .modal-header {
+    padding: 28px 24px 20px;
+  }
+
+  .modal-title {
+    font-size: 24px;
+    padding-right: 36px;
+  }
+
+  .modal-close {
+    width: 44px;
+    height: 44px;
+    top: 16px;
+    right: 16px;
+  }
+
+  .life-lightbox-close {
+    top: 12px;
+    right: 12px;
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .life-lightbox-zoom-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  nav {
+    padding: 12px 16px 14px;
+  }
+
+  .nav-contact {
+    gap: 0;
+  }
+
+  .nav-logo-name {
+    max-width: 36vw;
+    font-size: 15px;
+  }
+
+  .hero-l {
+    padding: 56px 18px 28px;
+  }
+
+  .hero-r {
+    padding: 32px 18px 56px;
+  }
+
+  .sec,
+  #contact {
+    padding: 56px 18px;
+  }
+
+  .hero-h1 {
+    font-size: 32px;
+  }
+
+  .pc-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .pc,
+  .pc.flagship {
+    padding: 18px 16px 20px;
+  }
+
+  .pc.flagship .pc-title {
+    font-size: 22px;
+  }
+
+  .es {
+    padding: 28px 22px;
+  }
+
+  .lesson-card {
+    padding: 24px 22px;
+  }
+
+  .ctl {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .ctl-type {
+    width: auto;
+  }
+
+  .ctl-arr {
+    display: none;
+  }
+
+  .life-studio-stack {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ft-links {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .principle-item {
+    padding: 20px 18px;
+  }
+}
+
+@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+  [data-reveal]:not([data-visible]) {
+    opacity: 1;
+    transform: none;
+  }
+
+  .vmodel-embed:not([data-visible]) {
+    transform: none;
+  }
+}
